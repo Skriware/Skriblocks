@@ -40,6 +40,7 @@ for(byte ii = 0; ii < blockList_N; ii++){
             end_block = blockList[ii];
       }else if(blockList[ii]->getID() == limit_block_id){
         set_limit_block(blockList[ii]);
+        set_limit();
       }
   
   }
