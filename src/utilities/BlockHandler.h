@@ -31,7 +31,8 @@ public:
 	int readInt();																								//BT message parsing help functions
 	int Handle_Msg();																							// Handle one line of the message
 	void ReadfromBT();	
-	void clear();																						// BT message hendler												
+	void clear();	
+	void init();																					// BT message hendler												
 
 	bool runCode;
 
@@ -50,7 +51,7 @@ public:
 	int ConstblockList_N;
 	int AritmeticblockList_N;						//Actual number of blocks in lists
 	int Mcursor;								// variable for message parsing
-	char AllMessage[200];
+	char AllMessage[500];
 	int messageLength;
 
 };

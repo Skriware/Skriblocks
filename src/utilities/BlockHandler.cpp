@@ -1,10 +1,10 @@
 	#include "BlockHandler.h"
 
 	BlockHandler::BlockHandler(){
-		clear();
+		init();
 	}
 
-	void BlockHandler::clear(){
+	void BlockHandler::init(){
 		runCode = false;
 		for(int tt = 0; tt < 60; tt++){
 			if(tt < 30)ConstblockList[tt] = NULL;
@@ -30,6 +30,24 @@
 	 messageLength = 0;
 	}
 
+  void BlockHandler::clear(){
+    runCode = false;
+    for(int tt = 0; tt < 60; tt++){
+     /* if(tt < 30)delete ConstblockList[tt];
+      if(tt < 10){
+        delete IfblockList[tt];
+        delete LoopblockList[tt];
+      } 
+      if(tt < 20){
+        delete LogicblockList[tt];
+        delete AritmeticblockList[tt];  
+      }*/
+      delete blockList[tt];
+    }
+    
+
+   init();
+  }
 	void BlockHandler::addLoop(int id,	int startBlockID,	int endBlockID,		int count){
 		 Loop *l = new Loop(id,startBlockID,endBlockID,count);
       	 blockList[blockList_N] = l;
@@ -182,8 +200,22 @@ int BlockHandler::freeRam()
 }
 
 int BlockHandler::readInt(){
+  int nDigits = 0;
+  while((AllMessage[Mcursor + nDigits] != ' ') && (AllMessage[Mcursor + nDigits] != '\n')){
+      nDigits++;
+  }
   int out = 0;
-  if((AllMessage[Mcursor + 1] != ' ') && (AllMessage[Mcursor + 1] != '\n')){
+  int power = 1;
+    for(int ii = nDigits-1; ii > -1; ii--){
+      if(ii != nDigits-1) power *=10;
+      int add = cti(AllMessage[Mcursor + ii])*power;
+      out += add;
+    }
+    Serial.println(out);
+    Mcursor += nDigits+1;
+    return(out);
+
+  /*if((AllMessage[Mcursor + 1] != ' ') && (AllMessage[Mcursor + 1] != '\n')){
   if((AllMessage[Mcursor + 2] != ' ') && (AllMessage[Mcursor + 2] != '\n')){
     out = cti(AllMessage[Mcursor])*100 + cti(AllMessage[Mcursor+1])*10 + cti(AllMessage[Mcursor+2]);
     Mcursor += 4;
@@ -194,8 +226,8 @@ int BlockHandler::readInt(){
   }else{
     out = cti(AllMessage[Mcursor]);
     Mcursor += 2;
-  }
-  return(out);
+  }*/
+ // return(out);
 }
 
 int BlockHandler::cti(char x){
@@ -237,7 +269,12 @@ int BlockHandler::Handle_Msg(){
      case 'C':
           Serial.print("CONST");
           Mcursor += 2;
-          value = readInt();
+          if(AllMessage[Mcursor] == 'I'){
+            value = 0;
+            Mcursor += 2;
+          }else{
+            value = readInt();
+          }
             Serial.print("id:");Serial.print(id);Serial.print("value:");Serial.println(value);
             addConst(id,value);
           break;
@@ -298,7 +335,7 @@ int BlockHandler::Handle_Msg(){
           next = readInt();
           Serial.print("Starting Block ID:");
           Serial.println(next);
-          addBlock(id,next,98,0,0);
+          addBlock(id,next,69,0,0);
        break;
          
       case 'A':

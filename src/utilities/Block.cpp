@@ -54,29 +54,50 @@ byte Block::getNextID(){
 }
 
  void Block::do_action() {
- // Serial.println("Performing action");
- // Serial.println(actionID);
+ /*
+    0 up regular actions
+
+    100 up reading from sensors actions
+
+    100 down custom actions(for pilot control)
+ */ 
   switch(actionID){
-    case 0:
+     case 0:
         Block::robot->Stop();
         break;
     case 1:
-        Block::robot->MoveForward(10*input_block->get_output() - 1);
+        Block::robot->SetSpeed(output_block->get_output() + 155);
+        Block::robot->MoveForward(input_block->get_output() - 1);
         break;
     case 2:
-        Block::robot->MoveBack(10*input_block->get_output() - 1);
+        Block::robot->SetSpeed(output_block->get_output() + 155);
+        Block::robot->MoveBack(input_block->get_output() - 1);
         break;
     case 3:
-        Block::robot->FaceLeft(10*input_block->get_output() - 1);
+        Block::robot->SetSpeed(255);
+        Block::robot->FaceLeft(input_block->get_output() - 1);
         break;
     case 4:
-        Block::robot->FaceRight(10*input_block->get_output() - 1);
+        Block::robot->SetSpeed(255);
+        Block::robot->FaceRight(input_block->get_output() - 1);
         break;
     case 5:
-        output_block->set_output(Block::robot->ReadDistSensor(input_block->get_output()));
+        delay(input_block->get_output());
+        break;
+    case 6:
+        Block::robot->Stop();
+        break;
+    case 7:
+        //LED
         break;
     case 99:
         Block::robot->RawRotorMove(input_block->get_output(),output_block->get_output());
+        break;
+    case 101:
+        output_block->set_output(Block::robot->ReadDistSensor(input_block->get_output()));
+        break;
+    case 102:
+        output_block->set_output(Block::robot->ReadLineSensor(input_block->get_output()));
         break;
     default :
         break;
