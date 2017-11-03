@@ -20,7 +20,7 @@ LogicBlock::~LogicBlock(){
 	  if(input_right  != NULL)val_right   = input_right->get_output();
 
 	  switch (operation) {
-    case 1:
+    case 0:
       bool_output = val_left == val_right;
       break;
     case 3:
@@ -28,6 +28,9 @@ LogicBlock::~LogicBlock(){
       break;
     case 2:
       bool_output = val_left < val_right;
+      break;
+    case 1:
+      bool_output = val_left != val_right;
       break;
     default:
       bool_output = false;

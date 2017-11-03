@@ -174,23 +174,26 @@
             break;
           }
 		}
-		
+		  current = StartBlock;
 	}
-	void BlockHandler::startCode(bool loop){
-		runCode = loop;
-		do {
-			current = StartBlock;
-			Serial.println("New loop over code!");
-		   	while (current != NULL) {
+	bool BlockHandler::doBlock(bool loopmode){
 		   		Serial.println(current->getID());
 			    current->do_action();
 			    Serial.println(current->getNextID());
 			    current = current->get_next(); 
-			    
-		  	}
+			  if (current == NULL){
+          Serial.print("O shet!");
+          if(loopmode){
+            current = StartBlock;
+            return(true);
+          }else{
+            return(false);
+          }
+          
+        }
 
-		}while(runCode);
-	}
+        return(true);
+  }
 
 int BlockHandler::freeRam() 
 {
@@ -240,9 +243,9 @@ int BlockHandler::Handle_Msg(){
   if(AllMessage[Mcursor] == 'R'){
     MakeConections();
     if(AllMessage[Mcursor+4] == 'C'){
-    	return(1);
-    }else{
     	return(0);
+    }else{
+    	return(1);
     }
     
   }
@@ -358,40 +361,3 @@ int BlockHandler::Handle_Msg(){
   return(2);    
 }
 
-
-void BlockHandler::ReadfromBT(){
-  String messagetmp;
-  char asci[30];
-  Serial.print("Free Ram Memory for code:"); 
-  Serial.println(freeRam());
-  runCode = true;
-  while(runCode){
-	   if(Serial.available()){
-		    while(Serial.available()){
-			    messagetmp = Serial1.readString();
-			    Serial.print(messagetmp);
-			    messagetmp.toCharArray(asci, 50);
-			    int NewMessageLength = messagetmp.length();
-			    for(int j = messageLength; j < messageLength+NewMessageLength; j++){
-			      AllMessage[j+1] = asci[j-messageLength];
-			    }
-			     messageLength+=NewMessageLength;
-			    if(AllMessage[messageLength-4] == 'S' && AllMessage[messageLength-3] == 'T'){
-				    Mcursor = 7;
-				    Serial1.println("ack");
-				    while(freeRam() > 190){
-				      Handle_Msg();
-				    }
-				    Serial.println("Code takes to Much Memory!!!");
-				    break;
-			    }
-			    //Serial1.println("ack");
-			     
-			    
-			    
-			    }
-			}
-
-	}
-
-}
