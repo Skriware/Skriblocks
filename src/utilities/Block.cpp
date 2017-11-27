@@ -61,6 +61,7 @@ byte Block::getNextID(){
 
     100 down custom actions(for pilot control)
  */ 
+
   switch(actionID){
      case 0:
         Block::robot->Stop();
@@ -89,6 +90,25 @@ byte Block::getNextID(){
         break;
     case 7:
         //LED
+        break;
+    case 8:
+        delay(500);
+        Block::robot->CloseClaw();
+        break;
+    case 9:
+        delay(500);
+        Block::robot->OpenClaw();
+        break;
+    case 10:
+        delay(500);
+        Block::robot->Pick_Up();
+        break;
+    case 11:
+        delay(500);
+        Block::robot->Put_Down();
+        break;
+    case 12:
+
         break;
     case 99:
         Block::robot->RawRotorMove(input_block->get_output(),output_block->get_output());
