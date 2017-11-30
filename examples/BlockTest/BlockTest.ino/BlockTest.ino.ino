@@ -10,7 +10,7 @@
 #define TRIG_PIN_2 11
 #define LED_DATA_PIN 2
 #define LED_DATA_PIN_1 0
-#define BT_STATE_PIN 1
+#define BT_STATE_PIN 3
 #define CLAW_PIN1 2
 #define CLAW_PIN2 8
 
