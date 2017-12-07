@@ -1,7 +1,6 @@
 #ifndef ConstBlock_H
 #define ConstBlock_H
 #include "Block.h"
-#include <iostream>
 class ConstBlock : public Block {
 
 public:

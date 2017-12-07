@@ -1,5 +1,4 @@
 #include "Block.h"
-#include <iostream>
 
 SkriBot* Block::robot = NULL;
 
@@ -88,9 +87,6 @@ byte Block::getNextID(){
     case 6:
         Block::robot->Stop();
         break;
-    case 7:
-        //LED
-        break;
     case 8:
         delay(500);
         Block::robot->CloseClaw();
@@ -108,7 +104,32 @@ byte Block::getNextID(){
         Block::robot->Put_Down();
         break;
     case 12:
+         switch(input_block->get_output()){
+            case 0 : 
+                Block::robot->TurnLEDOn(255,0,0);
+            break;
+             case 1 : 
+                Block::robot->TurnLEDOn(0,255,0);
+            break;
+             case 2 : 
+                Block::robot->TurnLEDOn(0,0,255);
+            break;
+             case 4 : 
+                Block::robot->TurnLEDOn(255,255,0);
+            break;
+             case 5 : 
+                Block::robot->TurnLEDOn(255,255,255);
+            break;
+             case 3 : 
+                Block::robot->TurnLEDOn(184, 3, 255);
+            break;
+            default:
 
+            break;
+          }
+        break;
+      case 13:
+        Block::robot->TurnLEDOff();
         break;
     case 99:
         Block::robot->RawRotorMove(input_block->get_output(),output_block->get_output());

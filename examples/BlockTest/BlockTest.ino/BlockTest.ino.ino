@@ -1,4 +1,4 @@
-#include <SkriBlocks.h>
+#include <Skriblocks.h>
 #include <Adafruit_NeoPixel.h>
 #define ROTOR_SPEED_PIN_R 6
 #define ROTOR_DIR_PIN_R 7
@@ -8,9 +8,9 @@
 #define ECHO_PIN_2 12
 #define TRIG_PIN_1 9
 #define TRIG_PIN_2 11
-#define LED_DATA_PIN 1
+#define LED_DATA_PIN 2
 #define LED_DATA_PIN_1 0
-#define BT_STATE_PIN 3
+#define BT_STATE_PIN 1
 #define CLAW_PIN1 2
 #define CLAW_PIN2 8
 

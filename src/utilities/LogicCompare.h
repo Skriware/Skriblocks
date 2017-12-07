@@ -1,7 +1,7 @@
 #ifndef LogicComp_H
 #define LogicComp_H
 #include "LogicBlock.h"
-#include <iostream>
+
 class LogicCompare : public LogicBlock {
 
 public:

@@ -1,7 +1,6 @@
 #ifndef LogicBlock_H
 #define LogicBlock_H
 #include "Block.h"
-#include <iostream>
 class LogicBlock : public Block {
 
 public:

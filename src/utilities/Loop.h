@@ -2,7 +2,6 @@
 #define Loop_H
 
 #include "Block.h"
-#include <iostream>
 
 class Loop : public Block {
 public:
