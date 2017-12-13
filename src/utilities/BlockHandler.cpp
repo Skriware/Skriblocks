@@ -107,7 +107,7 @@
 	}
 
 	void BlockHandler::addAritmeticBlock(int id,int _operation,int _left,int _right){
-		AritmeticBlock *ablock = new AritmeticBlock(id,_left,_right,_operation);
+		AritmeticBlock *ablock = new AritmeticBlock(id,_operation,_left,_right);
 		blockList[blockList_N] = ablock;
 		AritmeticblockList[AritmeticblockList_N] = ablock;
 		blockList_N++;
@@ -307,7 +307,7 @@ int BlockHandler::Handle_Msg(){
       	Serial.print("OperationType:");Serial.print(compareOperation);
       	Serial.print("Left:");Serial.print(input_left);
       	Serial.print("Right:");Serial.println(input_right);
-      	addLogicCompare(id,compareOperation,input_left,input_right);
+      	addAritmeticBlock(id,compareOperation,input_left,input_right);
       break;
 
       case 'K':

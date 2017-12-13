@@ -2,11 +2,11 @@
 
 AritmeticBlock::~AritmeticBlock(){}
 
-AritmeticBlock::AritmeticBlock(byte _id,byte _left_id,byte _rigth_id, byte _operation ){
+AritmeticBlock::AritmeticBlock(byte _id, byte _operation,byte _left_id,byte _rigth_id){
 	blockID = _id;
 	leftID 	= _left_id;
 	rightID = _rigth_id;
-	_operation = _operation;
+	operation = _operation;
 	input_left 	= NULL;
 	input_right = NULL;
 }
@@ -14,15 +14,19 @@ AritmeticBlock::AritmeticBlock(byte _id,byte _left_id,byte _rigth_id, byte _oper
   		for(int ii = 0; ii < blockList_N; ii++){
 			     if(blockList[ii]->getID() == leftID){
 			            input_left = blockList[ii];
+                  Serial.print("LEFT INPUT:");
+                  Serial.println(input_left->getID());
 			      }else if(blockList[ii]->getID() == rightID){
 			            input_right = blockList[ii];
+                  Serial.print("RIGHT INPUT:");
+                  Serial.println(input_right->getID());
 			      }
   		}
 
   }
   int AritmeticBlock::get_output(){
-  	bool val_right,val_left;
-  	  if(input_left   != NULL)val_left    = input_left->get_output();
+  	int val_right,val_left;
+  	if(input_left   != NULL)val_left    = input_left->get_output();
 	  if(input_right  != NULL)val_right   = input_right->get_output();
 
 	  switch (operation) {
