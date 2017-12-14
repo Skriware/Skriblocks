@@ -273,7 +273,7 @@ int BlockHandler::Handle_Msg(){
           Serial.print("CONST");
           Mcursor += 2;
           if(AllMessage[Mcursor] == 'I'){
-            value = 0;
+            value = -1;
             Mcursor += 2;
           }else{
             value = readInt();

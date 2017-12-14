@@ -78,7 +78,7 @@ Block* Loop::get_next() {
   Serial.print("limit:");
   Serial.println(limit);
   Serial.println(counter);
-  if (counter <= limit){
+  if (counter <= limit || limit == -1){
     return(begin_block);
   }
   else{

@@ -67,19 +67,19 @@ byte Block::getNextID(){
         break;
     case 1:
         Block::robot->SetSpeed(output_block->get_output() + 155);
-        Block::robot->MoveForward(input_block->get_output() - 1);
+        Block::robot->MoveForward(input_block->get_output());
         break;
     case 2:
         Block::robot->SetSpeed(output_block->get_output() + 155);
-        Block::robot->MoveBack(input_block->get_output() - 1);
+        Block::robot->MoveBack(input_block->get_output());
         break;
     case 3:
         Block::robot->SetSpeed(255);
-        Block::robot->FaceLeft(input_block->get_output() - 1);
+        Block::robot->FaceLeft(input_block->get_output());
         break;
     case 4:
         Block::robot->SetSpeed(255);
-        Block::robot->FaceRight(input_block->get_output() - 1);
+        Block::robot->FaceRight(input_block->get_output());
         break;
     case 5:
         delay(input_block->get_output());

@@ -11,6 +11,8 @@ void BTLOST(){
   BH.clear();
   robot->Stop();
   robot->TurnLEDOff(); 
+  robot->OpenClaw();
+  robot->Put_Down();
   runCode = false;
 }
 
@@ -76,6 +78,8 @@ void setup() {
               #endif
               BH.clear();
               robot->Stop();
+              robot->Put_Down();
+              robot->OpenClaw();
               robot->TurnLEDOn(255,255,255);
               break;
             }
@@ -97,6 +101,8 @@ void setup() {
             if(messagetmp == "END\n"){
               BH.clear();
               robot->Stop();
+               robot->OpenClaw();
+               robot->Put_Down();
               robot->TurnLEDOn(255,255,255);
               break;
             }
