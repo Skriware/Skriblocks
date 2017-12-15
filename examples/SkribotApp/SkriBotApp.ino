@@ -51,10 +51,10 @@ void setup() {
     BH.messageLength++;
       robot->TurnLEDOn(0,0,0);
      if(BH.messageLength > 399)break;
-    if(BH.messageLength > 4
-      && BH.AllMessage[BH.messageLength-5] == 'E' 
-      && BH.AllMessage[BH.messageLength-4] == 'N' 
-      && BH.AllMessage[BH.messageLength-3] == 'D'
+    if(BH.messageLength > 3
+      && BH.AllMessage[BH.messageLength-4] == 'E' 
+      && BH.AllMessage[BH.messageLength-3] == 'N' 
+      && BH.AllMessage[BH.messageLength-2] == 'D'
       ){
       BH.clear();
       robot->Stop();
