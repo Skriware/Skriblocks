@@ -120,6 +120,7 @@ void setup() {
             }
               if(digitalRead(EDU_BT_STATE_PIN) == LOW)BTLOST();
         }
+        Serial3.print("DONE");
         BH.clear();
         runCode = true;
         break;
