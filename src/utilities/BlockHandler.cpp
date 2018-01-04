@@ -275,6 +275,12 @@ int BlockHandler::Handle_Msg(){
           if(AllMessage[Mcursor] == 'I'){
             value = -1;
             Mcursor += 2;
+          }else if(AllMessage[Mcursor] == 'T'){
+            value = 1;
+            Mcursor += 2;
+          }else if(AllMessage[Mcursor] == 'F'){
+            value = 0;
+            Mcursor += 2;
           }else{
             value = readInt();
           }

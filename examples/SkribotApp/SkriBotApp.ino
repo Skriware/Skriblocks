@@ -95,7 +95,10 @@ void setup() {
               break;
             }
             }
-              if(digitalRead(EDU_BT_STATE_PIN) == LOW)BTLOST();
+              if(digitalRead(EDU_BT_STATE_PIN) == LOW){
+                BTLOST();
+                break;
+              }
         }
         BH.clear();
         break;
@@ -118,7 +121,10 @@ void setup() {
               break;
             }
             }
-              if(digitalRead(EDU_BT_STATE_PIN) == LOW)BTLOST();
+              if(digitalRead(EDU_BT_STATE_PIN) == LOW){
+                BTLOST();
+                break;
+              }
         }
         BH.clear();
         runCode = true;
