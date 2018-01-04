@@ -126,6 +126,7 @@ void setup() {
                 break;
               }
         }
+        Serial3.print("DONE");
         BH.clear();
         runCode = true;
         break;
