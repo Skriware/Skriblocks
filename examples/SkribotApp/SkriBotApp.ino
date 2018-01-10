@@ -123,6 +123,7 @@ void loop() {
                 break;
               }
         }
+        Serial3.print("DONE");
         BH.clear();
         runCode = true;
         break;
