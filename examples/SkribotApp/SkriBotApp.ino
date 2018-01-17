@@ -6,6 +6,9 @@ BlockHandler BH;
 SkriBot *robot;
 bool runCode = true;
 bool transmision_recieved = false;
+String messagetmp;
+char asci[30];
+char ascitmp;
 
 void BTLOST(){
   BH.clear();
@@ -24,22 +27,17 @@ int freeRam()
 }
 
 void setup() {
+  robot = new SkriBot("EDU_SHIELD");
   pinMode(EDU_BT_STATE_PIN,INPUT);
   #if ENABLED(DEBUG_MODE)
     Serial.begin(9600);
   #endif
-   Serial3.begin(9600);
+  Serial3.begin(9600);
   Serial3.setTimeout(50);
-  robot = new SkriBot("EDU_SHIELD");
-  Block::setRobot(robot);
-   
-  robot->SetSpeed(250); 
-  String messagetmp;
-  char asci[30];
-  char ascitmp;
-  robot->Stop();
+  Block::setRobot(robot);  
+}
 
-  while(true){
+void loop() {
    if(digitalRead(3) == LOW)BTLOST();
     while(Serial3.available()){
     robot->TurnLEDOn(0,0,255);
@@ -50,7 +48,7 @@ void setup() {
     BH.AllMessage[BH.messageLength] = ascitmp;
     BH.messageLength++;
       robot->TurnLEDOn(0,0,0);
-     if(BH.messageLength > 399)break;
+     if(BH.messageLength > 800)break;
     if(BH.messageLength > 3
       && BH.AllMessage[BH.messageLength-4] == 'E' 
       && BH.AllMessage[BH.messageLength-3] == 'N' 
@@ -69,11 +67,11 @@ void setup() {
       ){
     BH.Mcursor = 6;
     Serial3.println("ack");
-    int flag =0;
+    int flag; 
     while(freeRam() > 190){
       robot->TurnLEDOn(0,0,0);
       flag = BH.Handle_Msg(); 
-      if(flag ==0){
+      if(flag == 0){
        robot->TurnLEDOn(0,255,0);
        while(BH.doBlock(true)){
            if(Serial3.available()){
@@ -95,7 +93,10 @@ void setup() {
               break;
             }
             }
-              if(digitalRead(EDU_BT_STATE_PIN) == LOW)BTLOST();
+              if(digitalRead(EDU_BT_STATE_PIN) == LOW){
+                BTLOST();
+                break;
+              }
         }
         BH.clear();
         break;
@@ -111,14 +112,17 @@ void setup() {
             }
             if(messagetmp == "END\n"){
               BH.clear();
-              robot->Stop();
+               robot->Stop();
                robot->OpenClaw();
                robot->Put_Down();
-              robot->TurnLEDOn(255,255,255);
+               robot->TurnLEDOn(255,255,255);
               break;
             }
             }
-              if(digitalRead(EDU_BT_STATE_PIN) == LOW)BTLOST();
+              if(digitalRead(EDU_BT_STATE_PIN) == LOW){
+                BTLOST();
+                break;
+              }
         }
         BH.clear();
         runCode = true;
@@ -135,7 +139,7 @@ void setup() {
     }
     
     }
-    
+
     robot->TurnLEDOn(0,0,0);
     transmision_recieved = true;
     
@@ -157,12 +161,5 @@ void setup() {
      robot->TurnLEDOn(255,255,255); 
   }
 
-
-  }
-  
-}
-
-void loop() {
-  digitalWrite(Too_Long_Code,HIGH);
 }
 
