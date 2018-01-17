@@ -3,7 +3,7 @@
 #define   NUMPIXELS 3
 //#define DEBUG_MODE
 BlockHandler BH;
-SkriBot *robot;
+SkriBot *robot = new SkriBot("EDU_SHIELD");;
 bool runCode = true;
 bool transmision_recieved = false;
 String messagetmp;
@@ -124,6 +124,7 @@ void loop() {
                 break;
               }
         }
+        Serial3.print("DONE");
         BH.clear();
         runCode = true;
         break;
