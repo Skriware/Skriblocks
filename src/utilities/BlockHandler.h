@@ -51,7 +51,7 @@ public:
 	int ConstblockList_N;
 	int AritmeticblockList_N;						//Actual number of blocks in lists
 	int Mcursor;								// variable for message parsing
-	char AllMessage[500];
+	char AllMessage[800];
 	int messageLength;
 
 };
