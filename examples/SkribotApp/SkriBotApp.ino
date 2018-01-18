@@ -49,6 +49,11 @@ void loop() {
     BTLOST();
     }
 =======
+  Block::setRobot(robot);  
+}
+
+void loop() {
+   if(digitalRead(3) == LOW)BTLOST();
 >>>>>>> 876baa1f380589233194e795f5a46d0941599938
     while(Serial3.available()){
     ascitmp = Serial3.read();
@@ -89,6 +94,7 @@ void loop() {
 <<<<<<< HEAD
        //robot->TurnLEDOn(0,255,0);
 =======
+       robot->TurnLEDOn(0,255,0);
 >>>>>>> 876baa1f380589233194e795f5a46d0941599938
        while(BH.doBlock(true)){
            if(Serial3.available()){
