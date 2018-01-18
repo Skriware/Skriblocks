@@ -66,12 +66,20 @@ void loop() {
       
 =======
       robot->TurnLEDOn(0,0,0);
+<<<<<<< HEAD
 >>>>>>> 876baa1f380589233194e795f5a46d0941599938
      if(BH.messageLength > 800)break;
     if(BH.messageLength > 3
       && BH.AllMessage[BH.messageLength-4] == 'E' 
       && BH.AllMessage[BH.messageLength-3] == 'N' 
       && BH.AllMessage[BH.messageLength-2] == 'D'
+=======
+     if(BH.messageLength > 399)break;
+    if(BH.messageLength > 4
+      && BH.AllMessage[BH.messageLength-5] == 'E' 
+      && BH.AllMessage[BH.messageLength-4] == 'N' 
+      && BH.AllMessage[BH.messageLength-3] == 'D'
+>>>>>>> parent of d076a91... Stoping on END command
       ){
       BH.clear();
       robot->Stop();
