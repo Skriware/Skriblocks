@@ -6,7 +6,14 @@ BlockHandler BH;
 SkriBot *robot;
 bool runCode = true;
 bool transmision_recieved = false;
+<<<<<<< HEAD
 bool BT_state;
+=======
+<<<<<<< HEAD
+bool BT_state;
+=======
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
+>>>>>>> 0cf487d7b31ff738fe724041f3c126c51155b874
 String messagetmp;
 char asci[30];
 char ascitmp;
@@ -35,6 +42,7 @@ void setup() {
   #endif
   Serial3.begin(9600);
   Serial3.setTimeout(50);
+<<<<<<< HEAD
   Block::setRobot(robot); 
   BT_state = false; 
 }
@@ -44,6 +52,25 @@ void loop() {
     BT_state = !BT_state;
     BTLOST();
     }
+=======
+<<<<<<< HEAD
+  Block::setRobot(robot); 
+  BT_state = false; 
+}
+
+void loop() {
+   if(digitalRead(3) == LOW && BT_state){
+    BT_state = !BT_state;
+    BTLOST();
+    }
+=======
+  Block::setRobot(robot);  
+}
+
+void loop() {
+   if(digitalRead(3) == LOW)BTLOST();
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
+>>>>>>> 0cf487d7b31ff738fe724041f3c126c51155b874
     while(Serial3.available()){
     ascitmp = Serial3.read();
     #if ENABLED(DEBUG_MODE)
@@ -51,12 +78,28 @@ void loop() {
     #endif
     BH.AllMessage[BH.messageLength] = ascitmp;
     BH.messageLength++;
+<<<<<<< HEAD
       
+=======
+<<<<<<< HEAD
+      
+=======
+      robot->TurnLEDOn(0,0,0);
+<<<<<<< HEAD
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
+>>>>>>> 0cf487d7b31ff738fe724041f3c126c51155b874
      if(BH.messageLength > 800)break;
     if(BH.messageLength > 3
       && BH.AllMessage[BH.messageLength-4] == 'E' 
       && BH.AllMessage[BH.messageLength-3] == 'N' 
       && BH.AllMessage[BH.messageLength-2] == 'D'
+=======
+     if(BH.messageLength > 399)break;
+    if(BH.messageLength > 4
+      && BH.AllMessage[BH.messageLength-5] == 'E' 
+      && BH.AllMessage[BH.messageLength-4] == 'N' 
+      && BH.AllMessage[BH.messageLength-3] == 'D'
+>>>>>>> parent of d076a91... Stoping on END command
       ){
       BH.clear();
       robot->Stop();
@@ -76,7 +119,15 @@ void loop() {
       //robot->TurnLEDOn(0,0,0);
       flag = BH.Handle_Msg(); 
       if(flag == 0){
+<<<<<<< HEAD
        //robot->TurnLEDOn(0,255,0);
+=======
+<<<<<<< HEAD
+       //robot->TurnLEDOn(0,255,0);
+=======
+       robot->TurnLEDOn(0,255,0);
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
+>>>>>>> 0cf487d7b31ff738fe724041f3c126c51155b874
        while(BH.doBlock(true)){
            if(Serial3.available()){
            while(Serial3.available()){
@@ -146,7 +197,15 @@ void loop() {
     
     }
 
+<<<<<<< HEAD
     //robot->TurnLEDOn(0,0,0);
+=======
+<<<<<<< HEAD
+    //robot->TurnLEDOn(0,0,0);
+=======
+    robot->TurnLEDOn(0,0,0);
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
+>>>>>>> 0cf487d7b31ff738fe724041f3c126c51155b874
     transmision_recieved = true;
     
     
