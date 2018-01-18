@@ -6,7 +6,10 @@ BlockHandler BH;
 SkriBot *robot;
 bool runCode = true;
 bool transmision_recieved = false;
+<<<<<<< HEAD
 bool BT_state;
+=======
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
 String messagetmp;
 char asci[30];
 char ascitmp;
@@ -35,6 +38,7 @@ void setup() {
   #endif
   Serial3.begin(9600);
   Serial3.setTimeout(50);
+<<<<<<< HEAD
   Block::setRobot(robot); 
   BT_state = false; 
 }
@@ -44,6 +48,8 @@ void loop() {
     BT_state = !BT_state;
     BTLOST();
     }
+=======
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
     while(Serial3.available()){
     ascitmp = Serial3.read();
     #if ENABLED(DEBUG_MODE)
@@ -51,7 +57,11 @@ void loop() {
     #endif
     BH.AllMessage[BH.messageLength] = ascitmp;
     BH.messageLength++;
+<<<<<<< HEAD
       
+=======
+      robot->TurnLEDOn(0,0,0);
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
      if(BH.messageLength > 800)break;
     if(BH.messageLength > 3
       && BH.AllMessage[BH.messageLength-4] == 'E' 
@@ -76,7 +86,10 @@ void loop() {
       //robot->TurnLEDOn(0,0,0);
       flag = BH.Handle_Msg(); 
       if(flag == 0){
+<<<<<<< HEAD
        //robot->TurnLEDOn(0,255,0);
+=======
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
        while(BH.doBlock(true)){
            if(Serial3.available()){
            while(Serial3.available()){
@@ -146,7 +159,11 @@ void loop() {
     
     }
 
+<<<<<<< HEAD
     //robot->TurnLEDOn(0,0,0);
+=======
+    robot->TurnLEDOn(0,0,0);
+>>>>>>> 876baa1f380589233194e795f5a46d0941599938
     transmision_recieved = true;
     
     
