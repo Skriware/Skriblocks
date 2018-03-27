@@ -75,11 +75,11 @@ byte Block::getNextID(){
         break;
     case 3:
         Block::robot->SetSpeed(255);
-        Block::robot->FaceLeft(input_block->get_output());
+        Block::robot->FaceRight(input_block->get_output());
         break;
     case 4:
         Block::robot->SetSpeed(255);
-        Block::robot->FaceRight(input_block->get_output());
+        Block::robot->FaceLeft(input_block->get_output());
         break;
     case 5:
         delay(input_block->get_output());

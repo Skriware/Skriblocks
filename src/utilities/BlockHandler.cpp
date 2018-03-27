@@ -6,16 +6,11 @@
 
 	void BlockHandler::init(){
 		runCode = false;
-		for(int tt = 0; tt < 60; tt++){
-			if(tt < 30)ConstblockList[tt] = NULL;
-			if(tt < 10){
-				IfblockList[tt] = NULL;
-				LoopblockList[tt] = NULL;
-			}	
-			if(tt < 20){
-				LogicblockList[tt] = NULL;
-				AritmeticblockList[tt] = NULL;	
-			}
+		for(int tt = 0; tt < blockList_MAX; tt++){
+			if(tt < IfblockList_MAX)IfblockList[tt] = NULL;
+			if(tt < LoopblockList_MAX)LoopblockList[tt] = NULL;
+			if(tt < LogicblockList_MAX)LogicblockList[tt] = NULL;
+			if(tt < AritmeticblockList_MAX)AritmeticblockList[tt] = NULL;	
 			blockList[tt] = NULL;
 		}
 		
@@ -24,7 +19,6 @@
 	 IfblockList_N 			= 0;
 	 LoopblockList_N 		= 0;
 	 LogicblockList_N 		= 0;
-	 ConstblockList_N 		= 0;
 	 AritmeticblockList_N 	= 0;
 	 Mcursor = 0;
 	 messageLength = 0;
@@ -32,20 +26,9 @@
 
   void BlockHandler::clear(){
     runCode = false;
-    for(int tt = 0; tt < 60; tt++){
-     /* if(tt < 30)delete ConstblockList[tt];
-      if(tt < 10){
-        delete IfblockList[tt];
-        delete LoopblockList[tt];
-      } 
-      if(tt < 20){
-        delete LogicblockList[tt];
-        delete AritmeticblockList[tt];  
-      }*/
+    for(int tt = 0; tt < blockList_MAX; tt++){
       delete blockList[tt];
     }
-    
-
    init();
   }
 	void BlockHandler::addLoop(int id,	int startBlockID,	int endBlockID,		int count){
@@ -99,12 +82,13 @@
       
 	}
 
-	void BlockHandler::addConst(int id, String value){
+	/*void BlockHandler::addConst(int id, String value){
 		ConstBlock *cblock = new ConstBlock(id,value);
 		blockList[blockList_N] = cblock;
       	blockList_N++;
       	
 	}
+  */
 
 	void BlockHandler::addAritmeticBlock(int id,int _operation,int _left,int _right){
 		AritmeticBlock *ablock = new AritmeticBlock(id,_operation,_left,_right);
@@ -115,14 +99,14 @@
 	}
 
 	void BlockHandler::MakeConections(){
-		Serial.println("Making connections!");
+		#if ENABLED(DEBUG_MODE)
+      Serial.println("Making connections!");          
+    #endif
+  
 		for(int ii = 0 ; ii <  blockList_N ; ii++){
-			Serial.println(blockList[ii]->getID());
 			      for(int jj = 0 ; jj <  blockList_N ; jj++){
 			          if(blockList[ii]->getNextID() == blockList[jj]->getID()){
 			            blockList[ii]->set_next(blockList[jj]);
-			            Serial.print(blockList[jj]->getID());
-			            Serial.println(" next Set!");
 			            break;
 			          }
 			          
@@ -131,8 +115,6 @@
 			    	for(int kk = 0 ; kk <  blockList_N ; kk++){
 			          if(blockList[ii]->getInputID() == blockList[kk]->getID()){
 			          	blockList[ii]->set_input(blockList[kk]);
-			          	Serial.print(blockList[kk]->getID());
-			            Serial.println(" input Set!");
 			            break;
 			          }
 			          
@@ -141,8 +123,6 @@
 			    	for(int tt = 0 ; tt <  blockList_N ; tt++){
 			          if(blockList[ii]->getOutputID() == blockList[tt]->getID()){
 			          	blockList[ii]->set_output_block(blockList[tt]);
-			          	Serial.print(blockList[tt]->getID());
-			            Serial.println("  output Set!");
 			            break;
 			          }
 			          
@@ -165,12 +145,9 @@
   		for(int ll = 0; ll < AritmeticblockList_N ; ll++){
   			AritmeticblockList[ll]->set_connections(blockList,blockList_N);
   		}
-  		Serial.println("Finding Start block!");
   		 for(int jj = 0 ; jj <  blockList_N ; jj++){
           if(1 == blockList[jj]->getID()){
             StartBlock = blockList[jj];
-            Serial.print("Starting form block:");
-            //Serial.println(blockList[jj]->get_next()->getID());
             break;
           }
 		}
@@ -182,7 +159,6 @@
 			    Serial.println(current->getNextID());
 			    current = current->get_next(); 
 			  if (current == NULL){
-          Serial.print("O shet!");
           if(loopmode){
             current = StartBlock;
             return(true);
@@ -274,6 +250,12 @@ int BlockHandler::Handle_Msg(){
           Mcursor += 2;
           if(AllMessage[Mcursor] == 'I'){
             value = -1;
+            Mcursor += 2;
+          }else if(AllMessage[Mcursor] == 'T'){
+            value = 1;
+            Mcursor += 2;
+          }else if(AllMessage[Mcursor] == 'F'){
+            value = 0;
             Mcursor += 2;
           }else{
             value = readInt();

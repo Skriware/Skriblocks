@@ -10,7 +10,7 @@ AritmeticBlock::AritmeticBlock(byte _id, byte _operation,byte _left_id,byte _rig
 	input_left 	= NULL;
 	input_right = NULL;
 }
-  void AritmeticBlock::set_connections(Block *blockList[60],int blockList_N){
+  void AritmeticBlock::set_connections(Block *blockList[],int blockList_N){
   		for(int ii = 0; ii < blockList_N; ii++){
 			     if(blockList[ii]->getID() == leftID){
 			            input_left = blockList[ii];

@@ -32,7 +32,7 @@ void Loop::do_action() {
   //Serial.prbyteln(counter);
 }
 
-void Loop::set_connections(Block* blockList[60],int blockList_N){
+void Loop::set_connections(Block* blockList[],int blockList_N){
 for(byte ii = 0; ii < blockList_N; ii++){
      if(blockList[ii]->getID() == begin_block_id){
             begin_block = blockList[ii];

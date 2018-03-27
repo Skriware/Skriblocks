@@ -3,7 +3,7 @@
 ConstBlock::ConstBlock(int id, int value){
 	blockID = id;
 	output = value;
-	input_block 	= NULL;
+	  input_block 	= NULL;
   	next 			= NULL;
   	output_block 	= NULL;
   	inputblockID 	= 0;
@@ -15,7 +15,7 @@ ConstBlock::ConstBlock(int id, int value){
 
 ConstBlock::~ConstBlock(){}
 
-ConstBlock::ConstBlock(int id , String value){
+/*ConstBlock::ConstBlock(int id , String value){
 	blockID = id;
 	string_output = value;
 	input_block = NULL;
@@ -25,4 +25,4 @@ ConstBlock::ConstBlock(int id , String value){
 
 String ConstBlock::get_string_output(){
   return(string_output);
-}
+}*/

@@ -10,7 +10,7 @@ public:
   ~Conditional();
   void do_action();
   Block* get_next();
-  void set_logics(Block *blockList[60], int blockList_N, LogicBlock *lblockList[20], int lblockList_N);
+  void set_logics(Block *blockList[], int blockList_N, LogicBlock *lblockList[], int lblockList_N);
 protected:
 	Block *next_true;
 	Block *next_false;

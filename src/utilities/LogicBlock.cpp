@@ -36,7 +36,7 @@ LogicBlock::~LogicBlock(){
       bool_output = false;
   	}
   }
-  void LogicBlock::set_logics(Block *blockList[60], int blockList_N){
+  void LogicBlock::set_logics(Block *blockList[], int blockList_N){
   		for(int ii = 0; ii < blockList_N; ii++){
 			     if(blockList[ii]->getID() == input_Left_ID){
 			            input_left = blockList[ii];

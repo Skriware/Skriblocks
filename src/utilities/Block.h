@@ -27,6 +27,7 @@ public:
   	static SkriBot *robot;
 
 
+
 protected:
 	byte blockID;
 	int output;
@@ -37,8 +38,6 @@ protected:
 	byte outputblockID;
 	byte nextblockID;
 	int actionID;
-	
-
 	
 	
 	};

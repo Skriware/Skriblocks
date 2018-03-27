@@ -9,7 +9,7 @@ public:
   LogicBlock();
   virtual void get_value();
   void do_action();
-  void set_logics(Block *blockList[100], int blockList_N);
+  void set_logics(Block *blockList[], int blockList_N);
   bool get_bool_output();
 protected:
   byte input_Left_ID;

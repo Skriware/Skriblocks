@@ -17,7 +17,7 @@ public:
   void set_end_block(Block*);
   void set_limit_block(Block*);
   void set_limit();
-  void set_connections(Block *blockList[60],int);
+  void set_connections(Block *blockList[],int);
 
   byte get_end_block_id();
   byte get_begin_block_id();

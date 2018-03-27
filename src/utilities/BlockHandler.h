@@ -9,6 +9,8 @@
 #include "LogicCompare.h"
 #include "AritmeticBlock.h"
 class BlockHandler {
+
+
 public:
 	BlockHandler();
 
@@ -22,7 +24,7 @@ public:
 	void addConst(int id,String value);																			//Adding Blocks types
 	
 	void MakeConections();
-	bool doBlock(bool loopmode);																							//Making conectons(assigning pointers from IDs) 
+	bool doBlock(bool loopmode = false);																							//Making conectons(assigning pointers from IDs) 
 																												// Starting code
 	
 
@@ -36,23 +38,29 @@ public:
 
 	bool runCode;
 
-	Block *blockList[60];
-	Conditional *IfblockList[10];
-	Loop *LoopblockList[10];
-	AritmeticBlock *AritmeticblockList[20];
-	LogicBlock *LogicblockList[20];
-	ConstBlock *ConstblockList[30];
+	static const int blockList_MAX 			= 200;
+	static const int IfblockList_MAX 		= 20;
+	static const int LoopblockList_MAX 		= 20;
+	static const int LogicblockList_MAX 	= 40;
+	static const int AritmeticblockList_MAX	= 15;
+
+	Block *blockList[blockList_MAX];
+	Conditional *IfblockList[IfblockList_MAX];
+	Loop *LoopblockList[LoopblockList_MAX];
+	AritmeticBlock *AritmeticblockList[AritmeticblockList_MAX];
+	LogicBlock *LogicblockList[LogicblockList_MAX];
 	Block *current;
 	Block *StartBlock;
 	int blockList_N;
 	int IfblockList_N;
 	int LoopblockList_N;
 	int LogicblockList_N;
-	int ConstblockList_N;
-	int AritmeticblockList_N;						//Actual number of blocks in lists
+	int AritmeticblockList_N;					//Actual number of blocks in lists
 	int Mcursor;								// variable for message parsing
-	char AllMessage[500];
+	char AllMessage[1600];
 	int messageLength;
+
+	
 
 };
 

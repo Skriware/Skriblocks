@@ -17,7 +17,7 @@ Conditional::Conditional(byte id,byte _next_true, byte _next_false, byte _logic_
 
 }
 
-void Conditional::set_logics(Block* blockList[60], int blockList_N,LogicBlock* logicblockList[20], int logicblockList_N){
+void Conditional::set_logics(Block* blockList[], int blockList_N,LogicBlock* logicblockList[], int logicblockList_N){
   Serial.println("Setting logics for IF!");
   for(int ii = 0; ii < blockList_N; ii++){
       if(blockList[ii]->getID() == next_True_ID){
