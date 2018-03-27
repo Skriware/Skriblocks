@@ -5,6 +5,7 @@ SkriBot *robot;
 bool runCode = true;
 bool transmision_recieved = false;
 bool BT_state;
+
 char messagetmp[30];
 int messagetmpIterator = 0;
 char ascitmp;
@@ -52,7 +53,6 @@ void loop() {
 
     while(robot->BLE_dataAvailable()){
     ascitmp = robot->BLE_read();
-
     #if ENABLED(DEBUG_MODE)
       Serial.print(ascitmp);
     #endif
