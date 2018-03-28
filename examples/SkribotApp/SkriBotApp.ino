@@ -39,6 +39,7 @@ void setup() {
   #endif
   robot = new SkriBot("EDU_SHIELD");
   Block::setRobot(robot); 
+  robot->BLE_Setup();
   BT_state = false; 
   #if ENABLED(DEBUG_MODE)
     Serial.println(freeRam());
