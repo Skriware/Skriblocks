@@ -1,6 +1,6 @@
 #include "Block.h"
 
-SkriBot* Block::robot = NULL;
+Skribot* Block::robot = NULL;
 
 Block::Block() {
   input_block = NULL;
@@ -170,7 +170,7 @@ String Block::get_string_output(){
   return("");
 }
 
-void Block::setRobot(SkriBot *_robot){
+void Block::setRobot(Skribot *_robot){
   Block::robot = _robot;
 }
 

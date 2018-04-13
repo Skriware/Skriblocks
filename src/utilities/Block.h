@@ -1,6 +1,6 @@
 #ifndef Block_H
 #define Block_H
-#include <SkriBot.h>
+#include <Skribot.h>
 
 class Block;
 
@@ -23,8 +23,8 @@ public:
   	byte getInputID();
   	byte getOutputID();
   	virtual String get_string_output();
-  	static void setRobot(SkriBot *rob);
-  	static SkriBot *robot;
+  	static void setRobot(Skribot *rob);
+  	static Skribot *robot;
 
 
 

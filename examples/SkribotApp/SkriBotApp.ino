@@ -1,11 +1,9 @@
 //#define DEBUG_MODE
-#include <SkriBlocks.h>
+#include <Skribot_mobile.h>
 BlockHandler BH;
-SkriBot *robot;
-bool runCode = true;
+Skribot *robot;
 bool transmision_recieved = false;
 bool BT_state;
-
 char messagetmp[30];
 int messagetmpIterator = 0;
 char ascitmp;
@@ -17,7 +15,6 @@ void BTLOST(){
   robot->TurnLEDOff(); 
   robot->OpenClaw();
   robot->Put_Down();
-  runCode = false;
 }
 
 int freeRam() 
@@ -37,9 +34,9 @@ void setup() {
     Serial.begin(9600);
     Serial.println("DEBUG_MODE");
   #endif
-  robot = new SkriBot("EDU_SHIELD");
-  Block::setRobot(robot); 
+  robot = new Skribot("EDU_SHIELD");
   robot->BLE_Setup();
+  Block::setRobot(robot); 
   BT_state = false; 
   #if ENABLED(DEBUG_MODE)
     Serial.println(freeRam());
@@ -51,9 +48,11 @@ void loop() {
     BT_state = !BT_state;
     BTLOST();
     }
+    
 
     while(robot->BLE_dataAvailable()){
     ascitmp = robot->BLE_read();
+
     #if ENABLED(DEBUG_MODE)
       Serial.print(ascitmp);
     #endif
@@ -94,7 +93,7 @@ void loop() {
       && BH.AllMessage[BH.messageLength-4] == 'A' 
       && BH.AllMessage[BH.messageLength-3] == 'M' 
       && BH.AllMessage[BH.messageLength-2] == 'E' 
-      && BH.AllMessage[BH.messageLength-1] == 'X'
+      && BH.AllMessage[BH.messageLength-1] == '\n'
     ){
       #if ENABLED(DEBUG_MODE)
       Serial.println("NewName");
@@ -107,7 +106,7 @@ void loop() {
         tmpNameArray[tmpCounter] = tmp;
         tmpCounter++;
         tmp = robot->BLE_read();
-      } 
+      }
     }
       robot->BLE_write("OK\n");
       #if ENABLED(DEBUG_MODE)
@@ -168,6 +167,7 @@ void loop() {
               robot->Put_Down();
               robot->OpenClaw();
               robot->TurnLEDOn(255,255,255);
+              messagetmpIterator = 0;
               break;
               
             }
@@ -196,7 +196,7 @@ void loop() {
     transmision_recieved = true;   
   }
     if(transmision_recieved == true){
-      delay(10);
+      //delay(10);
       robot->BLE_write("ack\n");
       transmision_recieved = false;
     }
