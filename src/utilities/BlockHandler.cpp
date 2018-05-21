@@ -154,11 +154,18 @@
 		  current = StartBlock;
 	}
 	bool BlockHandler::doBlock(bool loopmode){
+    #ifdef DEBUG_MODE
 		   		Serial.println(current->getID());
-			    current->do_action();
-			    Serial.println(current->getNextID());
-			    current = current->get_next(); 
-			  if (current == NULL){
+    #endif
+		
+    current->do_action();
+
+    #ifdef DEBUG_MODE
+			 Serial.println(current->getNextID());
+    #endif
+		current = current->get_next(); 
+			  
+        if (current == NULL){
           if(loopmode){
             current = StartBlock;
             return(true);

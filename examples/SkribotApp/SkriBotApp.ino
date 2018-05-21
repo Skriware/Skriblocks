@@ -180,6 +180,9 @@ void loop() {
         }
         BH.clear();
         robot->BLE_write("DONE\n");
+        #if ENABLED(DEBUG_MODE)
+          Serial.println("CONFIRMING END OF CODE");
+        #endif
         break;
       }
     }

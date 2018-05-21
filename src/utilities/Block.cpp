@@ -82,7 +82,7 @@ byte Block::getNextID(){
         Block::robot->FaceLeft(input_block->get_output());
         break;
     case 5:
-        delay(input_block->get_output());
+        Block::robot->wait_And_Check_BLE_Connection(input_block->get_output(),10);
         break;
     case 6:
         Block::robot->Stop();
