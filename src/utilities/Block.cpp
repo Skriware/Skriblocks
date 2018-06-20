@@ -127,6 +127,7 @@ byte Block::getNextID(){
 
             break;
           }
+          Block::robot->wait_And_Check_BLE_Connection(10,5);
         break;
       case 13:
         Block::robot->TurnLEDOff();

@@ -157,7 +157,7 @@
     #ifdef DEBUG_MODE
 		   		Serial.println(current->getID());
     #endif
-		
+    Block::robot->wait_And_Check_BLE_Connection(5,2);      
     current->do_action();
 
     #ifdef DEBUG_MODE
