@@ -109,19 +109,19 @@ byte Block::getNextID(){
                 Block::robot->TurnLEDOn(255,0,0);
             break;
              case 1 : 
-                Block::robot->TurnLEDOn(0,255,0);
-            break;
-             case 2 : 
                 Block::robot->TurnLEDOn(0,0,255);
             break;
+             case 2 : 
+                Block::robot->TurnLEDOn(0,255,0);
+            break;
              case 4 : 
-                Block::robot->TurnLEDOn(255,255,0);
+                Block::robot->TurnLEDOn(255,0,255);
             break;
              case 5 : 
                 Block::robot->TurnLEDOn(255,255,255);
             break;
              case 3 : 
-                Block::robot->TurnLEDOn(184, 3, 255);
+                Block::robot->TurnLEDOn(184, 255, 3);
             break;
             default:
 
