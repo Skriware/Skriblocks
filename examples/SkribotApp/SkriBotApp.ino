@@ -18,7 +18,8 @@ void BTLOST(){
 
 int freeRam() 
 {
-  #ifndef _VARIANT_BBC_MICROBIT_
+  
+  #ifndef ARDUINO_ARCH_ESP32
   extern int __heap_start, *__brkval; 
   int v; 
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
@@ -34,6 +35,7 @@ void setup() {
     Serial.println("DEBUG_MODE");
   #endif
   robot = new Skribot("EDU_SHIELD");
+  robot->BLE_Set_Module(HM_10);
   robot->BLE_Setup();
   Block::setRobot(robot); 
   BT_state = false; 
@@ -47,8 +49,7 @@ void loop() {
     BT_state = !BT_state;
     BTLOST();
     }
-    
-
+    robot->BaterryCheck();
     while(robot->BLE_dataAvailable()){
     ascitmp = robot->BLE_read();
 
@@ -148,6 +149,7 @@ void loop() {
       if(flag != 2) {
         Connection_Break = false;
        while(BH.doBlock()){
+           robot->BaterryCheck();
            if(robot->ProgramENDRepotred()){
               #if ENABLED(DEBUG_MODE)
               Serial.println("Stopping the robot!");
