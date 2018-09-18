@@ -1,6 +1,7 @@
 #ifndef Block_H
 #define Block_H
 #include <Skribot.h>
+#include "UserFunctions.h"
 
 class Block;
 

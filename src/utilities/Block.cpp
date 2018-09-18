@@ -7,7 +7,9 @@ Block::Block() {
   next = NULL;
 };
 
-Block::~Block() {}
+Block::~Block() {
+  
+}
 
 Block::Block(Block* b) {
   next = b;
@@ -24,15 +26,7 @@ Block::Block(byte ID,byte _nextID,int _actionID,byte _InputID, byte _OutputID) {
   input_block = NULL;
   next = NULL;
   output_block = NULL;
-  //output = 69;
 }
-
-/*Block::Block(byte ID,byte _nextID ,byte _actionID ,byte _byteInput) {
-  blockID = ID;
-  byteInput = _byteInput; 
-  actionID = _actionID;
-  nextblockID = _nextID;
-}*/
 
 byte Block::getInputID(){
   return(inputblockID);
@@ -41,8 +35,6 @@ byte Block::getInputID(){
 byte Block::getOutputID(){
   return(outputblockID);
 }
-
-
 
 byte Block::getID(){
   return(blockID);
@@ -129,9 +121,24 @@ byte Block::getNextID(){
           }
           Block::robot->wait_And_Check_BLE_Connection(10,5);
         break;
-      case 13:
+    case 13:
         Block::robot->TurnLEDOff();
         break;
+    case 94:
+        UserFunction_5(input_block->get_output(),output_block->get_output());
+        break;
+    case 95:
+        output_block->set_output(UserFunction_4());
+        break;
+    case 96:
+        output_block->set_output(UserFunction_3(input_block->get_output()));
+        break;
+    case 97:
+        UserFunction_2(input_block->get_output());
+        break;
+    case 98:
+        UserFunction_1();
+        break; 
     case 99:
         Block::robot->RawRotorMove(input_block->get_output(),output_block->get_output());
         break;

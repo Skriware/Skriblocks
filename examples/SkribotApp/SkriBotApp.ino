@@ -35,13 +35,13 @@ void setup() {
     Serial.println("DEBUG_MODE");
   #endif
   robot = new Skribot("EDU_SHIELD");
-  robot->BLE_Set_Module(HM_10);
   robot->BLE_Setup();
   Block::setRobot(robot); 
   BT_state = false; 
   #if ENABLED(DEBUG_MODE)
     Serial.println(freeRam());
   #endif 
+    UserFunctions_Setup();
 }
 
 void loop() {
