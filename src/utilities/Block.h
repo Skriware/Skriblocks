@@ -23,6 +23,7 @@ public:
   	byte getNextID();
   	byte getInputID();
   	byte getOutputID();
+  	byte getActionID();
   	virtual String get_string_output();
   	static void setRobot(Skribot *rob);
   	static Skribot *robot;

@@ -8,6 +8,7 @@ Conditional::Conditional(byte id,byte _next_true, byte _next_false, byte _logic_
   next_False_ID = _next_false;
   first_LogicblockID = _logic_block;
   blockID = id;
+  actionID = 255;
   input_block = NULL;
   next = NULL;
   output_block = NULL;
@@ -18,17 +19,13 @@ Conditional::Conditional(byte id,byte _next_true, byte _next_false, byte _logic_
 }
 
 void Conditional::set_logics(Block* blockList[], int blockList_N,LogicBlock* logicblockList[], int logicblockList_N){
-  Serial.println("Setting logics for IF!");
   for(int ii = 0; ii < blockList_N; ii++){
       if(blockList[ii]->getID() == next_True_ID){
             next_true = blockList[ii];
-            Serial.println("True and False set!");
       }else if(blockList[ii]->getID() == next_False_ID){
             next_false = blockList[ii];
-            Serial.println("True and False set!");
       }else if(blockList[ii]->getID() == first_LogicblockID){
             logic_block = (LogicBlock*)blockList[ii];
-            Serial.println("Logic set!");
       }
    
 }
@@ -67,8 +64,6 @@ void Conditional::do_action() {
 }
 
 Block* Conditional::get_next() {
-  Serial.print("Pointing to logic block:");
-  Serial.println(logic_block->getID());
   if(logic_block->get_bool_output())
     return next_true;
   else

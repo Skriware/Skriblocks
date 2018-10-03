@@ -8,6 +8,7 @@ Loop::~Loop() {}
 
 Loop::Loop(byte id, byte _begin, byte _end, byte _limit) {
   blockID = id;
+  actionID = 255;
   limit_block_id = _limit;
   begin_block_id = _begin;
   end_block_id = _end;

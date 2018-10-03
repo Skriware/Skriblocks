@@ -1,5 +1,6 @@
 #ifndef SBlock_H
 #define SBlock_H
+//#define DEBUG_MODE
 
 #include "utilities/Block.h"
 #include "utilities/Conditional.h"

@@ -13,12 +13,13 @@
 			if(tt < AritmeticblockList_MAX)AritmeticblockList[tt] = NULL;	
 			blockList[tt] = NULL;
 		}
-		
+	current = NULL;
+  StartBlock = NULL;
 
-	 blockList_N 			= 0;
-	 IfblockList_N 			= 0;
-	 LoopblockList_N 		= 0;
-	 LogicblockList_N 		= 0;
+	 blockList_N 		= 0;
+	 IfblockList_N 	 = 0;
+	 LoopblockList_N 	= 0;
+	 LogicblockList_N 	= 0;
 	 AritmeticblockList_N 	= 0;
 	 Mcursor = 0;
 	 messageLength = 0;
@@ -158,7 +159,7 @@
 		   		Serial.println(current->getID());
     #endif
     Block::robot->wait_And_Check_BLE_Connection(5,2);      
-    current->do_action();
+          current->do_action();
 
     #ifdef DEBUG_MODE
 			 Serial.println(current->getNextID());

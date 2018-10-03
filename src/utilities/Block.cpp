@@ -15,6 +15,7 @@ Block::Block(Block* b) {
   next = b;
   input_block = NULL;
   next = NULL;
+  actionID = 1000;
 }
 
 Block::Block(byte ID,byte _nextID,int _actionID,byte _InputID, byte _OutputID) {
@@ -26,6 +27,10 @@ Block::Block(byte ID,byte _nextID,int _actionID,byte _InputID, byte _OutputID) {
   input_block = NULL;
   next = NULL;
   output_block = NULL;
+}
+
+byte Block::getActionID(){
+  return(actionID);
 }
 
 byte Block::getInputID(){
@@ -62,6 +67,7 @@ byte Block::getNextID(){
         Block::robot->MoveForward(input_block->get_output());
         break;
     case 2:
+
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveBack(input_block->get_output());
         break;
@@ -148,6 +154,9 @@ byte Block::getNextID(){
     case 102:
         output_block->set_output(Block::robot->ReadLineSensor(input_block->get_output()));
         break;
+    case 255:
+      //Saved for loops and ifs
+      break;
     default :
         break;
 
