@@ -19,7 +19,7 @@ void BTLOST(){
 int freeRam() 
 {
   
-  #ifndef ARDUINO_ARCH_ESP32
+  #ifndef ESP_H
   extern int __heap_start, *__brkval; 
   int v; 
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
@@ -31,7 +31,7 @@ int freeRam()
 
 void setup() {
   #if ENABLED(DEBUG_MODE)
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println("DEBUG_MODE");
   #endif
   robot = new Skribot("EDU_SHIELD");
@@ -50,21 +50,21 @@ void loop() {
     BTLOST();
     }
     robot->BaterryCheck();
-    while(robot->BLE_dataAvailable()){
-    ascitmp = robot->BLE_read();
-
-    #if ENABLED(DEBUG_MODE)
-      Serial.print(ascitmp);
-    #endif
-    BH.AllMessage[BH.messageLength] = ascitmp;
-    BH.messageLength++;
-      
-     if(BH.messageLength > 1600){
+    if(robot->BLE_dataAvailable()){
+      while(robot->BLE_dataAvailable()){
+        ascitmp = robot->BLE_read();
         #if ENABLED(DEBUG_MODE)
-          Serial.println("Too Long Code");
-        #endif 
-       break;
-    }
+        Serial.print(ascitmp);
+        #endif
+        BH.AllMessage[BH.messageLength] = ascitmp;
+        BH.messageLength++;
+        if(BH.messageLength > 1600){
+          #if ENABLED(DEBUG_MODE)
+            Serial.println("Too Long Code");
+          #endif 
+          break;
+        }
+      }
     if(BH.messageLength > 3
       && BH.AllMessage[BH.messageLength-4] == 'E' 
       && BH.AllMessage[BH.messageLength-3] == 'N' 
@@ -76,7 +76,7 @@ void loop() {
         robot->OpenClaw();
         robot->Put_Down();
       #endif
-      break;
+      //break;
     }
     if(BH.messageLength > 6 
       && BH.AllMessage[BH.messageLength-7] == 'V' 
@@ -88,7 +88,6 @@ void loop() {
       #endif
         robot->BLE_write(softVersion);
         BH.clear();
-
     }else if(BH.messageLength > 6
       && BH.AllMessage[BH.messageLength-4] == 'A' 
       && BH.AllMessage[BH.messageLength-3] == 'M' 
@@ -124,7 +123,6 @@ void loop() {
       #endif
       robot->sendNameInfo();
       BH.clear();
-
     }else if (BH.messageLength > 4 
       && BH.AllMessage[BH.messageLength-3]  == 'E' 
       && BH.AllMessage[BH.messageLength-2]  == 'T' 
@@ -159,8 +157,7 @@ void loop() {
               robot->Put_Down();
               robot->OpenClaw();
               robot->TurnLEDOn(255,255,255);
-              break;
-              
+              break;  
             }else if(!robot->BLE_checkConnection()){
                 BTLOST();
                 Connection_Break = true;
