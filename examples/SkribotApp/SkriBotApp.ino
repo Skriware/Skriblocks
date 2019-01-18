@@ -162,7 +162,7 @@ void loop() {
                 BTLOST();
                 Connection_Break = true;
                 break;
-              }
+            }
         }
         BH.clear();
         robot->TurnLEDOn(255,255,255);

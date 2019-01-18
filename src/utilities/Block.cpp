@@ -63,6 +63,7 @@ byte Block::getNextID(){
         Block::robot->Stop();
         break;
     case 1:
+        //UserFunction_3(input_block->get_output());
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveForward(input_block->get_output());
         break;
@@ -80,6 +81,7 @@ byte Block::getNextID(){
         Block::robot->FaceLeft(input_block->get_output());
         break;
     case 5:
+        //UserFunction_3(input_block->get_output());
         Block::robot->wait_And_Check_BLE_Connection(input_block->get_output(),10);
         break;
     case 6:
