@@ -7,13 +7,28 @@ bool BT_state;
 bool Connection_Break = false;
 char ascitmp;
 char softVersion[] = "1.0.0";
-
+long last_BT_check = 0;
+bool LED_STATE = true;
 void BTLOST(){
   BH.clear();
   robot->Stop();
   robot->TurnLEDOff(); 
   robot->OpenClaw();
   robot->Put_Down();
+}
+
+
+void Blink(){
+
+  if (millis()-last_BT_check > 500){
+    if(LED_STATE){
+      robot->TurnLEDOn(255,255,255);
+    }else{
+      robot->TurnLEDOff();
+    }
+      last_BT_check = millis();
+      LED_STATE = !LED_STATE;
+  }
 }
 
 int freeRam() 
@@ -34,7 +49,11 @@ void setup() {
     Serial.begin(115200);
     Serial.println("DEBUG_MODE");
   #endif
-  robot = new Skribot("EDU_SHIELD");
+  #ifdef ESP_H
+     robot = new Skribot("SKRIBRAIN");
+  #else
+    robot = new Skribot("EDU_SHIELD");
+  #endif
   robot->BLE_Setup();
   Block::setRobot(robot); 
   BT_state = false; 
@@ -190,11 +209,12 @@ void loop() {
       transmision_recieved = false;
     }
   
-
-  if(!robot->BLE_checkConnection() && BT_state){
-     robot->TurnLEDOn(0,0,0); 
-     robot->Stop();
-     BT_state = !BT_state;
+  if(!robot->BLE_checkConnection()){
+     Blink();
+     if(BT_state){
+      robot->Stop();
+      BT_state = !BT_state;
+     }
   }else if(robot->BLE_checkConnection() && !BT_state){
      robot->TurnLEDOn(255,255,255); 
      BT_state = !BT_state;
