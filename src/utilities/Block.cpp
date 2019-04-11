@@ -57,28 +57,44 @@ byte Block::getNextID(){
 
     100 down custom actions(for pilot control)
  */ 
-
+ byte msg[]  = {9,1,0xe7,2, 0xe7,3, 0xe7,4, 0x00,5, 0x81,6, 0x42,7, 0x3c,8, 0x00,0x0A,15};
+ byte msg1[] = {9,1,0xe7,2, 0xe7,3, 0xe7,4, 0x00,5, 0x00,6, 0x00,7, 0x7e,8, 0x81,0x0A,15};
   switch(actionID){
      case 0:
         Block::robot->Stop();
         break;
     case 1:
         //UserFunction_3(input_block->get_output());
+      if(!Block::robot->config_mode){
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveForward(input_block->get_output());
+      }else{
+        Block::robot->Invert_Left_Rotors(input_block->get_output()/1000);
+      }
         break;
     case 2:
-
+        if(!Block::robot->config_mode){
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveBack(input_block->get_output());
+         }else{
+        Block::robot->Invert_Right_Rotors(input_block->get_output()/1000);
+        }
         break;
     case 3:
-        Block::robot->SetSpeed(255);
-        Block::robot->FaceRight(input_block->get_output());
+        if(!Block::robot->config_mode){
+          Block::robot->SetSpeed(255);
+          Block::robot->FaceRight(input_block->get_output());
+        }else{
+          Block::robot->Scale_Right_Rotors(input_block->get_output()/1000);
+        }
         break;
     case 4:
-        Block::robot->SetSpeed(255);
-        Block::robot->FaceLeft(input_block->get_output());
+        if(!Block::robot->config_mode){
+          Block::robot->SetSpeed(255);
+          Block::robot->FaceLeft(input_block->get_output());
+        }else{
+          Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
+        }
         break;
     case 5:
         //UserFunction_3(input_block->get_output());
@@ -88,20 +104,24 @@ byte Block::getNextID(){
         Block::robot->Stop();
         break;
     case 8:
-        delay(500);
         Block::robot->CloseClaw();
+        Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
     case 9:
-        delay(500);
+         //Block::robot->comm->SPITransfer(msg1);
+       
         Block::robot->OpenClaw();
+        Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
     case 10:
-        delay(500);
+       
         Block::robot->Pick_Up();
+         Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
     case 11:
-        delay(500);
+       
         Block::robot->Put_Down();
+        Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
     case 12:
          switch(input_block->get_output()){

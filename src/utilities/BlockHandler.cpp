@@ -188,8 +188,14 @@ int BlockHandler::freeRam()
 
 int BlockHandler::readInt(){
   int nDigits = 0;
+  int sign = 1;
   while((AllMessage[Mcursor + nDigits] != ' ') && (AllMessage[Mcursor + nDigits] != '\n')){
+      if(AllMessage[Mcursor + nDigits] == '-')sign = -1;
       nDigits++;
+  }
+  if(sign==-1){
+    Mcursor++;
+    nDigits--;
   }
   int out = 0;
   int power = 1;
@@ -200,21 +206,7 @@ int BlockHandler::readInt(){
     }
     Serial.println(out);
     Mcursor += nDigits+1;
-    return(out);
-
-  /*if((AllMessage[Mcursor + 1] != ' ') && (AllMessage[Mcursor + 1] != '\n')){
-  if((AllMessage[Mcursor + 2] != ' ') && (AllMessage[Mcursor + 2] != '\n')){
-    out = cti(AllMessage[Mcursor])*100 + cti(AllMessage[Mcursor+1])*10 + cti(AllMessage[Mcursor+2]);
-    Mcursor += 4;
-  }else{
-    out = cti(AllMessage[Mcursor])*10 + cti(AllMessage[Mcursor+1]);
-    Mcursor += 3;
-  }
-  }else{
-    out = cti(AllMessage[Mcursor]);
-    Mcursor += 2;
-  }*/
- // return(out);
+    return(out*sign);
 }
 
 int BlockHandler::cti(char x){
@@ -233,7 +225,7 @@ int BlockHandler::Handle_Msg(){
     }
     
   }
-  id = readInt();
+          id = readInt();
           byte startBlockID;
           byte endBlockID; 
           int countID; 

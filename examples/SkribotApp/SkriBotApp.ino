@@ -1,4 +1,4 @@
-//#define DEBUG_MODE
+#define DEBUG_MODE
 #include <Skribot_mobile.h>
 BlockHandler BH;
 Skribot *robot;
@@ -9,6 +9,7 @@ char ascitmp;
 char softVersion[] = "1.0.0";
 long last_BT_check = 0;
 bool LED_STATE = true;
+
 void BTLOST(){
   BH.clear();
   robot->Stop();
@@ -17,9 +18,7 @@ void BTLOST(){
   robot->Put_Down();
 }
 
-
 void Blink(){
-
   if (millis()-last_BT_check > 500){
     if(LED_STATE){
       robot->TurnLEDOn(255,255,255);
@@ -33,7 +32,6 @@ void Blink(){
 
 int freeRam() 
 {
-  
   #ifndef ESP_H
   extern int __heap_start, *__brkval; 
   int v; 
@@ -42,7 +40,6 @@ int freeRam()
   return(500);
   #endif
 }
-
 
 void setup() {
   #if ENABLED(DEBUG_MODE)
@@ -61,6 +58,11 @@ void setup() {
     Serial.println(freeRam());
   #endif 
     UserFunctions_Setup();
+    BTLOST();
+    robot->status->BLINK_OK();
+    #ifdef ESP_H
+      robot->status->TurnOn(YELLOW,2);
+    #endif
 }
 
 void loop() {
@@ -165,6 +167,9 @@ void loop() {
       flag = BH.Handle_Msg(); 
       if(flag != 2) {
         Connection_Break = false;
+       #ifdef ESP_H
+        robot->status->TurnOn(GREEN,2);
+       #endif
        while(BH.doBlock()){
            robot->BaterryCheck();
            if(robot->ProgramENDRepotred()){
@@ -185,7 +190,15 @@ void loop() {
         }
         BH.clear();
         robot->TurnLEDOn(255,255,255);
-        if(!Connection_Break)robot->BLE_write("DONE\n");
+       
+        if(!Connection_Break){
+          robot->ProgramENDRepotred();
+          robot->BLE_write("DONE\n");
+           #ifdef ESP_H
+          robot->status->TurnOn(BLUE,2);
+           #endif
+
+        }
         #if ENABLED(DEBUG_MODE)
           Serial.println("CONFIRMING END OF CODE");
         #endif
@@ -214,10 +227,16 @@ void loop() {
      if(BT_state){
       robot->Stop();
       BT_state = !BT_state;
+      #ifdef ESP_H
+      robot->status->TurnOn(YELLOW,2);
+      #endif
      }
   }else if(robot->BLE_checkConnection() && !BT_state){
      robot->TurnLEDOn(255,255,255); 
      BT_state = !BT_state;
+     #ifdef ESP_H
+      robot->status->TurnOn(BLUE,2);
+     #endif
   }
 }
 

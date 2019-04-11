@@ -32,7 +32,6 @@ void Loop::do_action() {
   counter++;
   //Serial.prbyteln(counter);
 }
-
 void Loop::set_connections(Block* blockList[],int blockList_N){
 for(byte ii = 0; ii < blockList_N; ii++){
      if(blockList[ii]->getID() == begin_block_id){
@@ -71,9 +70,13 @@ void Loop::set_limit_block(Block *l){
 }
 
 void Loop::set_limit(){
-  limit = limit_block->get_output();
+  if(limit_block->get_output() == -757){
+    Block::robot->EnterConfigMode();
+    limit = 1;
+  }else{
+    limit = limit_block->get_output();
+  }
 }
-
 Block* Loop::get_next() {
   counter++;
   Serial.print("limit:");
@@ -84,6 +87,7 @@ Block* Loop::get_next() {
   }
   else{
     counter  = 0;
+    Block::robot->ExitConfigMode();
     return(end_block);
   }
 }
