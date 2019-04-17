@@ -241,12 +241,9 @@ int BlockHandler::Handle_Msg(){
           countID = readInt();
           startBlockID  = readInt();
           endBlockID = readInt();
-            Serial.print("LOOP");
-            Serial.print("id:");Serial.print(id);Serial.print("start:");Serial.print(startBlockID);Serial.print("end:");Serial.print(endBlockID);Serial.print(" ");Serial.println(countID);
-            addLoop(id,startBlockID,endBlockID,countID);
+          addLoop(id,startBlockID,endBlockID,countID);
           break;
      case 'C':
-          Serial.print("CONST");
           Mcursor += 2;
           if(AllMessage[Mcursor] == 'I'){
             value = -1;
@@ -260,7 +257,6 @@ int BlockHandler::Handle_Msg(){
           }else{
             value = readInt();
           }
-            Serial.print("id:");Serial.print(id);Serial.print("value:");Serial.println(value);
             addConst(id,value);
           break;
       default:
@@ -271,12 +267,6 @@ int BlockHandler::Handle_Msg(){
           logicBlock = readInt();
           nextTrue = readInt();
           nextFalse = readInt();
-          
-          Serial.print("IF:");
-          Serial.print("id:");Serial.print(id);
-          Serial.print("true:");Serial.print(nextTrue);
-          Serial.print("false:");Serial.print(nextFalse);
-          Serial.print("logic:");Serial.println(logicBlock);
           addIf(id,nextTrue,nextFalse,logicBlock);
       break;
 
@@ -285,22 +275,13 @@ int BlockHandler::Handle_Msg(){
       	compareOperation = readInt();
       	input_left = readInt();
       	input_right = readInt();
-      	Serial.print("id:");Serial.print(id);
-      	Serial.print("OperationType:");Serial.print(compareOperation);
-      	Serial.print("Left:");Serial.print(input_left);
-      	Serial.print("Right:");Serial.println(input_right);
       	addAritmeticBlock(id,compareOperation,input_left,input_right);
       break;
-
       case 'K':
       	Mcursor += 2;
       	compareOperation = readInt();
       	input_left = readInt();
       	input_right = readInt();
-      	Serial.print("id:");Serial.print(id);
-      	Serial.print("compType:");Serial.print(compareOperation);
-      	Serial.print("Left:");Serial.print(input_left);
-      	Serial.print("Right:");Serial.println(input_right);
       	addLogic(id,compareOperation,input_left,input_right);
       break;
 
@@ -309,10 +290,6 @@ int BlockHandler::Handle_Msg(){
       	compareOperation = readInt();
       	input_left = readInt();
       	input_right = readInt();
-      	Serial.print("id:");Serial.print(id);
-      	Serial.print("compType:");Serial.print(compareOperation);
-      	Serial.print("Left:");Serial.print(input_left);
-      	Serial.print("Right:");Serial.println(input_right);
       	addLogicCompare(id,compareOperation,input_left,input_right);
       break;
       case 'J':
@@ -332,11 +309,6 @@ int BlockHandler::Handle_Msg(){
           output = readInt();
           next  = readInt();
           addBlock(id,next,actionID,input,output);
-          Serial.print("id:");Serial.print(id);
-          Serial.print("actionID:");Serial.print(actionID);
-          Serial.print("input:");Serial.print(input);
-          Serial.print("next:");Serial.print(next);
-          Serial.print("output:");Serial.print(output);
           break;
   }
 

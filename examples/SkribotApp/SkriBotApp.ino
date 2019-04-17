@@ -85,6 +85,36 @@ void loop() {
           #endif 
           break;
         }
+        //#ifdef ESP_H
+          if(BH.messageLength > 4
+                  && BH.AllMessage[BH.messageLength-4] == 'A' 
+                  && BH.AllMessage[BH.messageLength-3] == 'M' 
+                  && BH.AllMessage[BH.messageLength-2] == 'E' 
+                  && BH.AllMessage[BH.messageLength-1] == '\n'
+                ){
+                  #if ENABLED(DEBUG_MODE)
+                  Serial.println("Setting new name");
+                  #endif
+                  char tmp = ' ';
+                  char tmpNameArray[32] = {' '};
+                  int tmpCounter = 0;
+                while(true){
+                  if(robot->BLE_dataAvailable()){
+                    tmp = robot->BLE_read();
+                    if(tmp == '\n')break;
+                    tmpNameArray[tmpCounter] = tmp;
+                    tmpCounter++; 
+                  }
+                }
+                  robot->BLE_write("OK\n");
+                  #if ENABLED(DEBUG_MODE)
+                  Serial.println(tmpNameArray);
+                  #endif  
+                  robot->BLE_changeName(tmpNameArray);
+                  BH.clear();
+                  break;
+                }
+       // #endif
       }
     if(BH.messageLength > 3
       && BH.AllMessage[BH.messageLength-4] == 'E' 
@@ -109,7 +139,8 @@ void loop() {
       #endif
         robot->BLE_write(softVersion);
         BH.clear();
-    }else if(BH.messageLength > 6
+    }else if
+      (BH.messageLength > 6
       && BH.AllMessage[BH.messageLength-4] == 'A' 
       && BH.AllMessage[BH.messageLength-3] == 'M' 
       && BH.AllMessage[BH.messageLength-2] == 'E' 
@@ -193,6 +224,7 @@ void loop() {
        
         if(!Connection_Break){
           robot->ProgramENDRepotred();
+          robot->wait_And_Check_BLE_Connection(500,50);
           robot->BLE_write("DONE\n");
            #ifdef ESP_H
           robot->status->TurnOn(BLUE,2);

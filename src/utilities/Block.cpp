@@ -70,6 +70,14 @@ byte Block::getNextID(){
         Block::robot->MoveForward(input_block->get_output());
       }else{
         Block::robot->Invert_Left_Rotors(input_block->get_output()/1000);
+        EEPROM.write(EEPROM_LEFT_INVERT_ADDR,input_block->get_output()/1000);
+        if(!Block::robot->user_config){
+          EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
+          Block::robot->user_config = true;
+          #ifdef ESP_H 
+          EEPROM.commit(); 
+          #endif
+        }
       }
         break;
     case 2:
@@ -78,6 +86,17 @@ byte Block::getNextID(){
         Block::robot->MoveBack(input_block->get_output());
          }else{
         Block::robot->Invert_Right_Rotors(input_block->get_output()/1000);
+         EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,input_block->get_output()/1000);
+         #ifdef ESP_H 
+          EEPROM.commit(); 
+          #endif
+         if(!Block::robot->user_config){
+          EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
+          Block::robot->user_config = true;
+          #ifdef ESP_H 
+          EEPROM.commit(); 
+          #endif
+        }
         }
         break;
     case 3:
@@ -85,7 +104,19 @@ byte Block::getNextID(){
           Block::robot->SetSpeed(255);
           Block::robot->FaceRight(input_block->get_output());
         }else{
+          Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Right_Rotors(input_block->get_output()/1000);
+          EEPROM.write(EEPROM_RIGHT_SCALE_ADDR,input_block->get_output()/1000);
+          #ifdef ESP_H 
+          EEPROM.commit(); 
+          #endif
+          if(!Block::robot->user_config){
+            EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
+            Block::robot->user_config = true;
+            #ifdef ESP_H 
+            EEPROM.commit(); 
+            #endif
+          }
         }
         break;
     case 4:
@@ -93,11 +124,23 @@ byte Block::getNextID(){
           Block::robot->SetSpeed(255);
           Block::robot->FaceLeft(input_block->get_output());
         }else{
+          Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
+          byte lscale = input_block->get_output()/1000;
+          EEPROM.write(EEPROM_LEFT_SCALE_ADDR,lscale);
+          #ifdef ESP_H 
+            EEPROM.commit(); 
+            #endif
+          if(!Block::robot->user_config){
+            EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
+            #ifdef ESP_H 
+            EEPROM.commit(); 
+            #endif
+            Block::robot->user_config = true;
+          }
         }
         break;
     case 5:
-        //UserFunction_3(input_block->get_output());
         Block::robot->wait_And_Check_BLE_Connection(input_block->get_output(),10);
         break;
     case 6:
@@ -108,18 +151,26 @@ byte Block::getNextID(){
         Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
     case 9:
-         //Block::robot->comm->SPITransfer(msg1);
-       
-        Block::robot->OpenClaw();
-        Block::robot->wait_And_Check_BLE_Connection(200,10);
+        if(!Block::robot->config_mode){
+          Block::robot->OpenClaw();
+          Block::robot->wait_And_Check_BLE_Connection(200,10);
+        }else{
+          Block::robot->TurnLEDOn(0,0,0);
+          for(byte ii = 6; ii<17;ii++){
+            EEPROM.write(ii,255);
+            #ifdef ESP_H 
+            EEPROM.commit(); 
+            #endif
+            delay(100);
+          }
+          Block::robot->TurnLEDOn(255,255,255);
+        }
         break;
     case 10:
-       
-        Block::robot->Pick_Up();
-         Block::robot->wait_And_Check_BLE_Connection(200,10);
+          Block::robot->Pick_Up();
+          Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
     case 11:
-       
         Block::robot->Put_Down();
         Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
@@ -129,7 +180,30 @@ byte Block::getNextID(){
                 Block::robot->TurnLEDOn(255,0,0);
             break;
              case 1 : 
-                Block::robot->TurnLEDOn(0,0,255);
+                if(!Block::robot->config_mode){
+                  Block::robot->TurnLEDOn(0,0,255);
+                }else{
+                   for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
+                      Block::robot->TurnLEDOn(255,255,255);
+                      Block::robot->LineSensors[zz]->Line_Readout();
+                      Block::robot->TurnLEDOn(0,0,0);
+                      Block::robot->wait_And_Check_BLE_Connection(100,5);
+                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_1)Block::robot->Write_EEPROM_INT(EEPROM_L1_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
+                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_2)Block::robot->Write_EEPROM_INT(EEPROM_L2_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
+                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_3)Block::robot->Write_EEPROM_INT(EEPROM_L3_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
+                      #ifdef ESP_H 
+                      EEPROM.commit(); 
+                      #endif
+                      delay(100);
+                    }
+                    if(!Block::robot->user_config){
+                      EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
+                      Block::robot->user_config = true;
+                      #ifdef ESP_H 
+                      EEPROM.commit(); 
+                      #endif
+                    }
+              }
             break;
              case 2 : 
                 Block::robot->TurnLEDOn(0,255,0);
@@ -138,7 +212,19 @@ byte Block::getNextID(){
                 Block::robot->TurnLEDOn(255,0,255);
             break;
              case 5 : 
-                Block::robot->TurnLEDOn(255,255,255);
+                if(!Block::robot->config_mode){
+                  Block::robot->TurnLEDOn(255,255,255);
+                }else{
+                   for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
+                      Block::robot->TurnLEDOn(255,255,255);
+                      Block::robot->LineSensors[zz]->No_Line_Readout();
+                      Block::robot->TurnLEDOn(0,0,0);
+                      Block::robot->wait_And_Check_BLE_Connection(100,5);
+                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_1)Block::robot->Write_EEPROM_INT(EEPROM_L1_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
+                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_2)Block::robot->Write_EEPROM_INT(EEPROM_L2_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
+                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_3)Block::robot->Write_EEPROM_INT(EEPROM_L3_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
+                    }
+                }
             break;
              case 3 : 
                 Block::robot->TurnLEDOn(184, 255, 3);
