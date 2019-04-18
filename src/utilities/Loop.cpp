@@ -70,7 +70,7 @@ void Loop::set_limit_block(Block *l){
 }
 
 void Loop::set_limit(){
-  if(limit_block->get_output() == -757){
+  if(limit_block->get_output() == -757 || limit_block->get_output() == 102938){
     Block::robot->EnterConfigMode();
     limit = 1;
   }else{

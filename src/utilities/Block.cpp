@@ -262,6 +262,7 @@ byte Block::getNextID(){
         break; 
     case 99:
         Block::robot->RawRotorMove(input_block->get_output(),output_block->get_output());
+        Block::robot->Remote_block_used = true;
         break;
     case 101:
         output_block->set_output(Block::robot->ReadDistSensor(input_block->get_output()));

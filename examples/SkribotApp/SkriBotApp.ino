@@ -1,4 +1,4 @@
-//#define DEBUG_MODE
+#define DEBUG_MODE
 #include <Skribot_mobile.h>
 BlockHandler BH;
 Skribot *robot;
@@ -224,7 +224,11 @@ void loop() {
        
         if(!Connection_Break){
           robot->ProgramENDRepotred();
-          robot->wait_And_Check_BLE_Connection(500,50);
+          if(!robot->Remote_block_used){
+            robot->wait_And_Check_BLE_Connection(500,20);
+          }else{
+            robot->Remote_block_used = false;
+          }
           robot->BLE_write("DONE\n");
            #ifdef ESP_H
           robot->status->TurnOn(BLUE,2);
@@ -263,7 +267,7 @@ void loop() {
       robot->status->TurnOn(YELLOW,2);
       #endif
      }
-  }else if(robot->BLE_checkConnection() && !BT_state){
+  }else if(robot->BLE_checkConnection() && !BT_state){ 
      robot->TurnLEDOn(255,255,255); 
      BT_state = !BT_state;
      #ifdef ESP_H
