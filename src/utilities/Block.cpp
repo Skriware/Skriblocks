@@ -69,6 +69,7 @@ byte Block::getNextID(){
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveForward(input_block->get_output());
       }else{
+        Serial.println("Config mode operation!");
         Block::robot->Invert_Left_Rotors(input_block->get_output()/1000);
         EEPROM.write(EEPROM_LEFT_INVERT_ADDR,input_block->get_output()/1000);
         if(!Block::robot->user_config){
@@ -85,6 +86,7 @@ byte Block::getNextID(){
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveBack(input_block->get_output());
          }else{
+           Serial.println("Config mode operation!");
         Block::robot->Invert_Right_Rotors(input_block->get_output()/1000);
          EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,input_block->get_output()/1000);
          #ifdef ESP_H 
@@ -104,6 +106,7 @@ byte Block::getNextID(){
           Block::robot->SetSpeed(255);
           Block::robot->FaceRight(input_block->get_output());
         }else{
+          Serial.println("Config mode operation!");
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Right_Rotors(input_block->get_output()/1000);
           EEPROM.write(EEPROM_RIGHT_SCALE_ADDR,input_block->get_output()/1000);
@@ -124,6 +127,7 @@ byte Block::getNextID(){
           Block::robot->SetSpeed(255);
           Block::robot->FaceLeft(input_block->get_output());
         }else{
+          Serial.println("Config mode operation!");
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
           byte lscale = input_block->get_output()/1000;
@@ -155,6 +159,7 @@ byte Block::getNextID(){
           Block::robot->OpenClaw();
           Block::robot->wait_And_Check_BLE_Connection(200,10);
         }else{
+          Serial.println("Config mode operation!");
           Block::robot->TurnLEDOn(0,0,0);
           for(byte ii = 6; ii<17;ii++){
             EEPROM.write(ii,255);
@@ -183,6 +188,7 @@ byte Block::getNextID(){
                 if(!Block::robot->config_mode){
                   Block::robot->TurnLEDOn(0,0,255);
                 }else{
+                   Serial.println("Config mode operation!");
                    for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
                       Block::robot->TurnLEDOn(255,255,255);
                       Block::robot->LineSensors[zz]->Line_Readout();
@@ -215,6 +221,7 @@ byte Block::getNextID(){
                 if(!Block::robot->config_mode){
                   Block::robot->TurnLEDOn(255,255,255);
                 }else{
+                   Serial.println("Config mode operation!");
                    for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
                       Block::robot->TurnLEDOn(255,255,255);
                       Block::robot->LineSensors[zz]->No_Line_Readout();

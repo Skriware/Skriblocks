@@ -1,4 +1,4 @@
-#define DEBUG_MODE
+//#define DEBUG_MODE
 #include <Skribot_mobile.h>
 BlockHandler BH;
 Skribot *robot;
