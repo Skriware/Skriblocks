@@ -86,7 +86,7 @@ byte Block::getNextID(){
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveBack(input_block->get_output());
          }else{
-           Serial.println("Config mode operation!");
+        Serial.println("Config mode operation!");
         Block::robot->Invert_Right_Rotors(input_block->get_output()/1000);
          EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,input_block->get_output()/1000);
          #ifdef ESP_H 

@@ -1,4 +1,4 @@
-#define DEBUG_MODE
+//#define DEBUG_MODE
 #include <Skribot_mobile.h>
 BlockHandler BH;
 Skribot *robot;
@@ -192,7 +192,7 @@ void loop() {
       && BH.AllMessage[BH.messageLength-3] == 'N' 
       ){
     BH.Mcursor = 6;
-    robot->BLE_write("ack\n");
+    robot->BLE_write("ack\n\r\n");
     int flag; 
     while(freeRam() > 190){
       flag = BH.Handle_Msg(); 
@@ -254,7 +254,7 @@ void loop() {
     transmision_recieved = true;   
   }
     if(transmision_recieved == true){
-      robot->BLE_write("ack\n");
+      robot->BLE_write("ack\n\r\n");
       transmision_recieved = false;
     }
   
