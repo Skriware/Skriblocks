@@ -6,6 +6,11 @@ LogicBlock::LogicBlock(byte id,byte _logics,byte _input_left, byte _input_right)
 	input_Right_ID 	= _input_right;
 	blockID = id;
   operation = _logics;
+  input_right = NULL;
+  input_left = NULL;
+  inputblockID = 0;
+  outputblockID = 0;
+  nextblockID = 0;
 }
 
 LogicBlock::LogicBlock(){
@@ -36,7 +41,7 @@ LogicBlock::~LogicBlock(){
       bool_output = false;
   	}
   }
-  void LogicBlock::set_logics(Block *blockList[], int blockList_N){
+  bool LogicBlock::set_logics(Block *blockList[], int blockList_N){
   		for(int ii = 0; ii < blockList_N; ii++){
 			     if(blockList[ii]->getID() == input_Left_ID){
 			            input_left = blockList[ii];
@@ -44,7 +49,11 @@ LogicBlock::~LogicBlock(){
 			            input_right = blockList[ii];
 			      }
   		}
-
+      if(input_right != NULL && input_left != NULL){
+        return(true);
+      }else{
+        return(false);
+      }
   }
 
   bool LogicBlock::get_bool_output(){

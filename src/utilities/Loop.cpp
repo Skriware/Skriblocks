@@ -19,6 +19,9 @@ Loop::Loop(byte id, byte _begin, byte _end, byte _limit) {
   end_block = NULL;
   begin_block = NULL;
   counter = 0;
+  inputblockID = 0;
+  outputblockID = 0;
+  nextblockID = 0;
 
 }
 
@@ -32,7 +35,7 @@ void Loop::do_action() {
   counter++;
   //Serial.prbyteln(counter);
 }
-void Loop::set_connections(Block* blockList[],int blockList_N){
+bool Loop::set_connections(Block* blockList[],int blockList_N){
 for(byte ii = 0; ii < blockList_N; ii++){
      if(blockList[ii]->getID() == begin_block_id){
             begin_block = blockList[ii];
@@ -43,6 +46,12 @@ for(byte ii = 0; ii < blockList_N; ii++){
         set_limit();
       }
   
+  }
+
+  if(begin_block != NULL && end_block != NULL && limit_block != NULL){
+    return(true);
+  }else{
+    return(false);
   }
 }
 

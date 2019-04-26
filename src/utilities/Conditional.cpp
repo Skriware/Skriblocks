@@ -15,10 +15,13 @@ Conditional::Conditional(byte id,byte _next_true, byte _next_false, byte _logic_
   next_true = NULL;
   next_false = NULL;
   logic_block = NULL;
+  inputblockID = 0;
+  outputblockID = 0;
+  nextblockID = 0;
 
 }
 
-void Conditional::set_logics(Block* blockList[], int blockList_N,LogicBlock* logicblockList[], int logicblockList_N){
+bool Conditional::set_logics(Block* blockList[], int blockList_N,LogicBlock* logicblockList[], int logicblockList_N){
   for(int ii = 0; ii < blockList_N; ii++){
       if(blockList[ii]->getID() == next_True_ID){
             next_true = blockList[ii];
@@ -28,14 +31,13 @@ void Conditional::set_logics(Block* blockList[], int blockList_N,LogicBlock* log
             logic_block = (LogicBlock*)blockList[ii];
       }
    
-}
- 
-  /*for(int yy = 0; yy < logicblockList_N; yy++){
-    if(logicblockList[yy]->getID() == first_LogicblockID){
-            logic_block = logicblockList[yy];
-      }
-  }*/
-  
+  }
+
+  if(logic_block != NULL && next_false != NULL && next_true != NULL){
+    return(true);
+  }else{
+    return(false);
+  }
 
 }
 
@@ -43,24 +45,7 @@ void Conditional::set_logics(Block* blockList[], int blockList_N,LogicBlock* log
 
 
 void Conditional::do_action() {
-  /*LogicBlock *current = logic_block;
-  if(operation){
-    main_logic_value = true;
-  }else{
-    main_logic_value = false;
-  }     
-        while (current != NULL) {
-          bool temp = current->get_value();
-          Serial.print("L");
-          Serial.println(current->getID());
-          if(operation){
-            main_logic_value = main_logic_value && temp;
-          }else{
-            main_logic_value = main_logic_value || temp;
-          }
-          current = (LogicBlock*)current->get_next(); 
-        }
-*/
+
 }
 
 Block* Conditional::get_next() {

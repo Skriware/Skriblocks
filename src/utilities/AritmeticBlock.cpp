@@ -9,20 +9,23 @@ AritmeticBlock::AritmeticBlock(byte _id, byte _operation,byte _left_id,byte _rig
 	operation = _operation;
 	input_left 	= NULL;
 	input_right = NULL;
+  inputblockID = 0;
+  outputblockID = 0;
+  nextblockID = 0;
 }
-  void AritmeticBlock::set_connections(Block *blockList[],int blockList_N){
+  bool AritmeticBlock::set_connections(Block *blockList[],int blockList_N){
   		for(int ii = 0; ii < blockList_N; ii++){
 			     if(blockList[ii]->getID() == leftID){
 			            input_left = blockList[ii];
-                  Serial.print("LEFT INPUT:");
-                  Serial.println(input_left->getID());
 			      }else if(blockList[ii]->getID() == rightID){
 			            input_right = blockList[ii];
-                  Serial.print("RIGHT INPUT:");
-                  Serial.println(input_right->getID());
 			      }
   		}
-
+      if(input_left != NULL && input_right != NULL){
+        return(true);
+      }else{
+        return(false);
+      }
   }
   int AritmeticBlock::get_output(){
   	int val_right,val_left;

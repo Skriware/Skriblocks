@@ -152,12 +152,10 @@ byte Block::getNextID(){
         break;
     case 8:
         Block::robot->CloseClaw();
-        Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
     case 9:
         if(!Block::robot->config_mode){
           Block::robot->OpenClaw();
-          Block::robot->wait_And_Check_BLE_Connection(200,10);
         }else{
           Serial.println("Config mode operation!");
           Block::robot->TurnLEDOn(0,0,0);
@@ -173,11 +171,9 @@ byte Block::getNextID(){
         break;
     case 10:
           Block::robot->Pick_Up();
-          Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
     case 11:
         Block::robot->Put_Down();
-        Block::robot->wait_And_Check_BLE_Connection(200,10);
         break;
     case 12:
          switch(input_block->get_output()){
@@ -280,17 +276,49 @@ byte Block::getNextID(){
   //Serial.println("Action Done!");
 }
 
-void Block::set_next(Block *_next) {
-  next = _next;
+bool Block::set_next(Block* blockList[],int blockList_N) {
+            
+          if(getNextID() != 0){
+            for(int jj = 0 ; jj <  blockList_N ; jj++){
+                if(getNextID() == blockList[jj]->getID()){
+                  next = blockList[jj];
+                  return(true);
+                }
+            }
+            return(false);
+          }else{
+            return(true);
+          }
 }
 
-void Block::set_input(Block *_input){
-  input_block = _input;
+bool Block::set_input(Block* blockList[],int blockList_N){
+          if(getInputID() !=0){
+            for(int jj = 0 ; jj <  blockList_N ; jj++){
+                if(getInputID() == blockList[jj]->getID()){
+                  input_block = blockList[jj];
+                  return(true);
+                }
+            }
+            return(false);
+          }else{
+            return(true);
+          }
 }
 
-void Block::set_output_block(Block *_output){
- output_block = _output;
+bool Block::set_output_block(Block* blockList[],int blockList_N){
+          if(getOutputID() !=0){
+              for(int jj = 0 ; jj <  blockList_N ; jj++){
+                if(getOutputID() == blockList[jj]->getID()){
+                  output_block = blockList[jj];
+                  return(true);
+                }
+            }
+            return(false);
+            }else{
+            return(true);
+          }
 }
+
 Block* Block::get_next() {
   return(next);
 }

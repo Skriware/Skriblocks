@@ -15,7 +15,6 @@
 		}
 	current = NULL;
   StartBlock = NULL;
-
 	 blockList_N 		= 0;
 	 IfblockList_N 	 = 0;
 	 LoopblockList_N 	= 0;
@@ -99,60 +98,51 @@
 		AritmeticblockList_N++;
 	}
 
-	void BlockHandler::MakeConections(){
+	bool BlockHandler::MakeConections(){
 		#if ENABLED(DEBUG_MODE)
       Serial.println("Making connections!");          
     #endif
   
 		for(int ii = 0 ; ii <  blockList_N ; ii++){
-			      for(int jj = 0 ; jj <  blockList_N ; jj++){
-			          if(blockList[ii]->getNextID() == blockList[jj]->getID()){
-			            blockList[ii]->set_next(blockList[jj]);
-			            break;
-			          }
-			          
-			    	}
+			 if(!blockList[ii]->set_next(blockList,blockList_N))return(false);			          
+		  }
 
-			    	for(int kk = 0 ; kk <  blockList_N ; kk++){
-			          if(blockList[ii]->getInputID() == blockList[kk]->getID()){
-			          	blockList[ii]->set_input(blockList[kk]);
-			            break;
-			          }
-			          
-			    	}
+			for(int kk = 0 ; kk <  blockList_N ; kk++){
+			 if(!blockList[kk]->set_input(blockList,blockList_N))return(false);  
+			}
 
-			    	for(int tt = 0 ; tt <  blockList_N ; tt++){
-			          if(blockList[ii]->getOutputID() == blockList[tt]->getID()){
-			          	blockList[ii]->set_output_block(blockList[tt]);
-			            break;
-			          }
-			          
-			    	}
-
-  		}
+			for(int tt = 0 ; tt <  blockList_N ; tt++){
+			 if(!blockList[tt]->set_output_block(blockList,blockList_N))return(false);  
+			 }
 
   		for(int kk = 0 ; kk < LogicblockList_N ; kk++){
-  			LogicblockList[kk]->set_logics(blockList,blockList_N);
+  			if(!LogicblockList[kk]->set_logics(blockList,blockList_N))return(false);
   		}
 
   		for(int kk = 0 ; kk < IfblockList_N ; kk++){
-  			IfblockList[kk]->set_logics(blockList,blockList_N,LogicblockList,LogicblockList_N);
+  			if(!IfblockList[kk]->set_logics(blockList,blockList_N,LogicblockList,LogicblockList_N))return(false);
   		}
 
   		for(int jj = 0 ; jj < LoopblockList_N ; jj++){
-  			LoopblockList[jj]->set_connections(blockList,blockList_N);
+  			if(LoopblockList[jj]->set_connections(blockList,blockList_N))return(false);
   		}
 
   		for(int ll = 0; ll < AritmeticblockList_N ; ll++){
-  			AritmeticblockList[ll]->set_connections(blockList,blockList_N);
+  			if(AritmeticblockList[ll]->set_connections(blockList,blockList_N))return(false);
   		}
   		 for(int jj = 0 ; jj <  blockList_N ; jj++){
           if(1 == blockList[jj]->getID()){
             StartBlock = blockList[jj];
             break;
           }
-		}
+		  }
+      if(StartBlock == NULL)return(false);
 		  current = StartBlock;
+    #if ENABLED(DEBUG_MODE)
+      Serial.println("Connections done!");          
+    #endif
+
+      return(true);
 	}
 	bool BlockHandler::doBlock(bool loopmode){
     #ifdef DEBUG_MODE
@@ -216,14 +206,22 @@ int BlockHandler::cti(char x){
 
 int BlockHandler::Handle_Msg(){
   int id;
+  bool codeOk;
   if(AllMessage[Mcursor] == 'R'){
-    MakeConections();
-    if(AllMessage[Mcursor+4] == 'C'){
-    	return(0);
-    }else{
-    	return(1);
-    }
-    
+             codeOk = MakeConections();
+              if(AllMessage[Mcursor+4] == 'C'){
+              	if(codeOk){
+                  return(0);
+                }else{
+                  return(3);
+                }
+              }else{
+                if(codeOk){
+              	 return(1);
+                }else{
+                  return(3);
+                }
+               }
   }
           id = readInt();
           byte startBlockID;
@@ -258,9 +256,6 @@ int BlockHandler::Handle_Msg(){
             value = readInt();
           }
             addConst(id,value);
-          break;
-      default:
-      
           break;
       case 'I':
           Mcursor += 2;
@@ -299,7 +294,6 @@ int BlockHandler::Handle_Msg(){
           Serial.println(next);
           addBlock(id,next,69,0,0);
        break;
-         
       case 'A':
           Serial.print("ACTION:");
            Mcursor +=2;
@@ -310,6 +304,13 @@ int BlockHandler::Handle_Msg(){
           next  = readInt();
           addBlock(id,next,actionID,input,output);
           break;
+      default:
+            #if ENABLED(DEBUG_MODE)
+              Serial.println("Got sth stragne!");          
+            #endif
+          return(3);
+        break;
+
   }
 
   return(2);    

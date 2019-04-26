@@ -17,9 +17,9 @@ public:
   	virtual int get_output();
   	void set_output(int x);
   	byte getID();
-  	void set_next(Block *_next);
-  	void set_input(Block *_input);
-  	void set_output_block(Block *_output_block);
+  	bool set_next(Block* blockList[],int blockList_N);
+  	bool set_input(Block* blockList[],int blockList_N);
+  	bool set_output_block(Block* blockList[],int blockList_N);
   	byte getNextID();
   	byte getInputID();
   	byte getOutputID();

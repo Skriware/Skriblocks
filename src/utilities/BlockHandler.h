@@ -22,7 +22,7 @@ public:
 	void addConst(int id, float value);
 	void addConst(int id,String value);																			//Adding Blocks types
 	
-	void MakeConections();
+	bool MakeConections();
 	bool doBlock(bool loopmode = false);																							//Making conectons(assigning pointers from IDs) 
 																												// Starting code
 	

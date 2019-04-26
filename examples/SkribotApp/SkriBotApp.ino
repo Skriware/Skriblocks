@@ -192,15 +192,15 @@ void loop() {
       && BH.AllMessage[BH.messageLength-3] == 'N' 
       ){
     BH.Mcursor = 6;
-    robot->BLE_write("ack\n\r\n");
     int flag; 
     while(freeRam() > 190){
       flag = BH.Handle_Msg(); 
-      if(flag != 2) {
+      if(flag != 2 && flag != 3) {
         Connection_Break = false;
        #ifdef ESP_H
         robot->status->TurnOn(GREEN,2);
        #endif
+        if(!robot->Remote_block_used)robot->BLE_write("ack\n\r\n");
        while(BH.doBlock()){
            robot->BaterryCheck();
            if(robot->ProgramENDRepotred()){
@@ -226,10 +226,11 @@ void loop() {
           robot->ProgramENDRepotred();
           if(!robot->Remote_block_used){
             robot->wait_And_Check_BLE_Connection(500,20);
+            robot->BLE_write("DONE\n");
           }else{
             robot->Remote_block_used = false;
           }
-          robot->BLE_write("DONE\n");
+        
            #ifdef ESP_H
           robot->status->TurnOn(BLUE,2);
            #endif
@@ -239,6 +240,16 @@ void loop() {
           Serial.println("CONFIRMING END OF CODE");
         #endif
         break;
+      }else if(flag == 3){
+        BH.clear();
+        robot->status->TurnOn(RED,2);
+        robot->Stop();
+        #if ENABLED(DEBUG_MODE)
+          Serial.println("CODE NOT VALID");
+          robot->BLE_write("DONE\n");
+        #endif
+        break;
+
       }
     }
     if(freeRam() < 190){
