@@ -37,7 +37,7 @@
       	 blockList_N++;
       	 LoopblockList[LoopblockList_N] = l;
       	 LoopblockList_N++;
-      	 Serial.println(blockList_N);
+         Serial.println("Adding LOOP");
 	}
 
 	void BlockHandler::addBlock(int id,	int _nextBlockID,int _actionID,int _intInput,int _intOutput){
@@ -59,7 +59,7 @@
 	void BlockHandler::addLogic(int id,int logicOperation,int _input_left, int _input_right){
 		LogicBlock *lblock = new LogicBlock(id,logicOperation,_input_left,_input_right);
 		blockList[blockList_N] = lblock;
-      	blockList_N++;
+    blockList_N++;
 		LogicblockList[LogicblockList_N] =  lblock;
 		LogicblockList_N++;
 		
@@ -82,13 +82,6 @@
       
 	}
 
-	/*void BlockHandler::addConst(int id, String value){
-		ConstBlock *cblock = new ConstBlock(id,value);
-		blockList[blockList_N] = cblock;
-      	blockList_N++;
-      	
-	}
-  */
 
 	void BlockHandler::addAritmeticBlock(int id,int _operation,int _left,int _right){
 		AritmeticBlock *ablock = new AritmeticBlock(id,_operation,_left,_right);
@@ -104,32 +97,50 @@
     #endif
   
 		for(int ii = 0 ; ii <  blockList_N ; ii++){
-			 if(!blockList[ii]->set_next(blockList,blockList_N))return(false);			          
+			 if(!blockList[ii]->set_next(blockList,blockList_N))return(false);         
 		  }
+      #ifdef DEBUG_MODE
+      Serial.println("Next OK");
+      #endif
 
 			for(int kk = 0 ; kk <  blockList_N ; kk++){
 			 if(!blockList[kk]->set_input(blockList,blockList_N))return(false);  
 			}
 
-			for(int tt = 0 ; tt <  blockList_N ; tt++){
+			#ifdef DEBUG_MODE
+        Serial.println("Input OK");
+        #endif
+
+      for(int tt = 0 ; tt <  blockList_N ; tt++){
 			 if(!blockList[tt]->set_output_block(blockList,blockList_N))return(false);  
 			 }
-
+#ifdef DEBUG_MODE
+       Serial.println("Output OK");
+       #endif
   		for(int kk = 0 ; kk < LogicblockList_N ; kk++){
   			if(!LogicblockList[kk]->set_logics(blockList,blockList_N))return(false);
   		}
-
+#ifdef DEBUG_MODE
+      Serial.println("Logic OK");
+      #endif
   		for(int kk = 0 ; kk < IfblockList_N ; kk++){
   			if(!IfblockList[kk]->set_logics(blockList,blockList_N,LogicblockList,LogicblockList_N))return(false);
   		}
-
+    #ifdef DEBUG_MODE
+      Serial.println("IF OK");
+    #endif
   		for(int jj = 0 ; jj < LoopblockList_N ; jj++){
-  			if(LoopblockList[jj]->set_connections(blockList,blockList_N))return(false);
+  			if(!LoopblockList[jj]->set_connections(blockList,blockList_N))return(false);
   		}
-
+      #ifdef DEBUG_MODE
+      Serial.println("LOOP OK");
+      #endif
   		for(int ll = 0; ll < AritmeticblockList_N ; ll++){
-  			if(AritmeticblockList[ll]->set_connections(blockList,blockList_N))return(false);
+  			if(!AritmeticblockList[ll]->set_connections(blockList,blockList_N))return(false);
   		}
+       #ifdef DEBUG_MODE
+      Serial.println("Aritmetic OK");
+      #endif
   		 for(int jj = 0 ; jj <  blockList_N ; jj++){
           if(1 == blockList[jj]->getID()){
             StartBlock = blockList[jj];
@@ -138,6 +149,11 @@
 		  }
       if(StartBlock == NULL)return(false);
 		  current = StartBlock;
+
+    #ifdef DEBUG_MODE
+      Serial.println("Start OK");
+    #endif
+
     #if ENABLED(DEBUG_MODE)
       Serial.println("Connections done!");          
     #endif
@@ -308,7 +324,6 @@ int BlockHandler::Handle_Msg(){
             #if ENABLED(DEBUG_MODE)
               Serial.println("Got sth stragne!");          
             #endif
-          return(3);
         break;
 
   }

@@ -33,9 +33,11 @@ Loop::Loop(byte _limit){
 
 void Loop::do_action() {
   counter++;
-  //Serial.prbyteln(counter);
 }
 bool Loop::set_connections(Block* blockList[],int blockList_N){
+    Serial.println(begin_block_id);
+    Serial.println(end_block_id);
+    Serial.println(limit_block_id);
 for(byte ii = 0; ii < blockList_N; ii++){
      if(blockList[ii]->getID() == begin_block_id){
             begin_block = blockList[ii];
@@ -48,9 +50,11 @@ for(byte ii = 0; ii < blockList_N; ii++){
   
   }
 
-  if(begin_block != NULL && end_block != NULL && limit_block != NULL){
+  if(begin_block != NULL && (end_block != NULL || end_block_id == 0)  && limit_block != NULL){
+    Serial.println("OK");
     return(true);
   }else{
+    Serial.println("Fail");
     return(false);
   }
 }

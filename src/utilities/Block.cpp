@@ -152,10 +152,12 @@ byte Block::getNextID(){
         break;
     case 8:
         Block::robot->CloseClaw();
+        Block::robot->wait_And_Check_BLE_Connection(100,10);
         break;
     case 9:
         if(!Block::robot->config_mode){
           Block::robot->OpenClaw();
+          Block::robot->wait_And_Check_BLE_Connection(100,10);
         }else{
           Serial.println("Config mode operation!");
           Block::robot->TurnLEDOn(0,0,0);
@@ -171,9 +173,11 @@ byte Block::getNextID(){
         break;
     case 10:
           Block::robot->Pick_Up();
+          Block::robot->wait_And_Check_BLE_Connection(100,10);
         break;
     case 11:
         Block::robot->Put_Down();
+        Block::robot->wait_And_Check_BLE_Connection(100,10);
         break;
     case 12:
          switch(input_block->get_output()){

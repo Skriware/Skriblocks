@@ -242,7 +242,9 @@ void loop() {
         break;
       }else if(flag == 3){
         BH.clear();
-        robot->status->TurnOn(RED,2);
+        #ifdef ESP_H        
+          robot->status->TurnOn(RED,2);
+        #endif
         robot->Stop();
         #if ENABLED(DEBUG_MODE)
           Serial.println("CODE NOT VALID");
@@ -281,6 +283,7 @@ void loop() {
   }else if(robot->BLE_checkConnection() && !BT_state){ 
      robot->TurnLEDOn(255,255,255); 
      BT_state = !BT_state;
+     BH.clear();
      #ifdef ESP_H
       robot->status->TurnOn(BLUE,2);
      #endif
