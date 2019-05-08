@@ -197,9 +197,6 @@ void loop() {
       flag = BH.Handle_Msg(); 
       if(flag != 2 && flag != 3) {
         Connection_Break = false;
-       #ifdef ESP_H
-        robot->status->TurnOn(GREEN,2);
-       #endif
         if(!robot->Remote_block_used)robot->BLE_write("ack\n\r\n");
        while(BH.doBlock()){
            robot->BaterryCheck();
@@ -230,10 +227,6 @@ void loop() {
           }else{
             robot->Remote_block_used = false;
           }
-        
-           #ifdef ESP_H
-          robot->status->TurnOn(BLUE,2);
-           #endif
 
         }
         #if ENABLED(DEBUG_MODE)

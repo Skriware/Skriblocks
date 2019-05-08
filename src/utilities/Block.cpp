@@ -69,7 +69,6 @@ byte Block::getNextID(){
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveForward(input_block->get_output());
       }else{
-        Serial.println("Config mode operation!");
         Block::robot->Invert_Left_Rotors(input_block->get_output()/1000);
         EEPROM.write(EEPROM_LEFT_INVERT_ADDR,input_block->get_output()/1000);
         if(!Block::robot->user_config){
@@ -86,7 +85,6 @@ byte Block::getNextID(){
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveBack(input_block->get_output());
          }else{
-        Serial.println("Config mode operation!");
         Block::robot->Invert_Right_Rotors(input_block->get_output()/1000);
          EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,input_block->get_output()/1000);
          #ifdef ESP_H 
@@ -106,10 +104,10 @@ byte Block::getNextID(){
           Block::robot->SetSpeed(255);
           Block::robot->FaceRight(input_block->get_output());
         }else{
-          Serial.println("Config mode operation!");
           Block::robot->TurnLEDOn(184, 255, 3);
-          Block::robot->Scale_Right_Rotors(input_block->get_output()/1000);
-          EEPROM.write(EEPROM_RIGHT_SCALE_ADDR,input_block->get_output()/1000);
+          Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
+          byte lscale = input_block->get_output()/1000;
+          EEPROM.write(EEPROM_LEFT_SCALE_ADDR,lscale);
           #ifdef ESP_H 
           EEPROM.commit(); 
           #endif
@@ -127,11 +125,10 @@ byte Block::getNextID(){
           Block::robot->SetSpeed(255);
           Block::robot->FaceLeft(input_block->get_output());
         }else{
-          Serial.println("Config mode operation!");
           Block::robot->TurnLEDOn(184, 255, 3);
-          Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
-          byte lscale = input_block->get_output()/1000;
-          EEPROM.write(EEPROM_LEFT_SCALE_ADDR,lscale);
+          Block::robot->Scale_Right_Rotors(input_block->get_output()/1000);
+          byte rscale = input_block->get_output()/1000;
+          EEPROM.write(EEPROM_RIGHT_SCALE_ADDR,rscale);
           #ifdef ESP_H 
             EEPROM.commit(); 
             #endif
