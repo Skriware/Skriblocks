@@ -19,7 +19,7 @@ public:
 	void addLogic(int id,int logicOperation,int _input_left, int _input_right);
 	void addLogicCompare(int id,int _logicOperation,int _input_left, int _input_right);
 	void addAritmeticBlock(int id,int _operation,int _left,int _right);
-	void addConst(int id, float value);
+	void addConst(int id, int32_t value);
 	void addConst(int id,String value);																			//Adding Blocks types
 	
 	bool MakeConections();
@@ -29,7 +29,7 @@ public:
 
 	int freeRam();
 	int cti(char c);
-	int readInt();																								//BT message parsing help functions
+	int32_t readInt();																								//BT message parsing help functions
 	int Handle_Msg();																							// Handle one line of the message
 	void ReadfromBT();	
 	void clear();	

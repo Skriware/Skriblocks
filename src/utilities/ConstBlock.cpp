@@ -1,6 +1,6 @@
 #include "ConstBlock.h"
 
-ConstBlock::ConstBlock(int id, int value){
+ConstBlock::ConstBlock(int id, int32_t value){
 	blockID = id;
 	output = value;
 	  input_block 	= NULL;

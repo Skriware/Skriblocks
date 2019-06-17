@@ -102,11 +102,15 @@ byte Block::getNextID(){
     case 3:
         if(!Block::robot->config_mode){
           Block::robot->SetSpeed(255);
-          Block::robot->FaceRight(input_block->get_output());
+          Block::robot->FaceLeft(input_block->get_output());
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
-          byte lscale = input_block->get_output()/1000;
+          byte lscale = byte(input_block->get_output()/1000);
+          #ifdef DEBUG_MODE
+            Serial.print("Scalling left rotor: ");
+            Serial.println(lscale);
+          #endif
           EEPROM.write(EEPROM_LEFT_SCALE_ADDR,lscale);
           #ifdef ESP_H 
           EEPROM.commit(); 
@@ -123,12 +127,16 @@ byte Block::getNextID(){
     case 4:
         if(!Block::robot->config_mode){
           Block::robot->SetSpeed(255);
-          Block::robot->FaceLeft(input_block->get_output());
+          Block::robot->FaceRight(input_block->get_output());
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Right_Rotors(input_block->get_output()/1000);
-          byte rscale = input_block->get_output()/1000;
+          byte rscale = byte(input_block->get_output()/1000);
           EEPROM.write(EEPROM_RIGHT_SCALE_ADDR,rscale);
+          #ifdef DEBUG_MODE
+            Serial.print("Scalling right rotor: ");
+            Serial.println(rscale);
+          #endif
           #ifdef ESP_H 
             EEPROM.commit(); 
             #endif
@@ -324,7 +332,7 @@ Block* Block::get_next() {
   return(next);
 }
 
-int Block::get_output() {
+int32_t Block::get_output() {
   return output;
 }
 

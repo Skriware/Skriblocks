@@ -14,7 +14,7 @@ public:
 	void do_action();
 	virtual	Block* get_next();
 	virtual bool get_bool_output();
-  	virtual int get_output();
+  	virtual int32_t get_output();
   	void set_output(int x);
   	byte getID();
   	bool set_next(Block* blockList[],int blockList_N);
@@ -32,14 +32,14 @@ public:
 
 protected:
 	byte blockID;
-	int output;
+	int32_t output;
 	Block *input_block;
 	Block *output_block;
 	Block *next; 
 	byte inputblockID;
 	byte outputblockID;
 	byte nextblockID;
-	int actionID;
+	byte actionID;
 	
 	
 	};

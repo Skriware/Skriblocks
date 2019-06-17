@@ -4,13 +4,9 @@
 class ConstBlock : public Block {
 
 public:
-  ConstBlock(int id,int const);
-  //ConstBlock(int id,String const);
-  //String get_string_output();
+  ConstBlock(int id,int32_t const);
   ~ConstBlock(); 
-/* protected:
- 	String string_output;
-*/
+
 };
 
 #endif

@@ -75,7 +75,7 @@
 	}
 
 
-	void BlockHandler::addConst(int id, float value){
+	void BlockHandler::addConst(int id, int32_t value){
 		ConstBlock *cblock = new ConstBlock(id,value);
 		blockList[blockList_N] = cblock;
       	blockList_N++;
@@ -192,7 +192,7 @@ int BlockHandler::freeRam()
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
 }
 
-int BlockHandler::readInt(){
+int32_t BlockHandler::readInt(){
   int nDigits = 0;
   int sign = 1;
   while((AllMessage[Mcursor + nDigits] != ' ') && (AllMessage[Mcursor + nDigits] != '\n')){
@@ -203,14 +203,16 @@ int BlockHandler::readInt(){
     Mcursor++;
     nDigits--;
   }
-  int out = 0;
-  int power = 1;
+  int32_t out = 0;
+  int32_t power = 1;
     for(int ii = nDigits-1; ii > -1; ii--){
       if(ii != nDigits-1) power *=10;
-      int add = cti(AllMessage[Mcursor + ii])*power;
+      int32_t add = cti(AllMessage[Mcursor + ii])*power;
       out += add;
     }
-    Serial.println(out);
+    #ifdef DEBUG_MODE
+    Serial.println(out*sign);
+    #endif
     Mcursor += nDigits+1;
     return(out*sign);
 }
@@ -243,7 +245,7 @@ int BlockHandler::Handle_Msg(){
           byte startBlockID;
           byte endBlockID; 
           int countID; 
-          int value;
+          int32_t value;
           byte actionID;
           byte input,output;
           byte next;

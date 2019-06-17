@@ -27,8 +27,8 @@ AritmeticBlock::AritmeticBlock(byte _id, byte _operation,byte _left_id,byte _rig
         return(false);
       }
   }
-  int AritmeticBlock::get_output(){
-  	int val_right,val_left;
+  int32_t AritmeticBlock::get_output(){
+  	int32_t val_right,val_left;
   	if(input_left   != NULL)val_left    = input_left->get_output();
 	  if(input_right  != NULL)val_right   = input_right->get_output();
 
@@ -48,8 +48,10 @@ AritmeticBlock::AritmeticBlock(byte _id, byte _operation,byte _left_id,byte _rig
     default:
       output = 0;
   	}
+    #ifdef DEBUG_MODE
   	Serial.print("Aritmetic output:");
   	Serial.println(output);
+    #endif
 
   	return(output);
   

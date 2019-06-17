@@ -52,6 +52,7 @@ void setup() {
     robot = new Skribot("EDU_SHIELD");
   #endif
   robot->BLE_Setup();
+  robot->ConfigureBoardEEPROM();
   Block::setRobot(robot); 
   BT_state = false; 
   #if ENABLED(DEBUG_MODE)
