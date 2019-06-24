@@ -37,7 +37,6 @@
       	 blockList_N++;
       	 LoopblockList[LoopblockList_N] = l;
       	 LoopblockList_N++;
-         Serial.println("Adding LOOP");
 	}
 
 	void BlockHandler::addBlock(int id,	int _nextBlockID,int _actionID,int _intInput,int _intOutput){

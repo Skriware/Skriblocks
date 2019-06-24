@@ -33,7 +33,7 @@ bool Conditional::set_logics(Block* blockList[], int blockList_N,LogicBlock* log
    
   }
 
-  if(logic_block != NULL && next_false != NULL && next_true != NULL){
+  if(logic_block != NULL && (next_false != NULL || next_False_ID == 0) && next_true != NULL){
     return(true);
   }else{
     return(false);
