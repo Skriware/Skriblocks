@@ -1,0 +1,54 @@
+#ifndef SKRIBOT_INTERRUPT_H
+#define DEFINE_INTERRUPT
+#include <Skribot.h>
+#include "Block.h"
+
+#define BUTTON_INTERRUPT 0			//interrupt types
+#define DISTANCE_INTERRUPT 1
+#define LINE_INTERRUPT 2
+#define TIME_INTERRUPT 3
+
+#define DIST_D1 	0					//interrupt inputs
+#define DIST_D2 	1
+#define LINE_L1 	2
+#define LINE_L2 	3
+#define LINE_L3 	4
+#define TIME    	5
+#define BUTTON_1	6
+#define BUTTON_2	7
+#define BUTTON_3	8					
+
+										//interrupt triggers
+#define DISTANCE_GRATER_THEN 0
+#define DISTANCE_LESS_THEN 1
+#define LINE_DETECTED 2
+#define NO_LINE_DETECTED 3
+#define BUTTON_PRESSED 4
+
+class Skribot_Interrupt;
+
+class Skribot_Interrupt {
+public:
+	Skribot_Interrupt(byte int_type,
+					  byte int_input,
+					  byte trigger,
+					  byte _priority,
+					  byte _starting_block_id);
+	bool Check_for_interrupt();
+	bool Condition_saniti_check();
+	void Set_Trig_Distance(byte dist);
+	byte get_start_block_id();
+	Block* get_starting_Block();
+	bool set_start_block(Block* blockList[],int blockList_N);
+
+protected:
+	byte interrupt_type;
+	byte starting_block_id;
+	byte priority;
+	byte trigger_type;
+	byte trig_distance;
+	Block *starting_block;
+	Skribot *robot;
+	};
+
+#endif
