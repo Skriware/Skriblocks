@@ -10,6 +10,7 @@
 #include "utilities/ConstBlock.h"
 #include "utilities/LogicCompare.h"
 #include "utilities/AritmeticBlock.h"
+#include "utilities/InterruptHandler.h"
 
 class Skribot_mobile {
 	public:

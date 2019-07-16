@@ -1,5 +1,6 @@
-#ifndef SKRIBOT_INTERRUPT_H
-#define DEFINE_INTERRUPT
+#ifndef DEFINE_INTERRUPT_H
+#define DEFINE_INTERRUPT_H
+#include "Arduino.h"
 #include <Skribot.h>
 #include "Block.h"
 
@@ -23,13 +24,13 @@
 #define DISTANCE_LESS_THEN 1
 #define LINE_DETECTED 2
 #define NO_LINE_DETECTED 3
-#define BUTTON_PRESSED 4
+#define BUTTON_HIGH 4
+#define BUTTON_LOW 5
 
-class Skribot_Interrupt;
 
-class Skribot_Interrupt {
+class InterruptHandler {
 public:
-	Skribot_Interrupt(byte int_type,
+	InterruptHandler(byte int_type,
 					  byte int_input,
 					  byte trigger,
 					  byte _priority,
@@ -37,6 +38,7 @@ public:
 	bool Check_for_interrupt();
 	bool Condition_saniti_check();
 	void Set_Trig_Distance(byte dist);
+	void Set_Trig_Time(int T);
 	byte get_start_block_id();
 	Block* get_starting_Block();
 	bool set_start_block(Block* blockList[],int blockList_N);
@@ -47,8 +49,11 @@ protected:
 	byte priority;
 	byte trigger_type;
 	byte trig_distance;
+	byte input;
+	int time_period;
 	Block *starting_block;
 	Skribot *robot;
+	long last_interrupt_time;
 	};
 
 #endif
