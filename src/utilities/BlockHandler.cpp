@@ -10,7 +10,8 @@
 			if(tt < IfblockList_MAX)IfblockList[tt] = NULL;
 			if(tt < LoopblockList_MAX)LoopblockList[tt] = NULL;
 			if(tt < LogicblockList_MAX)LogicblockList[tt] = NULL;
-			if(tt < AritmeticblockList_MAX)AritmeticblockList[tt] = NULL;	
+			if(tt < AritmeticblockList_MAX)AritmeticblockList[tt] = NULL;
+      if(tt < MAX_INTERRUPTS)Interrupts[tt] = NULL;	
 			blockList[tt] = NULL;
 		}
 	current = NULL;
@@ -22,6 +23,9 @@
 	 AritmeticblockList_N 	= 0;
 	 Mcursor = 0;
 	 messageLength = 0;
+   interrupt_running = MAX_INTERRUPTS;
+   interrupts_N = 0;
+   interruped_precesed = false;
 	}
 
   void BlockHandler::clear(){
@@ -29,6 +33,7 @@
     for(int tt = 0; tt < blockList_MAX; tt++){
       delete blockList[tt];
     }
+    for(byte yy = 0; yy <MAX_INTERRUPTS;yy++)delete Interrupts[yy];
    init();
   }
 	void BlockHandler::addLoop(int id,	int startBlockID,	int endBlockID,		int count){
@@ -81,7 +86,6 @@
       
 	}
 
-
 	void BlockHandler::addAritmeticBlock(int id,int _operation,int _left,int _right){
 		AritmeticBlock *ablock = new AritmeticBlock(id,_operation,_left,_right);
 		blockList[blockList_N] = ablock;
@@ -89,6 +93,41 @@
 		blockList_N++;
 		AritmeticblockList_N++;
 	}
+
+  void BlockHandler::addInterrupt(byte type,byte input,byte trigger,byte _priority,byte _starting_block_id){
+    Interrupts[interrupts_N]= new InterruptHandler(type,input,trigger,_priority,_starting_block_id);
+    interrupts_N++;
+  }
+
+  byte BlockHandler::checkForInterrupts(){
+    Serial.println("Checking for interrupts!");
+    byte interrupts_triggered = 0;
+    byte triggered_interrupt_ids[8];
+    for(byte ii = 0; ii < interrupts_N; ii++){
+      Serial.print("Interrupt:");
+
+      if(Interrupts[ii]->Check_for_interrupt()){
+         Serial.println("OK");
+        triggered_interrupt_ids[interrupts_triggered] = ii;
+        interrupts_triggered++;
+      }
+    }
+    if(interrupts_triggered == 1){
+      return(triggered_interrupt_ids[0]);
+    }else if(interrupts_triggered ==0){
+      return(MAX_INTERRUPTS);
+    }else if(interrupts_triggered >1){
+      byte highest_priority_id = triggered_interrupt_ids[0];
+      for(byte rr = 1; rr < interrupts_triggered;rr++){
+        if(Interrupts[highest_priority_id]->get_priority() < Interrupts[triggered_interrupt_ids[rr]]->get_priority()){
+          highest_priority_id = triggered_interrupt_ids[rr];
+        }
+      }
+      return(highest_priority_id);
+    }
+    return(MAX_INTERRUPTS);
+  }
+
 
 	bool BlockHandler::MakeConections(){
 		#if ENABLED(DEBUG_MODE)
@@ -152,7 +191,10 @@
     #ifdef DEBUG_MODE
       Serial.println("Start OK");
     #endif
-
+      for(byte tt = 0; tt < interrupts_N;tt++){
+        if(!Interrupts[tt]->set_start_block(blockList,blockList_N))return(false);
+      }
+      
     #if ENABLED(DEBUG_MODE)
       Serial.println("Connections done!");          
     #endif
@@ -163,26 +205,43 @@
     #ifdef DEBUG_MODE
 		   		Serial.println(current->getID());
     #endif
+
     Block::robot->wait_And_Check_BLE_Connection(5,2);      
-          current->do_action();
+    current->do_action();
 
     #ifdef DEBUG_MODE
 			 Serial.println(current->getNextID());
     #endif
-		current = current->get_next(); 
-			  
+
+    if(interrupt_running == 8 && !interruped_precesed)interrupt_running = checkForInterrupts();  //do not chack interrupts if you are in one alerady
+		
+    Serial.println(interrupt_running);
+    if(interrupt_running !=8 && !interruped_precesed){
+      Interrupts[interrupt_running]->set_interrupted_block(current); 
+      Serial.print("Interrupted block:");
+      Serial.println(current->getID());
+      current = Interrupts[interrupt_running]->get_starting_Block();
+      interruped_precesed = true;
+    }else{
+      current = current->get_next(); 
+    }
         if (current == NULL){
-          if(loopmode){
+          if(interrupt_running !=8){
+            Serial.println("END of interrupt!");
+            current = Interrupts[interrupt_running]->get_interrupted_block();
+            interrupt_running = 8;
+            interruped_precesed = false;
+          }else if(loopmode){
             current = StartBlock;
             return(true);
           }else{
             return(false);
           }
-          
         }
 
         return(true);
-  }
+    }
+
 
 int BlockHandler::freeRam() 
 {

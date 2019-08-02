@@ -57,8 +57,13 @@ byte Block::getNextID(){
 
     100 down custom actions(for pilot control)
  */ 
- byte msg[]  = {9,1,0xe7,2, 0xe7,3, 0xe7,4, 0x00,5, 0x81,6, 0x42,7, 0x3c,8, 0x00,0x0A,15};
- byte msg1[] = {9,1,0xe7,2, 0xe7,3, 0xe7,4, 0x00,5, 0x00,6, 0x00,7, 0x7e,8, 0x81,0x0A,15};
+
+        byte font[][8] = {{ 0x7e, 0x7e, 0x66, 0x66, 0x7e, 0x7e, 0x66, 0x66 }, // A
+                          { 0x78, 0x7c, 0x6c, 0x7c, 0x7e, 0x66, 0x7e, 0x7c }, // B
+                          { 0x7e, 0x7e, 0x60, 0x60, 0x60, 0x60, 0x7e, 0x7e }, // C
+                          { 0x7c, 0x7e, 0x66, 0x66, 0x66, 0x66, 0x7e, 0x7c }, // D
+                          { 0x7e, 0x7e, 0x60, 0x78, 0x78, 0x60, 0x7e, 0x7e }, // E
+                          { 0x7e, 0x7e, 0x60, 0x78, 0x78, 0x60, 0x60, 0x60 }}; // F
   switch(actionID){
      case 0:
         Block::robot->Stop();
@@ -245,11 +250,18 @@ byte Block::getNextID(){
 
             break;
           }
-          Block::robot->wait_And_Check_BLE_Connection(10,5);
         break;
     case 13:
         Block::robot->TurnLEDOff();
         break;
+    case 14:
+          robot->LED_Matrixes[SPI_PORT_2]->SetBitmap(0,font[input_block->get_output()]);
+          
+          robot->LED_Matrixes[SPI_PORT_2]->Update();
+
+          Block::robot->wait_And_Check_BLE_Connection(10,5);
+        break;
+        /*
     case 94:
         UserFunction_5(input_block->get_output(),output_block->get_output());
         break;
@@ -265,6 +277,7 @@ byte Block::getNextID(){
     case 98:
         UserFunction_1();
         break; 
+        */
     case 99:
         Block::robot->RawRotorMove(input_block->get_output(),output_block->get_output());
         Block::robot->Remote_block_used = true;

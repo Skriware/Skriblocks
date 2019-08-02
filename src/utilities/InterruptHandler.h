@@ -15,17 +15,18 @@
 #define LINE_L2 	3
 #define LINE_L3 	4
 #define TIME    	5
-#define BUTTON_1	6
-#define BUTTON_2	7
-#define BUTTON_3	8					
+#define BUTTON_1	12
+#define BUTTON_2	13
+#define BUTTON_3	14					
 
 										//interrupt triggers
 #define DISTANCE_GRATER_THEN 0
 #define DISTANCE_LESS_THEN 1
 #define LINE_DETECTED 2
 #define NO_LINE_DETECTED 3
-#define BUTTON_HIGH 4
-#define BUTTON_LOW 5
+#define BUTTON_PRESSED 4
+#define BUTTON_HOLD 5
+#define TIME_PASSED 6
 
 
 class InterruptHandler {
@@ -35,6 +36,7 @@ public:
 					  byte trigger,
 					  byte _priority,
 					  byte _starting_block_id);
+	~InterruptHandler();
 	bool Check_for_interrupt();
 	bool Condition_saniti_check();
 	void Set_Trig_Distance(byte dist);
@@ -42,6 +44,9 @@ public:
 	byte get_start_block_id();
 	Block* get_starting_Block();
 	bool set_start_block(Block* blockList[],int blockList_N);
+	byte get_priority();
+	Block* get_interrupted_block();
+	void set_interrupted_block(Block *tmp);
 
 protected:
 	byte interrupt_type;
@@ -50,8 +55,10 @@ protected:
 	byte trigger_type;
 	byte trig_distance;
 	byte input;
+	int held_time;
 	int time_period;
 	Block *starting_block;
+	Block *last_interrupted_Block;
 	Skribot *robot;
 	long last_interrupt_time;
 	};

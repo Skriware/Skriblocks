@@ -6,16 +6,32 @@
 	priority = _priority;
 	trigger_type = trigger;
 	input = int_input;
+	last_interrupted_Block = NULL;
+	held_time = 2000;
 	}
+
+	InterruptHandler::~InterruptHandler(){
+		if(interrupt_type == BUTTON_INTERRUPT)buttonDisable(input);
+	}
+
 	bool InterruptHandler::Check_for_interrupt(){
 		if(!Condition_saniti_check())return(false);
+		Serial.println("checking for interrupt!");
 		byte distance;
 		bool line_trig;
 		switch(interrupt_type){
 			case BUTTON_INTERRUPT:
-			
-				if(trigger_type == BUTTON_HIGH){
-					return(digitalRead(input) == HIGH);
+				if(trigger_type == BUTTON_PRESSED){
+					if(buttonPressed(input)){
+					 buttonClearEvent(input);
+					 Serial.println("Button pressed");
+					return(true);
+				}
+				}else if(trigger_type == BUTTON_HOLD){
+					if(buttonHeld(input,held_time)){
+					 buttonClearEvent(input);
+					return(true);
+				}
 				}
  			break;
  			case DISTANCE_INTERRUPT:
@@ -26,7 +42,6 @@
  				}else{
  					return(false);
  				}
-
  				switch(trigger_type){
  					case DISTANCE_GRATER_THEN:
  						return(distance > trig_distance);
@@ -63,27 +78,29 @@
  			break;
 
 		}
+			return(false);
 	}
 	bool InterruptHandler::Condition_saniti_check(){
-		if(input == BUTTON_INTERRUPT){
+		if(interrupt_type == BUTTON_INTERRUPT){
 			if(input == BUTTON_1 || input == BUTTON_2 || input == BUTTON_3){
-				if(trigger_type == BUTTON_HIGH || trigger_type == BUTTON_LOW){
+				if(trigger_type == BUTTON_PRESSED || trigger_type == BUTTON_HOLD){
+					buttonEnable(input);
 					return(true);
 				}
 			}
-		}else if(input == DISTANCE_INTERRUPT){
+		}else if(interrupt_type == DISTANCE_INTERRUPT){
 			if(input == DIST_D1 || input == DIST_D2){
 				if(trigger_type == DISTANCE_GRATER_THEN || trigger_type == DISTANCE_LESS_THEN){
 					return(true);
 				}
 			}
-		}else if(input == LINE_INTERRUPT){
+		}else if(interrupt_type == LINE_INTERRUPT){
 			if(input == LINE_L1 || input == LINE_L2 || input == LINE_L3){
 				if(trigger_type == NO_LINE_DETECTED || trigger_type == LINE_DETECTED){
 					return(true);
 				}
 			}
-		}else if(input == TIME_INTERRUPT){
+		}else if(interrupt_type == TIME_INTERRUPT){
 			if(input == 0 && trigger_type == 0){
 				return(true);
 			}
@@ -117,3 +134,17 @@
             return(true);
           }
 	}
+
+	byte InterruptHandler::get_priority(){
+		return(priority);
+	}
+
+	Block* InterruptHandler::get_interrupted_block(){
+		return(last_interrupted_Block);
+	}
+
+	void InterruptHandler::set_interrupted_block(Block *tmp){
+		last_interrupted_Block = tmp;
+	}
+
+	

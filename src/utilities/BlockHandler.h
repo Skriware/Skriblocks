@@ -7,6 +7,7 @@
 #include "ConstBlock.h"
 #include "LogicCompare.h"
 #include "AritmeticBlock.h"
+#include "InterruptHandler.h"
 class BlockHandler {
 
 
@@ -18,9 +19,11 @@ public:
 	void addIf(int id,int _next_true, int _next_false, int _logic_block);
 	void addLogic(int id,int logicOperation,int _input_left, int _input_right);
 	void addLogicCompare(int id,int _logicOperation,int _input_left, int _input_right);
+	void addInterrupt(byte type,byte input,byte trigger,byte _priority,byte _starting_block);
 	void addAritmeticBlock(int id,int _operation,int _left,int _right);
 	void addConst(int id, int32_t value);
-	void addConst(int id,String value);																			//Adding Blocks types
+	void addConst(int id,String value);	
+	byte checkForInterrupts();																		//Adding Blocks types
 	
 	bool MakeConections();
 	bool doBlock(bool loopmode = false);																							//Making conectons(assigning pointers from IDs) 
@@ -37,11 +40,12 @@ public:
 
 	bool runCode;
 
-	static const int blockList_MAX 			= 200;
-	static const int IfblockList_MAX 		= 20;
-	static const int LoopblockList_MAX 		= 20;
-	static const int LogicblockList_MAX 	= 40;
-	static const int AritmeticblockList_MAX	= 15;
+	 #define blockList_MAX 			200
+	 #define IfblockList_MAX 		20
+	 #define LoopblockList_MAX 		20
+	 #define LogicblockList_MAX 	40
+	 #define AritmeticblockList_MAX	15
+	 #define MAX_INTERRUPTS 8
 
 	Block *blockList[blockList_MAX];
 	Conditional *IfblockList[IfblockList_MAX];
@@ -50,6 +54,10 @@ public:
 	LogicBlock *LogicblockList[LogicblockList_MAX];
 	Block *current;
 	Block *StartBlock;
+	InterruptHandler *Interrupts[MAX_INTERRUPTS];
+	byte interrupt_running;
+	byte interrupts_N;
+	bool interruped_precesed;
 	int blockList_N;
 	int IfblockList_N;
 	int LoopblockList_N;

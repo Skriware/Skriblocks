@@ -47,7 +47,7 @@ void setup() {
     Serial.println("DEBUG_MODE");
   #endif
   #ifdef ESP_H
-     robot = new Skribot("SKRIBRAIN");
+     robot = new Skribot("SKRIBRAIN+LED_MATRIX");
   #else
     robot = new Skribot("EDU_SHIELD");
   #endif
