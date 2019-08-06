@@ -25,7 +25,7 @@ public:
 	void addConst(int id,String value);	
 	bool checkForInterrupts();																		//Adding Blocks types
 	
-	void active_wait(int ms,int interval);
+	void active_wait(uint32_t ms,int interval);
 
 	bool MakeConections();
 	bool doBlock(bool loopmode = false);																							//Making conectons(assigning pointers from IDs) 
@@ -59,6 +59,7 @@ public:
 	InterruptHandler *Interrupts[MAX_INTERRUPTS];
 	byte interrupt_running;
 	byte interrupts_N;
+	uint32_t millis_left_from_interrupt;
 	bool interruped_precesed;
 	int blockList_N;
 	int IfblockList_N;

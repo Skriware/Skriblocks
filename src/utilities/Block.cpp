@@ -74,7 +74,9 @@ byte Block::getNextID(){
         //UserFunction_3(input_block->get_output());
       if(!Block::robot->config_mode){
         Block::robot->SetSpeed(output_block->get_output() + 155);
-        Block::robot->MoveForward(input_block->get_output());
+        Block::robot->MoveForward();
+        Block::BH->active_wait(input_block->get_output(),10);
+        Block::robot->Stop();
       }else{
         Block::robot->Invert_Left_Rotors(input_block->get_output()/1000);
         EEPROM.write(EEPROM_LEFT_INVERT_ADDR,input_block->get_output()/1000);
@@ -90,7 +92,9 @@ byte Block::getNextID(){
     case 2:
         if(!Block::robot->config_mode){
         Block::robot->SetSpeed(output_block->get_output() + 155);
-        Block::robot->MoveBack(input_block->get_output());
+        Block::robot->MoveBack();
+        Block::BH->active_wait(input_block->get_output(),10);
+        Block::robot->Stop();
          }else{
         Block::robot->Invert_Right_Rotors(input_block->get_output()/1000);
          EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,input_block->get_output()/1000);
@@ -109,7 +113,9 @@ byte Block::getNextID(){
     case 3:
         if(!Block::robot->config_mode){
           Block::robot->SetSpeed(255);
-          Block::robot->FaceLeft(input_block->get_output());
+          Block::robot->FaceLeft();
+          Block::BH->active_wait(input_block->get_output(),10);
+          Block::robot->Stop();
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
@@ -134,7 +140,9 @@ byte Block::getNextID(){
     case 4:
         if(!Block::robot->config_mode){
           Block::robot->SetSpeed(255);
-          Block::robot->FaceRight(input_block->get_output());
+          Block::robot->FaceRight();
+          Block::BH->active_wait(input_block->get_output(),10);
+          Block::robot->Stop();
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Right_Rotors(input_block->get_output()/1000);
@@ -297,7 +305,6 @@ byte Block::getNextID(){
         break;
 
   }
-  //Serial.println("Action Done!");
 }
 
 bool Block::set_next(Block* blockList[],int blockList_N) {

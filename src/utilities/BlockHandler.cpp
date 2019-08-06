@@ -26,6 +26,7 @@
    interrupt_running = MAX_INTERRUPTS;
    interrupts_N = 0;
    interruped_precesed = false;
+   millis_left_from_interrupt = 0;
 	}
 
   void BlockHandler::clear(){
@@ -389,11 +390,16 @@ int BlockHandler::Handle_Msg(){
   return(2);    
 }
 
-
-void BlockHandler::active_wait(int ms, int interval){
+void BlockHandler::active_wait(uint32_t ms, int interval){
+   
    int loop_iterator = ms/interval;
-    int ms_left_after_loop = loop_iterator%interval;
-    delay(ms_left_after_loop);
+    int ms_left_befor_loop = ms%interval;
+    if(millis_left_from_interrupt !=0 && interrupt_running == MAX_INTERRUPTS){
+      loop_iterator = millis_left_from_interrupt/interval;
+      ms_left_befor_loop = millis_left_from_interrupt%interval;
+      millis_left_from_interrupt = 0;
+    }
+    delay(ms_left_befor_loop);
     for(int yy = 1; yy < loop_iterator; yy++){
           if(Block::robot->using_BLE_Connection && !Block::robot->connection_Break_Reported && Block::robot->BLE_checkConnection() == false){
           Block::robot->connection_Break_Reported = true;
@@ -415,7 +421,10 @@ void BlockHandler::active_wait(int ms, int interval){
             if(Block::robot->program_End_Reported || Block::robot->connection_Break_Reported)break;
           
       }
-      if(checkForInterrupts())break;
+      if(checkForInterrupts()){
+        millis_left_from_interrupt = (loop_iterator - yy)*interval;
+        break;
+      }
       if(Block::robot->stausLEDused)Block::robot->BaterryCheck();
       delay(interval);
     } 
