@@ -1,6 +1,8 @@
 #include "Block.h"
+#include "BlockHandler.h"
 
 Skribot* Block::robot = NULL;
+BlockHandler* Block::BH = NULL;
 
 Block::Block() {
   input_block = NULL;
@@ -155,19 +157,19 @@ byte Block::getNextID(){
         }
         break;
     case 5:
-        Block::robot->wait_And_Check_BLE_Connection(input_block->get_output(),10);
+        Block::BH->active_wait(input_block->get_output(),10);
         break;
     case 6:
         Block::robot->Stop();
         break;
     case 8:
         Block::robot->CloseClaw();
-        Block::robot->wait_And_Check_BLE_Connection(100,10);
+        Block::BH->active_wait(100,10);
         break;
     case 9:
         if(!Block::robot->config_mode){
           Block::robot->OpenClaw();
-          Block::robot->wait_And_Check_BLE_Connection(100,10);
+          Block::BH->active_wait(100,10);
         }else{
           Serial.println("Config mode operation!");
           Block::robot->TurnLEDOn(0,0,0);
@@ -183,11 +185,11 @@ byte Block::getNextID(){
         break;
     case 10:
           Block::robot->Pick_Up();
-          Block::robot->wait_And_Check_BLE_Connection(100,10);
+          Block::BH->active_wait(100,10);
         break;
     case 11:
         Block::robot->Put_Down();
-        Block::robot->wait_And_Check_BLE_Connection(100,10);
+        Block::BH->active_wait(100,10);
         break;
     case 12:
          switch(input_block->get_output()){
@@ -203,7 +205,7 @@ byte Block::getNextID(){
                       Block::robot->TurnLEDOn(255,255,255);
                       Block::robot->LineSensors[zz]->Line_Readout();
                       Block::robot->TurnLEDOn(0,0,0);
-                      Block::robot->wait_And_Check_BLE_Connection(100,5);
+                      Block::BH->active_wait(100,5);
                       if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_1)Block::robot->Write_EEPROM_INT(EEPROM_L1_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
                       if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_2)Block::robot->Write_EEPROM_INT(EEPROM_L2_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
                       if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_3)Block::robot->Write_EEPROM_INT(EEPROM_L3_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
@@ -236,7 +238,7 @@ byte Block::getNextID(){
                       Block::robot->TurnLEDOn(255,255,255);
                       Block::robot->LineSensors[zz]->No_Line_Readout();
                       Block::robot->TurnLEDOn(0,0,0);
-                      Block::robot->wait_And_Check_BLE_Connection(100,5);
+                      Block::BH->active_wait(100,5);
                       if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_1)Block::robot->Write_EEPROM_INT(EEPROM_L1_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
                       if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_2)Block::robot->Write_EEPROM_INT(EEPROM_L2_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
                       if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_3)Block::robot->Write_EEPROM_INT(EEPROM_L3_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
@@ -259,7 +261,7 @@ byte Block::getNextID(){
           
           robot->LED_Matrixes[SPI_PORT_2]->Update();
 
-          Block::robot->wait_And_Check_BLE_Connection(10,5);
+          Block::BH->active_wait(10,5);
         break;
         /*
     case 94:
@@ -355,6 +357,10 @@ String Block::get_string_output(){
 
 void Block::setRobot(Skribot *_robot){
   Block::robot = _robot;
+}
+
+void Block::setBlockHandler(BlockHandler *bh){
+  Block::BH = bh;
 }
 
 

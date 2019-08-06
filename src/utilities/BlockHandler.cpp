@@ -94,28 +94,28 @@
 		AritmeticblockList_N++;
 	}
 
-  void BlockHandler::addInterrupt(byte type,byte input,byte trigger,byte _priority,byte _starting_block_id){
+  void BlockHandler::addInterrupt(byte type,byte input,byte trigger,byte _priority,byte _starting_block_id,int value){
     Interrupts[interrupts_N]= new InterruptHandler(type,input,trigger,_priority,_starting_block_id);
+    Interrupts[interrupts_N]->setValue(value);
     interrupts_N++;
   }
 
-  byte BlockHandler::checkForInterrupts(){
-    Serial.println("Checking for interrupts!");
+  bool BlockHandler::checkForInterrupts(){
+    if(interrupt_running == 8 && !interruped_precesed){
     byte interrupts_triggered = 0;
     byte triggered_interrupt_ids[8];
     for(byte ii = 0; ii < interrupts_N; ii++){
-      Serial.print("Interrupt:");
-
       if(Interrupts[ii]->Check_for_interrupt()){
-         Serial.println("OK");
         triggered_interrupt_ids[interrupts_triggered] = ii;
         interrupts_triggered++;
       }
     }
     if(interrupts_triggered == 1){
-      return(triggered_interrupt_ids[0]);
+      interrupt_running = triggered_interrupt_ids[0];
+      return(true);
     }else if(interrupts_triggered ==0){
-      return(MAX_INTERRUPTS);
+      interrupt_running = MAX_INTERRUPTS;
+      return(false);
     }else if(interrupts_triggered >1){
       byte highest_priority_id = triggered_interrupt_ids[0];
       for(byte rr = 1; rr < interrupts_triggered;rr++){
@@ -123,10 +123,12 @@
           highest_priority_id = triggered_interrupt_ids[rr];
         }
       }
-      return(highest_priority_id);
+      interrupt_running = highest_priority_id;
+      return(true);
     }
-    return(MAX_INTERRUPTS);
   }
+  return(false);
+}
 
 
 	bool BlockHandler::MakeConections(){
@@ -213,23 +215,19 @@
 			 Serial.println(current->getNextID());
     #endif
 
-    if(interrupt_running == 8 && !interruped_precesed)interrupt_running = checkForInterrupts();  //do not chack interrupts if you are in one alerady
+    checkForInterrupts();  //do not check interrupts if you are in one alerady
 		
-    Serial.println(interrupt_running);
-    if(interrupt_running !=8 && !interruped_precesed){
+    if(interrupt_running !=MAX_INTERRUPTS && !interruped_precesed){
       Interrupts[interrupt_running]->set_interrupted_block(current); 
-      Serial.print("Interrupted block:");
-      Serial.println(current->getID());
       current = Interrupts[interrupt_running]->get_starting_Block();
       interruped_precesed = true;
     }else{
       current = current->get_next(); 
     }
         if (current == NULL){
-          if(interrupt_running !=8){
-            Serial.println("END of interrupt!");
+          if(interrupt_running !=MAX_INTERRUPTS){
             current = Interrupts[interrupt_running]->get_interrupted_block();
-            interrupt_running = 8;
+            interrupt_running = MAX_INTERRUPTS;
             interruped_precesed = false;
           }else if(loopmode){
             current = StartBlock;
@@ -391,3 +389,35 @@ int BlockHandler::Handle_Msg(){
   return(2);    
 }
 
+
+void BlockHandler::active_wait(int ms, int interval){
+   int loop_iterator = ms/interval;
+    int ms_left_after_loop = loop_iterator%interval;
+    delay(ms_left_after_loop);
+    for(int yy = 1; yy < loop_iterator; yy++){
+          if(Block::robot->using_BLE_Connection && !Block::robot->connection_Break_Reported && Block::robot->BLE_checkConnection() == false){
+          Block::robot->connection_Break_Reported = true;
+          #ifdef DEBUG_MODE
+          if(Block::robot->connection_Break_Reported)Serial.println("Connection LOST!");
+          #endif
+        }else if(Block::robot->using_BLE_Connection && !Block::robot->program_End_Reported && Block::robot->BLE_dataAvailable() > 0){
+            char tmp;
+            while(Block::robot->BLE_dataAvailable() > 0){
+              tmp = Block::robot->BLE_read();
+              delay(5);                     // to be sure that next char will be recieved
+              if((tmp == 'E' && Block::robot->BLE_read() == 'N' && Block::robot->BLE_read() == 'D') || (tmp == 'B' && Block::robot->BLE_read() == 'E' && Block::robot->BLE_read() == 'G')){
+                Block::robot->program_End_Reported = true;
+              }
+              #ifndef ESP_H && _VARIANT_BBC_MICROBIT_
+              if(tmp != 'B')Block::robot->serialFlush();
+              #endif
+            }
+            if(Block::robot->program_End_Reported || Block::robot->connection_Break_Reported)break;
+          
+      }
+      if(checkForInterrupts())break;
+      if(Block::robot->stausLEDused)Block::robot->BaterryCheck();
+      delay(interval);
+    } 
+    
+}

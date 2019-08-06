@@ -19,12 +19,14 @@ public:
 	void addIf(int id,int _next_true, int _next_false, int _logic_block);
 	void addLogic(int id,int logicOperation,int _input_left, int _input_right);
 	void addLogicCompare(int id,int _logicOperation,int _input_left, int _input_right);
-	void addInterrupt(byte type,byte input,byte trigger,byte _priority,byte _starting_block);
+	void addInterrupt(byte type,byte input,byte trigger,byte _priority,byte _starting_block,int value = 0);
 	void addAritmeticBlock(int id,int _operation,int _left,int _right);
 	void addConst(int id, int32_t value);
 	void addConst(int id,String value);	
-	byte checkForInterrupts();																		//Adding Blocks types
+	bool checkForInterrupts();																		//Adding Blocks types
 	
+	void active_wait(int ms,int interval);
+
 	bool MakeConections();
 	bool doBlock(bool loopmode = false);																							//Making conectons(assigning pointers from IDs) 
 																												// Starting code

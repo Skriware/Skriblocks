@@ -4,6 +4,7 @@
 #include "UserFunctions.h"
 
 class Block;
+class BlockHandler;
 
 class Block {
 public:
@@ -26,7 +27,9 @@ public:
   	byte getActionID();
   	virtual String get_string_output();
   	static void setRobot(Skribot *rob);
+  	static void setBlockHandler(BlockHandler *bh);
   	static Skribot *robot;
+  	static BlockHandler *BH;
 
 
 
@@ -40,7 +43,6 @@ protected:
 	byte outputblockID;
 	byte nextblockID;
 	byte actionID;
-	
 	
 	};
 

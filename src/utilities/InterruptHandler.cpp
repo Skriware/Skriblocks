@@ -7,7 +7,7 @@
 	trigger_type = trigger;
 	input = int_input;
 	last_interrupted_Block = NULL;
-	held_time = 2000;
+	value = 0;
 	}
 
 	InterruptHandler::~InterruptHandler(){
@@ -16,21 +16,30 @@
 
 	bool InterruptHandler::Check_for_interrupt(){
 		if(!Condition_saniti_check())return(false);
-		Serial.println("checking for interrupt!");
 		byte distance;
 		bool line_trig;
 		switch(interrupt_type){
 			case BUTTON_INTERRUPT:
 				if(trigger_type == BUTTON_PRESSED){
-					if(buttonPressed(input)){
-					 buttonClearEvent(input);
-					 Serial.println("Button pressed");
-					return(true);
+					if(buttonEventPending(input)){
+					 if(buttonPressed(input)){
+					 	buttonClearEvent(input);
+					 	return(true);
+					 }else{
+					 	buttonClearEvent(input);
+					 	return(false);
+					 }
+					
 				}
 				}else if(trigger_type == BUTTON_HOLD){
-					if(buttonHeld(input,held_time)){
-					 buttonClearEvent(input);
-					return(true);
+					if(buttonEventPending(input)){
+					 if(buttonHeld(input,value)){
+					 	buttonClearEvent(input);
+					 	return(true);
+					 }else{
+					 	buttonClearEvent(input);
+					 	return(false);
+					 }
 				}
 				}
  			break;
@@ -44,10 +53,10 @@
  				}
  				switch(trigger_type){
  					case DISTANCE_GRATER_THEN:
- 						return(distance > trig_distance);
+ 						return(distance > value);
  					break;
  					case DISTANCE_LESS_THEN:
- 						return(distance < trig_distance);
+ 						return(distance < value);
  					break;
  					default:
  						return(false);
@@ -63,10 +72,10 @@
  				}else{
  					return(false);
  				}
- 				return(robot->ReadLineSensor(input - 1) == line_trig);
+ 				return(robot->ReadLineSensor(input - 1) == value);
  			break; 
  			case TIME_INTERRUPT :
- 				if(millis()-last_interrupt_time > time_period){
+ 				if(millis()-last_interrupt_time > value){
  					last_interrupt_time = millis();
  					return(true);
  				}else{
@@ -107,12 +116,6 @@
 		}
 		return(false);
 	}
-	void InterruptHandler::Set_Trig_Distance(byte dist){
-		trig_distance = dist;
-	}
-	void InterruptHandler::Set_Trig_Time(int T){
-		time_period = T;
-	}
 	byte InterruptHandler::get_start_block_id(){
 		return(starting_block_id);
 	}
@@ -145,6 +148,9 @@
 
 	void InterruptHandler::set_interrupted_block(Block *tmp){
 		last_interrupted_Block = tmp;
+	}
+	void InterruptHandler::setValue(int val){
+		value = val;
 	}
 
 	

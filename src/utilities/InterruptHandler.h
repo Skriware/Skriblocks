@@ -39,24 +39,21 @@ public:
 	~InterruptHandler();
 	bool Check_for_interrupt();
 	bool Condition_saniti_check();
-	void Set_Trig_Distance(byte dist);
-	void Set_Trig_Time(int T);
 	byte get_start_block_id();
 	Block* get_starting_Block();
 	bool set_start_block(Block* blockList[],int blockList_N);
 	byte get_priority();
 	Block* get_interrupted_block();
 	void set_interrupted_block(Block *tmp);
+	void setValue(int v);
 
 protected:
 	byte interrupt_type;
 	byte starting_block_id;
 	byte priority;
 	byte trigger_type;
-	byte trig_distance;
 	byte input;
-	int held_time;
-	int time_period;
+	int value;
 	Block *starting_block;
 	Block *last_interrupted_Block;
 	Skribot *robot;
