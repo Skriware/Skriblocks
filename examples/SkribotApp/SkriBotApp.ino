@@ -47,12 +47,13 @@ void setup() {
     Serial.println("DEBUG_MODE");
   #endif
   #ifdef ESP_H
-     robot = new Skribot("SKRIBRAIN+LED_MATRIX");
+     robot = new Skribot("SKRIBRAIN");
   #else
     robot = new Skribot("EDU_SHIELD");
   #endif
-  robot->BLE_Setup();
   robot->ConfigureBoardEEPROM();
+  robot->BLE_Setup();
+ 
   Block::setRobot(robot); 
   BT_state = false; 
   #if ENABLED(DEBUG_MODE)
