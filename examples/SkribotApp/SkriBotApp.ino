@@ -55,6 +55,7 @@ void setup() {
   robot->BLE_Setup();
  
   Block::setRobot(robot); 
+  Block::setBlockHandler(&BH);
   BT_state = false; 
   #if ENABLED(DEBUG_MODE)
     Serial.println(freeRam());

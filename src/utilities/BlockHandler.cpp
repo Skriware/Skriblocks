@@ -391,7 +391,6 @@ int BlockHandler::Handle_Msg(){
 }
 
 void BlockHandler::active_wait(uint32_t ms, int interval){
-   
    int loop_iterator = ms/interval;
     int ms_left_befor_loop = ms%interval;
     if(millis_left_from_interrupt !=0 && interrupt_running == MAX_INTERRUPTS){
@@ -415,7 +414,7 @@ void BlockHandler::active_wait(uint32_t ms, int interval){
                 Block::robot->program_End_Reported = true;
               }
               #ifndef ESP_H && _VARIANT_BBC_MICROBIT_
-              if(tmp != 'B')Block::robot->serialFlush();
+              if(tmp != 'B')serialFlush();
               #endif
             }
             if(Block::robot->program_End_Reported || Block::robot->connection_Break_Reported)break;
@@ -428,5 +427,4 @@ void BlockHandler::active_wait(uint32_t ms, int interval){
       if(Block::robot->stausLEDused)Block::robot->BaterryCheck();
       delay(interval);
     } 
-    
 }
