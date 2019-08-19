@@ -112,9 +112,11 @@ byte Block::getNextID(){
         break;
     case 3:
         if(!Block::robot->config_mode){
-          Block::robot->SetSpeed(255);
-          Block::robot->FaceLeft();
-          Block::BH->active_wait(input_block->get_output(),10);
+          //Block::robot->SetSpeed(255);
+          //Block::robot->FaceLeft();
+          //Block::BH->active_wait(input_block->get_output(),10);
+          Block::robot->smartRotor->setDirection(0);
+          Block::robot->smartRotor->turnByAngle(input_block->get_output()/1000);
           Block::robot->Stop();
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
@@ -139,10 +141,13 @@ byte Block::getNextID(){
         break;
     case 4:
         if(!Block::robot->config_mode){
-          Block::robot->SetSpeed(255);
+          /*Block::robot->SetSpeed(255);
           Block::robot->FaceRight();
           Block::BH->active_wait(input_block->get_output(),10);
           Block::robot->Stop();
+          */
+          Block::robot->smartRotor->setDirection(1);
+          Block::robot->smartRotor->turnByAngle(input_block->get_output()/1000);
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Right_Rotors(input_block->get_output()/1000);
@@ -165,7 +170,8 @@ byte Block::getNextID(){
         }
         break;
     case 5:
-        Block::BH->active_wait(input_block->get_output(),10);
+        //Block::BH->active_wait(input_block->get_output(),10);
+        Block::robot->smartRotor->setPulsesPerTurn(input_block->get_output()/1000);
         break;
     case 6:
         Block::robot->Stop();
