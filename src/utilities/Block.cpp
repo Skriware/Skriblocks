@@ -111,9 +111,11 @@ byte Block::getNextID(){
         break;
     case 3:
         if(!Block::robot->config_mode){
+
           Block::robot->smartRotor->turnByAngle(-input_block->get_output()/1000);
           while (Block::robot->smartRotor->isMoving())
             Block::BH->active_wait(10, 10);
+
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
