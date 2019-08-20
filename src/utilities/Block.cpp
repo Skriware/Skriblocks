@@ -73,9 +73,9 @@ byte Block::getNextID(){
     case 1:
       if(!Block::robot->config_mode){
         Block::robot->smartRotor->setDirection(1);
-        Block::robot->smartRotor->move();
-        Block::BH->active_wait(input_block->get_output(),10);
-        Block::robot->smartRotor->stop();
+        Block::robot->smartRotor->moveByMeters(input_block->get_output()/1000);
+        while (Block::robot->smartRotor->isMoving())
+          Block::BH->active_wait(10, 10);
       }else{
         Block::robot->Invert_Left_Rotors(input_block->get_output()/1000);
         EEPROM.write(EEPROM_LEFT_INVERT_ADDR,input_block->get_output()/1000);
@@ -90,10 +90,10 @@ byte Block::getNextID(){
         break;
     case 2:
         if(!Block::robot->config_mode){
-        Block::robot->smartRotor->setDirection(0);
-        Block::robot->smartRotor->move();
-        Block::BH->active_wait(input_block->get_output(),10);
-        Block::robot->smartRotor->stop();
+          Block::robot->smartRotor->setDirection(0);
+          Block::robot->smartRotor->moveByMeters(input_block->get_output()/1000);
+          while (Block::robot->smartRotor->isMoving())
+            Block::BH->active_wait(10, 10);
          }else{
         Block::robot->Invert_Right_Rotors(input_block->get_output()/1000);
          EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,input_block->get_output()/1000);
@@ -162,8 +162,10 @@ byte Block::getNextID(){
         }
         break;
     case 5:
-        //Block::BH->active_wait(input_block->get_output(),10);
-        Block::robot->smartRotor->setPulsesPerTurn(input_block->get_output()/1000);
+        if (Block::robot->config_mode)
+          Block::robot->smartRotor->setPulsesPerMeter(input_block->get_output()/1000);
+        else
+          Block::robot->smartRotor->setPulsesPerTurn(input_block->get_output()/1000);
         break;
     case 6:
         Block::robot->smartRotor->stop();
