@@ -115,9 +115,10 @@ byte Block::getNextID(){
           //Block::robot->SetSpeed(255);
           //Block::robot->FaceLeft();
           //Block::BH->active_wait(input_block->get_output(),10);
+          //Block::robot->Stop();
           Block::robot->smartRotor->setDirection(0);
           Block::robot->smartRotor->turnByAngle(input_block->get_output()/1000);
-          Block::robot->Stop();
+       
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
