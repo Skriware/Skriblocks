@@ -165,9 +165,9 @@ byte Block::getNextID(){
         break;
     case 5:
         if (Block::robot->config_mode)
-          Block::robot->smartRotor->setPulsesPerMeter(input_block->get_output()/1000);
+          Block::robot->smartRotor->setPulsesPerTurn(input_block->get_output()/1000, -1);
         else
-          Block::robot->smartRotor->setPulsesPerTurn(input_block->get_output()/1000);
+          Block::robot->smartRotor->setPulsesPerTurn(-1, input_block->get_output()/1000);
         break;
     case 6:
         Block::robot->smartRotor->stop();
