@@ -72,8 +72,8 @@ byte Block::getNextID(){
         break;
     case 1:
       if(!Block::robot->config_mode){
-        Block::robot->smartRotor->setDirection(1);
-        Block::robot->smartRotor->moveByMeters(input_block->get_output()/1000);
+        Block::robot->smartRotor->setDirection(0);
+        Block::robot->smartRotor->moveByMeters((float)input_block->get_output()/1000.0);
         while (Block::robot->smartRotor->isMoving())
           Block::BH->active_wait(10, 10);
       }else{
@@ -90,8 +90,8 @@ byte Block::getNextID(){
         break;
     case 2:
         if(!Block::robot->config_mode){
-          Block::robot->smartRotor->setDirection(0);
-          Block::robot->smartRotor->moveByMeters(input_block->get_output()/1000);
+          Block::robot->smartRotor->setDirection(1);
+          Block::robot->smartRotor->moveByMeters((float)input_block->get_output()/1000.0);
           while (Block::robot->smartRotor->isMoving())
             Block::BH->active_wait(10, 10);
          }else{
