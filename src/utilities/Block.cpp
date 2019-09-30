@@ -205,10 +205,12 @@ byte Block::getNextID(){
          switch(input_block->get_output()){
             case 0 : 
                 Block::robot->TurnLEDOn(255,0,0);
+                if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote('C');
             break;
              case 1 : 
                 if(!Block::robot->config_mode){
                   Block::robot->TurnLEDOn(0,0,255);
+                  if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote('D');
                 }else{
                    Serial.println("Config mode operation!");
                    for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
@@ -235,13 +237,16 @@ byte Block::getNextID(){
             break;
              case 2 : 
                 Block::robot->TurnLEDOn(0,255,0);
+                if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote('E');
             break;
              case 4 : 
                 Block::robot->TurnLEDOn(255,0,255);
+                if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote('G');
             break;
              case 5 : 
                 if(!Block::robot->config_mode){
                   Block::robot->TurnLEDOn(255,255,255);
+                  if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote('A');
                 }else{
                    Serial.println("Config mode operation!");
                    for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
@@ -257,6 +262,7 @@ byte Block::getNextID(){
             break;
              case 3 : 
                 Block::robot->TurnLEDOn(184, 255, 3);
+                if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote('F');
             break;
             default:
 
@@ -265,6 +271,7 @@ byte Block::getNextID(){
         break;
     case 13:
         Block::robot->TurnLEDOff();
+        if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->StopNote();
         break;
     case 14:
           robot->LED_Matrixes[SPI_PORT_2]->SetBitmap(0,font[input_block->get_output()]);
