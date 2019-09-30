@@ -17,6 +17,7 @@ void BTLOST(){
   robot->TurnLEDOff(); 
   robot->OpenClaw();
   robot->Put_Down();
+   if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->StopNote();
 }
 
 void Blink(){
@@ -127,6 +128,7 @@ void loop() {
       ){
       BH.clear();
       robot->Stop();
+      if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->StopNote();
       #ifndef _VARIANT_BBC_MICROBIT_
         robot->OpenClaw();
         robot->Put_Down();
@@ -213,6 +215,7 @@ void loop() {
               robot->Put_Down();
               robot->OpenClaw();
               robot->TurnLEDOn(255,255,255);
+               if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->StopNote();
               break;  
             }else if(!robot->BLE_checkConnection()){
                 BTLOST();
