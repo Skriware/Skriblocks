@@ -381,3 +381,6 @@ bool Block::get_bool_output(){
   return(false);
 }
 
+uint8_t* Block::get_table_output(){
+  return(NULL);
+}

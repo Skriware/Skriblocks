@@ -16,6 +16,7 @@ public:
 	virtual	Block* get_next();
 	virtual bool get_bool_output();
   	virtual int32_t get_output();
+  	virtual uint8_t* get_table_output();
   	void set_output(int x);
   	byte getID();
   	bool set_next(Block* blockList[],int blockList_N);
@@ -31,14 +32,12 @@ public:
   	static Skribot *robot;
   	static BlockHandler *BH;
 
-
-
 protected:
 	byte blockID;
 	int32_t output;
 	Block *input_block;
 	Block *output_block;
-	Block *next; 
+	Block *next;
 	byte inputblockID;
 	byte outputblockID;
 	byte nextblockID;
