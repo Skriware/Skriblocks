@@ -48,7 +48,7 @@ void setup() {
     Serial.println("DEBUG_MODE");
   #endif
   #ifdef ESP_H
-     robot = new Skribot("SMART_ROTOR_TEST");
+     robot = new Skribot("SKRIBRAIN_ARDUBLOCK");
   #else
     robot = new Skribot("EDU_SHIELD");
   #endif
