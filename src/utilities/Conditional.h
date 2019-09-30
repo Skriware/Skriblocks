@@ -21,8 +21,6 @@ protected:
   byte operation;
   bool main_logic_value;
 
-  
-
 };
 
 #endif

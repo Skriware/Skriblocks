@@ -164,11 +164,15 @@ byte Block::getNextID(){
         }
         break;
     case 5:
+       if(Block::robot->smartRotor != NULL){
         if (Block::robot->config_mode)
           Block::robot->smartRotor->setPulsesPerTurn(input_block->get_output()/1000, -1);
         else
           Block::robot->smartRotor->setPulsesPerTurn(-1, input_block->get_output()/1000);
-        break;
+      }else{
+         Block::BH->active_wait(input_block->get_output(),10);
+      }
+     break;
     case 6:
         Block::robot->smartRotor->stop();
         break;
@@ -205,10 +209,12 @@ byte Block::getNextID(){
          switch(input_block->get_output()){
             case 0 : 
                 Block::robot->TurnLEDOn(255,0,0);
+                if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote("C4");
             break;
              case 1 : 
                 if(!Block::robot->config_mode){
                   Block::robot->TurnLEDOn(0,0,255);
+                  if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote("D4");
                 }else{
                    Serial.println("Config mode operation!");
                    for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
@@ -235,13 +241,16 @@ byte Block::getNextID(){
             break;
              case 2 : 
                 Block::robot->TurnLEDOn(0,255,0);
+                if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote("E4");
             break;
              case 4 : 
                 Block::robot->TurnLEDOn(255,0,255);
+                if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote("G4");
             break;
              case 5 : 
                 if(!Block::robot->config_mode){
                   Block::robot->TurnLEDOn(255,255,255);
+                  if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote("A4");
                 }else{
                    Serial.println("Config mode operation!");
                    for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
@@ -257,6 +266,7 @@ byte Block::getNextID(){
             break;
              case 3 : 
                 Block::robot->TurnLEDOn(184, 255, 3);
+                if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->PlayNote("F4");
             break;
             default:
 
@@ -265,6 +275,7 @@ byte Block::getNextID(){
         break;
     case 13:
         Block::robot->TurnLEDOff();
+        if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->StopNote();
         break;
     case 14:
           robot->LED_Matrixes[SPI_PORT_2]->SetBitmap(0,font[input_block->get_output()]);
@@ -381,3 +392,6 @@ bool Block::get_bool_output(){
   return(false);
 }
 
+uint8_t* Block::get_table_output(){
+  return(NULL);
+}
