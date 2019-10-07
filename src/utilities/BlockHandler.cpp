@@ -102,9 +102,9 @@
   }
 
   bool BlockHandler::checkForInterrupts(){
-    if(interrupt_running == 8 && !interruped_precesed){
+    if(interrupt_running == MAX_INTERRUPTS && !interruped_precesed){
     byte interrupts_triggered = 0;
-    byte triggered_interrupt_ids[8];
+    byte triggered_interrupt_ids[MAX_INTERRUPTS];
     for(byte ii = 0; ii < interrupts_N; ii++){
       if(Interrupts[ii]->Check_for_interrupt()){
         triggered_interrupt_ids[interrupts_triggered] = ii;
@@ -194,6 +194,7 @@
     #ifdef DEBUG_MODE
       Serial.println("Start OK");
     #endif
+      Serial.println("interrupts OK");
       for(byte tt = 0; tt < interrupts_N;tt++){
         if(!Interrupts[tt]->set_start_block(blockList,blockList_N))return(false);
       }
@@ -219,6 +220,7 @@
     checkForInterrupts();  //do not check interrupts if you are in one alerady
 		
     if(interrupt_running !=MAX_INTERRUPTS && !interruped_precesed){
+      current->interrupted = true;
       Interrupts[interrupt_running]->set_interrupted_block(current); 
       current = Interrupts[interrupt_running]->get_starting_Block();
       interruped_precesed = true;
@@ -308,6 +310,7 @@ int BlockHandler::Handle_Msg(){
           byte next;
           byte nextTrue,nextFalse,logicBlock;
           byte input_left,input_right, compareOperation;
+          byte type,trigger,priority, starting_block;
   switch(AllMessage[Mcursor]){
     case 'L':
           Mcursor += 2;
@@ -372,12 +375,22 @@ int BlockHandler::Handle_Msg(){
       case 'A':
           Serial.print("ACTION:");
            Mcursor +=2;
-          Serial.print("ActionID: ");
           actionID = readInt();
           input = readInt();
           output = readInt();
           next  = readInt();
           addBlock(id,next,actionID,input,output);
+          break;
+      case 'V':
+          Serial.println("INTERRUPT:");
+          Mcursor +=2;
+          type = readInt();
+          input = readInt();
+          trigger = readInt();
+          value = readInt();
+          priority = readInt();
+          starting_block = readInt();
+          addInterrupt(type,input,trigger,priority,starting_block,value);
           break;
       default:
             #if ENABLED(DEBUG_MODE)
@@ -390,8 +403,9 @@ int BlockHandler::Handle_Msg(){
   return(2);    
 }
 
-void BlockHandler::active_wait(uint32_t ms, int interval){
-   int loop_iterator = ms/interval;
+void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *interrupt_info){
+    if(interrupted)ms = millis_left_from_interrupt;
+    int loop_iterator = ms/interval;
     int ms_left_befor_loop = ms%interval;
     if(millis_left_from_interrupt !=0 && interrupt_running == MAX_INTERRUPTS){
       loop_iterator = millis_left_from_interrupt/interval;
@@ -422,6 +436,9 @@ void BlockHandler::active_wait(uint32_t ms, int interval){
       }
       if(checkForInterrupts()){
         millis_left_from_interrupt = (loop_iterator - yy)*interval;
+        if(interrupt_info != NULL) *interrupt_info = false;
+        Serial.print("millis left:");
+        Serial.println(millis_left_from_interrupt);
         break;
       }
       if(Block::robot->stausLEDused)Block::robot->BaterryCheck();

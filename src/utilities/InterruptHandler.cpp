@@ -6,6 +6,22 @@
 	priority = _priority;
 	trigger_type = trigger;
 	input = int_input;
+	if(int_type == BUTTON_INTERRUPT){			//mapping for SKRIBRAIN
+		switch(input){
+			case BUTTON_1:
+				input = SKRIBRAIN_ANALOG_PIN_1;
+			break;
+			case BUTTON_2:
+				input = SKRIBRAIN_ANALOG_PIN_2;
+			break;
+			case BUTTON_3:
+				input = SKRIBRAIN_ANALOG_PIN_3;
+			break;
+			default:
+				input = SKRIBRAIN_ANALOG_PIN_1;
+			break;
+		}
+	}
 	last_interrupted_Block = NULL;
 	value = 0;
 	}
@@ -21,6 +37,7 @@
 		switch(interrupt_type){
 			case BUTTON_INTERRUPT:
 				if(trigger_type == BUTTON_PRESSED){
+
 					if(buttonEventPending(input)){
 					 if(buttonPressed(input)){
 					 	buttonClearEvent(input);
@@ -91,7 +108,7 @@
 	}
 	bool InterruptHandler::Condition_saniti_check(){
 		if(interrupt_type == BUTTON_INTERRUPT){
-			if(input == BUTTON_1 || input == BUTTON_2 || input == BUTTON_3){
+			if(input == SKRIBRAIN_ANALOG_PIN_1 || input == SKRIBRAIN_ANALOG_PIN_2 || input == SKRIBRAIN_ANALOG_PIN_3){
 				if(trigger_type == BUTTON_PRESSED || trigger_type == BUTTON_HOLD){
 					buttonEnable(input);
 					return(true);

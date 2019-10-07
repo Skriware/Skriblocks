@@ -25,7 +25,7 @@ public:
 	void addConst(int id,String value);	
 	bool checkForInterrupts();																		//Adding Blocks types
 	
-	void active_wait(uint32_t ms,int interval);
+	void active_wait(uint32_t ms,int interval,bool interruppted = false,bool *int_info = NULL);
 
 	bool MakeConections();
 	bool doBlock(bool loopmode = false);																							//Making conectons(assigning pointers from IDs) 

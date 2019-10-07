@@ -7,6 +7,8 @@ BlockHandler* Block::BH = NULL;
 Block::Block() {
   input_block = NULL;
   next = NULL;
+  interrupted = false;
+  action_with_no_interrupt = true;
 };
 
 Block::~Block() {
@@ -18,6 +20,8 @@ Block::Block(Block* b) {
   input_block = NULL;
   next = NULL;
   actionID = 1000;
+  interrupted = false;
+  action_with_no_interrupt = true;
 }
 
 Block::Block(byte ID,byte _nextID,int _actionID,byte _InputID, byte _OutputID) {
@@ -29,6 +33,8 @@ Block::Block(byte ID,byte _nextID,int _actionID,byte _InputID, byte _OutputID) {
   input_block = NULL;
   next = NULL;
   output_block = NULL;
+  interrupted = false;
+  action_with_no_interrupt = true;
 }
 
 byte Block::getActionID(){
@@ -59,7 +65,7 @@ byte Block::getNextID(){
 
     100 down custom actions(for pilot control)
  */ 
-
+action_with_no_interrupt = true;
         byte font[][8] = {{ 0x7e, 0x7e, 0x66, 0x66, 0x7e, 0x7e, 0x66, 0x66 }, // A
                           { 0x78, 0x7c, 0x6c, 0x7c, 0x7e, 0x66, 0x7e, 0x7c }, // B
                           { 0x7e, 0x7e, 0x60, 0x60, 0x60, 0x60, 0x7e, 0x7e }, // C
@@ -71,11 +77,10 @@ byte Block::getNextID(){
         Block::robot->Stop();
         break;
     case 1:
-        //UserFunction_3(input_block->get_output());
       if(!Block::robot->config_mode){
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveForward();
-        Block::BH->active_wait(input_block->get_output(),10);
+        Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
         Block::robot->Stop();
       }else{
         Block::robot->Invert_Left_Rotors(input_block->get_output()/1000);
@@ -93,7 +98,7 @@ byte Block::getNextID(){
         if(!Block::robot->config_mode){
         Block::robot->SetSpeed(output_block->get_output() + 155);
         Block::robot->MoveBack();
-        Block::BH->active_wait(input_block->get_output(),10);
+        Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
         Block::robot->Stop();
          }else{
         Block::robot->Invert_Right_Rotors(input_block->get_output()/1000);
@@ -114,7 +119,7 @@ byte Block::getNextID(){
         if(!Block::robot->config_mode){
           Block::robot->SetSpeed(255);
           Block::robot->FaceLeft();
-          Block::BH->active_wait(input_block->get_output(),10);
+          Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
           Block::robot->Stop();
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
@@ -141,7 +146,7 @@ byte Block::getNextID(){
         if(!Block::robot->config_mode){
           Block::robot->SetSpeed(255);
           Block::robot->FaceRight();
-          Block::BH->active_wait(input_block->get_output(),10);
+          Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
           Block::robot->Stop();
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
@@ -165,19 +170,20 @@ byte Block::getNextID(){
         }
         break;
     case 5:
-        Block::BH->active_wait(input_block->get_output(),10);
+        Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
         break;
     case 6:
-        Block::robot->Stop();
+         Block::robot->Stop();
+         Block::BH->active_wait(10,10,interrupted,&action_with_no_interrupt);
         break;
     case 8:
         Block::robot->CloseClaw();
-        Block::BH->active_wait(100,10);
+        Block::BH->active_wait(100,10,interrupted,&action_with_no_interrupt);
         break;
     case 9:
         if(!Block::robot->config_mode){
           Block::robot->OpenClaw();
-          Block::BH->active_wait(100,10);
+          Block::BH->active_wait(100,10,interrupted,&action_with_no_interrupt);
         }else{
           Serial.println("Config mode operation!");
           Block::robot->TurnLEDOn(0,0,0);
@@ -193,11 +199,11 @@ byte Block::getNextID(){
         break;
     case 10:
           Block::robot->Pick_Up();
-          Block::BH->active_wait(100,10);
+          Block::BH->active_wait(100,10,interrupted,&action_with_no_interrupt);
         break;
     case 11:
         Block::robot->Put_Down();
-        Block::BH->active_wait(100,10);
+        Block::BH->active_wait(100,10,interrupted,&action_with_no_interrupt);
         break;
     case 12:
          switch(input_block->get_output()){
@@ -260,6 +266,7 @@ byte Block::getNextID(){
 
             break;
           }
+           Block::BH->active_wait(10,10,interrupted,&action_with_no_interrupt);
         break;
     case 13:
         Block::robot->TurnLEDOff();
@@ -269,7 +276,7 @@ byte Block::getNextID(){
           
           robot->LED_Matrixes[SPI_PORT_2]->Update();
 
-          Block::BH->active_wait(10,5);
+          Block::BH->active_wait(10,5,interrupted,&action_with_no_interrupt);
         break;
         /*
     case 94:
@@ -305,6 +312,7 @@ byte Block::getNextID(){
         break;
 
   }
+  if(interrupted && action_with_no_interrupt)interrupted = false;
 }
 
 bool Block::set_next(Block* blockList[],int blockList_N) {

@@ -25,6 +25,7 @@ public:
   	byte getInputID();
   	byte getOutputID();
   	byte getActionID();
+  	bool interrupted,action_with_no_interrupt;
   	virtual String get_string_output();
   	static void setRobot(Skribot *rob);
   	static void setBlockHandler(BlockHandler *bh);
@@ -43,6 +44,7 @@ protected:
 	byte outputblockID;
 	byte nextblockID;
 	byte actionID;
+
 	
 	};
 

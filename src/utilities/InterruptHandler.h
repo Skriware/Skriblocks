@@ -15,9 +15,9 @@
 #define LINE_L2 	3
 #define LINE_L3 	4
 #define TIME    	5
-#define BUTTON_1	12
-#define BUTTON_2	13
-#define BUTTON_3	14					
+#define BUTTON_1	1
+#define BUTTON_2	2
+#define BUTTON_3	3					
 
 										//interrupt triggers
 #define DISTANCE_GRATER_THEN 0
@@ -27,7 +27,6 @@
 #define BUTTON_PRESSED 4
 #define BUTTON_HOLD 5
 #define TIME_PASSED 6
-
 
 class InterruptHandler {
 public:
