@@ -22,6 +22,7 @@
 			break;
 		}
 	}
+	sanity_check = Condition_saniti_check();
 	last_interrupted_Block = NULL;
 	value = 0;
 	}
@@ -31,13 +32,12 @@
 	}
 
 	bool InterruptHandler::Check_for_interrupt(){
-		if(!Condition_saniti_check())return(false);
+		if(!sanity_check)return(false);
 		byte distance;
 		bool line_trig;
 		switch(interrupt_type){
 			case BUTTON_INTERRUPT:
 				if(trigger_type == BUTTON_PRESSED){
-
 					if(buttonEventPending(input)){
 					 if(buttonPressed(input)){
 					 	buttonClearEvent(input);
@@ -45,8 +45,7 @@
 					 }else{
 					 	buttonClearEvent(input);
 					 	return(false);
-					 }
-					
+					 }		
 				}
 				}else if(trigger_type == BUTTON_HOLD){
 					if(buttonEventPending(input)){

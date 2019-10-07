@@ -15,7 +15,7 @@ public:
 	BlockHandler();
 
 	void addLoop(int id,	int startBlockID,	int endBlockID,		int count);
-	void addBlock(int id,	int _nextBlockID,	int _actionID ,	int _inputBlockID = -1, int _outputBlockID = -1);
+	void addBlock(int id,	int _nextBlockID,int _actionID,byte* _usedBlocksIDs= NULL,byte _NusedBlocks = 0);
 	void addIf(int id,int _next_true, int _next_false, int _logic_block);
 	void addLogic(int id,int logicOperation,int _input_left, int _input_right);
 	void addLogicCompare(int id,int _logicOperation,int _input_left, int _input_right);
@@ -34,7 +34,8 @@ public:
 
 	int freeRam();
 	int cti(char c);
-	int32_t readInt();																								//BT message parsing help functions
+	int32_t readInt();
+	byte* readMultipleInts(byte *n);																								//BT message parsing help functions
 	int Handle_Msg();																							// Handle one line of the message
 	void ReadfromBT();	
 	void clear();	

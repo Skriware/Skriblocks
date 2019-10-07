@@ -45,8 +45,8 @@
       	 LoopblockList_N++;
 	}
 
-	void BlockHandler::addBlock(int id,	int _nextBlockID,int _actionID,int _intInput,int _intOutput){
-		Block *block = new Block(id,_nextBlockID,_actionID,_intInput,_intOutput);
+	void BlockHandler::addBlock(int id,  int _nextBlockID,int _actionID,byte* _usedBlocksIDs,byte _NusedBlocks){
+		Block *block = new Block(id,_nextBlockID,_actionID,_usedBlocksIDs,_NusedBlocks);
       	blockList[blockList_N] = block;
       	blockList_N++;
       	Serial.println(blockList_N);
@@ -78,7 +78,6 @@
 		LogicblockList_N++;
 	
 	}
-
 
 	void BlockHandler::addConst(int id, int32_t value){
 		ConstBlock *cblock = new ConstBlock(id,value);
@@ -145,19 +144,13 @@
       #endif
 
 			for(int kk = 0 ; kk <  blockList_N ; kk++){
-			 if(!blockList[kk]->set_input(blockList,blockList_N))return(false);  
+			 if(!blockList[kk]->set_used_block(blockList,blockList_N))return(false);  
 			}
 
 			#ifdef DEBUG_MODE
-        Serial.println("Input OK");
+        Serial.println("Used blocks OK");
         #endif
 
-      for(int tt = 0 ; tt <  blockList_N ; tt++){
-			 if(!blockList[tt]->set_output_block(blockList,blockList_N))return(false);  
-			 }
-#ifdef DEBUG_MODE
-       Serial.println("Output OK");
-       #endif
   		for(int kk = 0 ; kk < LogicblockList_N ; kk++){
   			if(!LogicblockList[kk]->set_logics(blockList,blockList_N))return(false);
   		}
@@ -239,7 +232,6 @@
             return(false);
           }
         }
-
         return(true);
     }
 
@@ -270,10 +262,33 @@ int32_t BlockHandler::readInt(){
       out += add;
     }
     #ifdef DEBUG_MODE
-    Serial.println(out*sign);
+    //Serial.println(out*sign);
     #endif
     Mcursor += nDigits+1;
     return(out*sign);
+}
+
+byte* BlockHandler::readMultipleInts(byte *N){
+  int start_cursor_pos = Mcursor;
+  byte intsToRead = 0;
+  while(AllMessage[Mcursor-1] != '\n'){
+    readInt();
+    intsToRead++;
+  }
+  Serial.print("Ints to read:");
+  Serial.println(intsToRead);
+if(intsToRead !=0){
+  byte *tmp = new byte[intsToRead];
+  Mcursor = start_cursor_pos;
+  for(byte yy = 0; yy < intsToRead; yy++)tmp[yy] = readInt();
+    *N = intsToRead;
+    return(tmp);
+}else{
+  *N = 0;
+  return(NULL);
+}
+  *N = 0;
+  return(NULL);
 }
 
 int BlockHandler::cti(char x){
@@ -306,11 +321,13 @@ int BlockHandler::Handle_Msg(){
           int countID; 
           int32_t value;
           byte actionID;
-          byte input,output;
+          byte input;
           byte next;
           byte nextTrue,nextFalse,logicBlock;
           byte input_left,input_right, compareOperation;
           byte type,trigger,priority, starting_block;
+          byte *tmp_b;
+          int *tmp_int;
   switch(AllMessage[Mcursor]){
     case 'L':
           Mcursor += 2;
@@ -334,6 +351,8 @@ int BlockHandler::Handle_Msg(){
             value = readInt();
           }
             addConst(id,value);
+            Serial.print("CONST:");
+            Serial.println(value);
           break;
       case 'I':
           Mcursor += 2;
@@ -370,16 +389,15 @@ int BlockHandler::Handle_Msg(){
           next = readInt();
           Serial.print("Starting Block ID:");
           Serial.println(next);
-          addBlock(id,next,69,0,0);
+          addBlock(id,next,69);
        break;
       case 'A':
           Serial.print("ACTION:");
-           Mcursor +=2;
+          Mcursor +=2;
           actionID = readInt();
-          input = readInt();
-          output = readInt();
           next  = readInt();
-          addBlock(id,next,actionID,input,output);
+          tmp_b = readMultipleInts(&input);
+          addBlock(id,next,actionID,tmp_b,input);
           break;
       case 'V':
           Serial.println("INTERRUPT:");
@@ -397,9 +415,7 @@ int BlockHandler::Handle_Msg(){
               Serial.println("Got sth stragne!");          
             #endif
         break;
-
   }
-
   return(2);    
 }
 

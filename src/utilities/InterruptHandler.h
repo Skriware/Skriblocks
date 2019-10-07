@@ -53,6 +53,7 @@ protected:
 	byte trigger_type;
 	byte input;
 	int value;
+	bool sanity_check;
 	Block *starting_block;
 	Block *last_interrupted_Block;
 	Skribot *robot;

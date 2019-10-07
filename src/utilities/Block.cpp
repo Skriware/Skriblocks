@@ -5,34 +5,32 @@ Skribot* Block::robot = NULL;
 BlockHandler* Block::BH = NULL;
 
 Block::Block() {
-  input_block = NULL;
   next = NULL;
   interrupted = false;
   action_with_no_interrupt = true;
+  used_blocks_N = 0;
 };
 
 Block::~Block() {
-  
+  delete used_blocks;
+  delete used_blocksIDs;
 }
 
 Block::Block(Block* b) {
   next = b;
-  input_block = NULL;
   next = NULL;
   actionID = 1000;
   interrupted = false;
   action_with_no_interrupt = true;
 }
 
-Block::Block(byte ID,byte _nextID,int _actionID,byte _InputID, byte _OutputID) {
-  blockID = ID;
-  inputblockID = _InputID;
-  outputblockID = _OutputID;
+Block::Block(byte id,byte _nextBlockID,int _actionID,byte *_usedblockIDs,byte Nused_blocks){
+  blockID = id;
   actionID = _actionID;
-  nextblockID = _nextID;
-  input_block = NULL;
+  nextblockID = _nextBlockID;
+  used_blocksIDs = _usedblockIDs;
+  used_blocks_N = Nused_blocks;
   next = NULL;
-  output_block = NULL;
   interrupted = false;
   action_with_no_interrupt = true;
 }
@@ -78,13 +76,13 @@ action_with_no_interrupt = true;
         break;
     case 1:
       if(!Block::robot->config_mode){
-        Block::robot->SetSpeed(output_block->get_output() + 155);
+        Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
         Block::robot->MoveForward();
-        Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
+        Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
         Block::robot->Stop();
       }else{
-        Block::robot->Invert_Left_Rotors(input_block->get_output()/1000);
-        EEPROM.write(EEPROM_LEFT_INVERT_ADDR,input_block->get_output()/1000);
+        Block::robot->Invert_Left_Rotors(used_blocks[0]->get_output()/1000);
+        EEPROM.write(EEPROM_LEFT_INVERT_ADDR,used_blocks[0]->get_output()/1000);
         if(!Block::robot->user_config){
           EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
           Block::robot->user_config = true;
@@ -96,13 +94,13 @@ action_with_no_interrupt = true;
         break;
     case 2:
         if(!Block::robot->config_mode){
-        Block::robot->SetSpeed(output_block->get_output() + 155);
+        Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
         Block::robot->MoveBack();
-        Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
+        Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
         Block::robot->Stop();
          }else{
-        Block::robot->Invert_Right_Rotors(input_block->get_output()/1000);
-         EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,input_block->get_output()/1000);
+        Block::robot->Invert_Right_Rotors(used_blocks[0]->get_output()/1000);
+         EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,used_blocks[0]->get_output()/1000);
          #ifdef ESP_H 
           EEPROM.commit(); 
           #endif
@@ -119,12 +117,12 @@ action_with_no_interrupt = true;
         if(!Block::robot->config_mode){
           Block::robot->SetSpeed(255);
           Block::robot->FaceLeft();
-          Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
+          Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
           Block::robot->Stop();
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
-          Block::robot->Scale_Left_Rotors(input_block->get_output()/1000);
-          byte lscale = byte(input_block->get_output()/1000);
+          Block::robot->Scale_Left_Rotors(used_blocks[0]->get_output()/1000);
+          byte lscale = byte(used_blocks[0]->get_output()/1000);
           #ifdef DEBUG_MODE
             Serial.print("Scalling left rotor: ");
             Serial.println(lscale);
@@ -146,12 +144,12 @@ action_with_no_interrupt = true;
         if(!Block::robot->config_mode){
           Block::robot->SetSpeed(255);
           Block::robot->FaceRight();
-          Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
+          Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
           Block::robot->Stop();
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
-          Block::robot->Scale_Right_Rotors(input_block->get_output()/1000);
-          byte rscale = byte(input_block->get_output()/1000);
+          Block::robot->Scale_Right_Rotors(used_blocks[0]->get_output()/1000);
+          byte rscale = byte(used_blocks[0]->get_output()/1000);
           EEPROM.write(EEPROM_RIGHT_SCALE_ADDR,rscale);
           #ifdef DEBUG_MODE
             Serial.print("Scalling right rotor: ");
@@ -170,7 +168,7 @@ action_with_no_interrupt = true;
         }
         break;
     case 5:
-        Block::BH->active_wait(input_block->get_output(),10,interrupted,&action_with_no_interrupt);
+        Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
         break;
     case 6:
          Block::robot->Stop();
@@ -206,7 +204,7 @@ action_with_no_interrupt = true;
         Block::BH->active_wait(100,10,interrupted,&action_with_no_interrupt);
         break;
     case 12:
-         switch(input_block->get_output()){
+         switch(used_blocks[0]->get_output()){
             case 0 : 
                 Block::robot->TurnLEDOn(255,0,0);
             break;
@@ -272,7 +270,7 @@ action_with_no_interrupt = true;
         Block::robot->TurnLEDOff();
         break;
     case 14:
-          robot->LED_Matrixes[SPI_PORT_2]->SetBitmap(0,font[input_block->get_output()]);
+          robot->LED_Matrixes[SPI_PORT_2]->SetBitmap(0,font[used_blocks[0]->get_output()]);
           
           robot->LED_Matrixes[SPI_PORT_2]->Update();
 
@@ -280,30 +278,30 @@ action_with_no_interrupt = true;
         break;
         /*
     case 94:
-        UserFunction_5(input_block->get_output(),output_block->get_output());
+        UserFunction_5(used_blocks[0]->get_output(),used_blocks[1]->get_output());
         break;
     case 95:
-        output_block->set_output(UserFunction_4());
+        used_blocks[1]->set_output(UserFunction_4());
         break;
     case 96:
-        output_block->set_output(UserFunction_3(input_block->get_output()));
+        used_blocks[1]->set_output(UserFunction_3(used_blocks[0]->get_output()));
         break;
     case 97:
-        UserFunction_2(input_block->get_output());
+        UserFunction_2(used_blocks[0]->get_output());
         break;
     case 98:
         UserFunction_1();
         break; 
         */
     case 99:
-        Block::robot->RawRotorMove(input_block->get_output(),output_block->get_output());
+        Block::robot->RawRotorMove(used_blocks[0]->get_output(),used_blocks[1]->get_output());
         Block::robot->Remote_block_used = true;
         break;
     case 101:
-        output_block->set_output(Block::robot->ReadDistSensor(input_block->get_output()));
+        used_blocks[1]->set_output(Block::robot->ReadDistSensor(used_blocks[0]->get_output()));
         break;
     case 102:
-        output_block->set_output(Block::robot->ReadLineSensor(input_block->get_output()));
+        used_blocks[1]->set_output(Block::robot->ReadLineSensor(used_blocks[0]->get_output()));
         break;
     case 255:
       //Saved for loops and ifs
@@ -316,7 +314,6 @@ action_with_no_interrupt = true;
 }
 
 bool Block::set_next(Block* blockList[],int blockList_N) {
-            
           if(getNextID() != 0){
             for(int jj = 0 ; jj <  blockList_N ; jj++){
                 if(getNextID() == blockList[jj]->getID()){
@@ -330,31 +327,31 @@ bool Block::set_next(Block* blockList[],int blockList_N) {
           }
 }
 
-bool Block::set_input(Block* blockList[],int blockList_N){
-          if(getInputID() !=0){
-            for(int jj = 0 ; jj <  blockList_N ; jj++){
-                if(getInputID() == blockList[jj]->getID()){
-                  input_block = blockList[jj];
-                  return(true);
-                }
-            }
-            return(false);
+
+
+bool Block::set_used_block(Block* blockList[],int blockList_N){
+          byte usedBlockAttached = 0;
+          used_blocks = new Block*[used_blocks_N];
+          for(byte uu = 0;uu<used_blocks_N;uu++) used_blocks[uu] = NULL;
+          if(used_blocks_N !=0){
+              for(byte tt = 0; tt < used_blocks_N; tt++){
+                Serial.print("Searching for block id:");
+                Serial.println(used_blocksIDs[tt]);
+                for(int jj = 0 ; jj <  blockList_N ; jj++){
+                  if(used_blocksIDs[tt] == blockList[jj]->getID()){
+                    Serial.println("Found!");
+                    used_blocks[tt] = blockList[jj];
+                    break;
+                  }
+              }
+            }  
           }else{
             return(true);
           }
-}
-
-bool Block::set_output_block(Block* blockList[],int blockList_N){
-          if(getOutputID() !=0){
-              for(int jj = 0 ; jj <  blockList_N ; jj++){
-                if(getOutputID() == blockList[jj]->getID()){
-                  output_block = blockList[jj];
-                  return(true);
-                }
-            }
-            return(false);
-            }else{
+          if(usedBlockAttached == used_blocks_N){
             return(true);
+          }else{
+            return(false);
           }
 }
 

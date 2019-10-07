@@ -10,7 +10,7 @@ class Block {
 public:
 	Block();
 	Block(Block*);
-	Block(byte id,byte _nextBlockID,int _actionID = 0,byte _InputID = 0, byte _OutputID = 0);
+	Block(byte id,byte _nextBlockID,int _actionID ,byte* _usedblockIDs = NULL,byte NusedBlocks = 0);
 	virtual ~Block();
 	void do_action();
 	virtual	Block* get_next();
@@ -19,8 +19,7 @@ public:
   	void set_output(int x);
   	byte getID();
   	bool set_next(Block* blockList[],int blockList_N);
-  	bool set_input(Block* blockList[],int blockList_N);
-  	bool set_output_block(Block* blockList[],int blockList_N);
+  	bool set_used_block(Block* blockList[],int blockList_N);
   	byte getNextID();
   	byte getInputID();
   	byte getOutputID();
@@ -37,15 +36,16 @@ public:
 protected:
 	byte blockID;
 	int32_t output;
+	Block** used_blocks;
 	Block *input_block;
 	Block *output_block;
 	Block *next; 
+	byte  *used_blocksIDs;
+	byte used_blocks_N;
 	byte inputblockID;
 	byte outputblockID;
 	byte nextblockID;
 	byte actionID;
-
-	
 	};
 
 #endif
