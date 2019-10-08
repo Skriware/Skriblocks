@@ -74,6 +74,8 @@ action_with_no_interrupt = true;
                           { 0x7e, 0x7e, 0x60, 0x78, 0x78, 0x60, 0x60, 0x60 }}; // F
 byte *tmp;
 char *tmp_c;
+SmartRotor::Which which;
+size_t tmp_n;
   switch(actionID){
      case 0:
       if (Block::robot->smartRotor != nullptr)
@@ -90,7 +92,8 @@ char *tmp_c;
         if (Block::robot->smartRotor != nullptr)
         {
           Block::robot->smartRotor->setDirection(1);
-          Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/1000.0);
+          Block::robot->smartRotor->setSpeed(used_blocks[1]->get_output() + 155);
+          Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/100.0);
           while (Block::robot->smartRotor->isMoving())
             Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
         }
@@ -117,8 +120,9 @@ char *tmp_c;
         if(!Block::robot->config_mode){
           if (Block::robot->smartRotor != nullptr)
           {
+            Block::robot->smartRotor->setSpeed(used_blocks[1]->get_output() + 155);
             Block::robot->smartRotor->setDirection(0);
-            Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/1000.0);
+            Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/100.0);
             while (Block::robot->smartRotor->isMoving())
               Block::BH->active_wait(10,10,interrupted,&action_with_no_interrupt);
           }
@@ -148,12 +152,14 @@ char *tmp_c;
         if(!Block::robot->config_mode){
           if (Block::robot->smartRotor != nullptr)
           {
-            Block::robot->smartRotor->turnByAngle(-used_blocks[0]->get_output()/1000);
+            Block::robot->smartRotor->setSpeed(used_blocks[1]->get_output() + 155);
+            Block::robot->smartRotor->turnByAngle(-used_blocks[0]->get_output());
             while (Block::robot->smartRotor->isMoving())
               Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
           }
           else
           {
+           
             Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
             Block::robot->FaceLeft();
             Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
@@ -184,7 +190,8 @@ char *tmp_c;
         if(!Block::robot->config_mode){
           if (Block::robot->smartRotor != nullptr)
           {
-            Block::robot->smartRotor->turnByAngle(used_blocks[0]->get_output()/1000);
+            Block::robot->smartRotor->setSpeed(used_blocks[1]->get_output() + 155);
+            Block::robot->smartRotor->turnByAngle(used_blocks[0]->get_output());
             while (Block::robot->smartRotor->isMoving())
               Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
           }
@@ -320,9 +327,17 @@ char *tmp_c;
         break;
     case 14:
           tmp = used_blocks[1]->get_table_output_8();
-          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->SetBitmap(0,tmp);
-          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
-          Block::BH->active_wait(10,5,interrupted,&action_with_no_interrupt);
+          tmp_n = robot->LED_Matrixes[used_blocks[0]->get_output()-1]->SetAnimation(0,tmp,(size_t)used_blocks[1]->get_output_N());
+          Serial.println(tmp_n);
+          if(tmp_n > 1){
+          for(byte pp = 0; pp< tmp_n;pp++){
+            robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
+            Block::BH->active_wait(500,5,interrupted,&action_with_no_interrupt);
+          }
+        }else{
+            robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
+            Block::BH->active_wait(50,5,interrupted,&action_with_no_interrupt);
+        }
         break;
     case 15:
           tmp_c = (char*)used_blocks[1]->get_table_output_8();
@@ -397,11 +412,21 @@ char *tmp_c;
     case 19:
         //playMusic
         break;
-    case 21:
-        //Engine back
+    case 20:
+          which = (SmartRotor::Which)used_blocks[0]->get_output();
+          Block::robot->smartRotor->setDirection(1);
+          Block::robot->smartRotor->setSpeed(used_blocks[2]->get_output() + 155);
+          Block::robot->smartRotor->moveByRevolutions((float)used_blocks[1]->get_output()/1000.0,which);
+          while (Block::robot->smartRotor->isMoving())
+            Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
       break;
-    case 22:
-        //Engine forw
+    case 21:
+          which = (SmartRotor::Which)used_blocks[0]->get_output();
+          Block::robot->smartRotor->setDirection(0);
+          Block::robot->smartRotor->setSpeed(used_blocks[2]->get_output() + 155);
+          Block::robot->smartRotor->moveByRevolutions((float)used_blocks[1]->get_output()/1000.0,which);
+          while (Block::robot->smartRotor->isMoving())
+            Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
       break;
         /*
     case 94:
