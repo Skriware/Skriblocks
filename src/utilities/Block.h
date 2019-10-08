@@ -16,6 +16,9 @@ public:
 	virtual	Block* get_next();
 	virtual bool get_bool_output();
   	virtual int32_t get_output();
+  	virtual int32_t* get_table_output();
+  	virtual byte* get_table_output_8();
+  	virtual byte get_output_N();
   	void set_output(int x);
   	byte getID();
   	bool set_next(Block* blockList[],int blockList_N);

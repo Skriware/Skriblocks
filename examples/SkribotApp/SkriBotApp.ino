@@ -221,7 +221,6 @@ void loop() {
         }
         BH.clear();
         robot->TurnLEDOn(255,255,255);
-       
         if(!Connection_Break){
           robot->ProgramENDRepotred();
           if(!robot->Remote_block_used){

@@ -82,9 +82,16 @@
 	void BlockHandler::addConst(int id, int32_t value){
 		ConstBlock *cblock = new ConstBlock(id,value);
 		blockList[blockList_N] = cblock;
-      	blockList_N++;
+    blockList_N++;
       
 	}
+
+void BlockHandler::addConst(int id, int32_t *value,byte N){
+    ConstBlock *cblock = new ConstBlock(id,value,N);
+    blockList[blockList_N] = cblock;
+    blockList_N++;
+  }
+
 
 	void BlockHandler::addAritmeticBlock(int id,int _operation,int _left,int _right){
 		AritmeticBlock *ablock = new AritmeticBlock(id,_operation,_left,_right);
@@ -196,10 +203,12 @@
       Serial.println("Connections done!");          
     #endif
 
+      delay(1000);
       return(true);
 	}
 	bool BlockHandler::doBlock(bool loopmode){
     #ifdef DEBUG_MODE
+          Serial.print("current:");
 		   		Serial.println(current->getID());
     #endif
 
@@ -207,11 +216,11 @@
     current->do_action();
 
     #ifdef DEBUG_MODE
+       Serial.print("next:");
 			 Serial.println(current->getNextID());
     #endif
 
     checkForInterrupts();  //do not check interrupts if you are in one alerady
-		
     if(interrupt_running !=MAX_INTERRUPTS && !interruped_precesed){
       current->interrupted = true;
       Interrupts[interrupt_running]->set_interrupted_block(current); 
@@ -266,6 +275,30 @@ int32_t BlockHandler::readInt(){
     #endif
     Mcursor += nDigits+1;
     return(out*sign);
+}
+
+
+int32_t* BlockHandler::readMultipleInts32(byte *N){
+  int start_cursor_pos = Mcursor;
+  byte intsToRead = 0;
+  while(AllMessage[Mcursor-1] != '\n'){
+    readInt();
+    intsToRead++;
+  }
+  Serial.print("Ints to read:");
+  Serial.println(intsToRead);
+if(intsToRead !=0){
+  int32_t *tmp = new int32_t[intsToRead];
+  Mcursor = start_cursor_pos;
+  for(byte yy = 0; yy < intsToRead; yy++)tmp[yy] = readInt();
+    *N = intsToRead;
+    return(tmp);
+}else{
+  *N = 0;
+  return(NULL);
+}
+  *N = 0;
+  return(NULL);
 }
 
 byte* BlockHandler::readMultipleInts(byte *N){
@@ -327,17 +360,20 @@ int BlockHandler::Handle_Msg(){
           byte input_left,input_right, compareOperation;
           byte type,trigger,priority, starting_block;
           byte *tmp_b;
+          int32_t *tmp_32;
           int *tmp_int;
   switch(AllMessage[Mcursor]){
     case 'L':
           Mcursor += 2;
+          endBlockID = readInt();
           countID = readInt();
           startBlockID  = readInt();
-          endBlockID = readInt();
           addLoop(id,startBlockID,endBlockID,countID);
           break;
      case 'C':
           Mcursor += 2;
+
+          Serial.print("CONST:");
           if(AllMessage[Mcursor] == 'I'){
             value = -1;
             Mcursor += 2;
@@ -348,11 +384,24 @@ int BlockHandler::Handle_Msg(){
             value = 0;
             Mcursor += 2;
           }else{
-            value = readInt();
+            tmp_32 = readMultipleInts32(&input);
+            if(input == 1){
+            addConst(id,tmp_32[0]);
+            Serial.println(tmp_32[0]);
+            }else if(input >1){
+            addConst(id,tmp_32,input);
+            for(byte rr = 0; rr<input; rr++){
+              Serial.print(":");
+              Serial.print(tmp_32[rr]);
+
+            }
+            Serial.println();
+            }
+            break;
           }
-            addConst(id,value);
-            Serial.print("CONST:");
-            Serial.println(value);
+          addConst(id,value);
+          Serial.println("Special const!");
+            
           break;
       case 'I':
           Mcursor += 2;
@@ -376,7 +425,6 @@ int BlockHandler::Handle_Msg(){
       	input_right = readInt();
       	addLogic(id,compareOperation,input_left,input_right);
       break;
-
       case 'U':
       	Mcursor += 2;
       	compareOperation = readInt();
@@ -451,6 +499,7 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
           
       }
       if(checkForInterrupts()){
+        Serial.println("Interrupts!");
         millis_left_from_interrupt = (loop_iterator - yy)*interval;
         if(interrupt_info != NULL) *interrupt_info = false;
         Serial.print("millis left:");

@@ -12,8 +12,9 @@ Block::Block() {
 };
 
 Block::~Block() {
-  delete used_blocks;
-  delete used_blocksIDs;
+  //TO DO - check if it gives memory licks
+  //delete used_blocks;
+  //delete used_blocksIDs;
 }
 
 Block::Block(Block* b) {
@@ -22,6 +23,7 @@ Block::Block(Block* b) {
   actionID = 1000;
   interrupted = false;
   action_with_no_interrupt = true;
+  used_blocks_N = 0;
 }
 
 Block::Block(byte id,byte _nextBlockID,int _actionID,byte *_usedblockIDs,byte Nused_blocks){
@@ -70,6 +72,8 @@ action_with_no_interrupt = true;
                           { 0x7c, 0x7e, 0x66, 0x66, 0x66, 0x66, 0x7e, 0x7c }, // D
                           { 0x7e, 0x7e, 0x60, 0x78, 0x78, 0x60, 0x7e, 0x7e }, // E
                           { 0x7e, 0x7e, 0x60, 0x78, 0x78, 0x60, 0x60, 0x60 }}; // F
+byte *tmp;
+char *tmp_c;
   switch(actionID){
      case 0:
         Block::robot->Stop();
@@ -270,12 +274,42 @@ action_with_no_interrupt = true;
         Block::robot->TurnLEDOff();
         break;
     case 14:
-          robot->LED_Matrixes[SPI_PORT_2]->SetBitmap(0,font[used_blocks[0]->get_output()]);
-          
-          robot->LED_Matrixes[SPI_PORT_2]->Update();
-
+          tmp = used_blocks[1]->get_table_output_8();
+          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->SetBitmap(0,tmp);
+          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
           Block::BH->active_wait(10,5,interrupted,&action_with_no_interrupt);
         break;
+    case 15:
+          tmp_c = (char*)used_blocks[1]->get_table_output_8();
+          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->StartMarquee(tmp_c);
+          for(byte yy = 0; yy <8*(used_blocks_N-1);yy++){
+            robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
+            Block::BH->active_wait(100,5,interrupted,&action_with_no_interrupt);
+          }
+          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->StopMarquee();
+          //ShowText
+        break;
+    case 16:
+         
+          //showVariable
+        break;
+    case 17:
+          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->ClearDisplay(0);
+          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
+          Block::BH->active_wait(10,5,interrupted,&action_with_no_interrupt);
+        break;
+    case 18:
+        //Play sound
+        break;
+    case 19:
+        //playMusic
+        break;
+    case 21:
+        //Engine back
+      break;
+    case 22:
+        //Engine forw
+      break;
         /*
     case 94:
         UserFunction_5(used_blocks[0]->get_output(),used_blocks[1]->get_output());
@@ -330,6 +364,8 @@ bool Block::set_next(Block* blockList[],int blockList_N) {
 
 
 bool Block::set_used_block(Block* blockList[],int blockList_N){
+          Serial.print("Setting usage for block:");
+          Serial.println(blockID);
           byte usedBlockAttached = 0;
           used_blocks = new Block*[used_blocks_N];
           for(byte uu = 0;uu<used_blocks_N;uu++) used_blocks[uu] = NULL;
@@ -337,17 +373,24 @@ bool Block::set_used_block(Block* blockList[],int blockList_N){
               for(byte tt = 0; tt < used_blocks_N; tt++){
                 Serial.print("Searching for block id:");
                 Serial.println(used_blocksIDs[tt]);
+                if(used_blocksIDs[tt] == 0){
+                    used_blocks_N--;
+                    Serial.println("Pass 0 value");
+                }else{
                 for(int jj = 0 ; jj <  blockList_N ; jj++){
                   if(used_blocksIDs[tt] == blockList[jj]->getID()){
                     Serial.println("Found!");
                     used_blocks[tt] = blockList[jj];
+                    usedBlockAttached++;
                     break;
                   }
+                }
               }
             }  
           }else{
             return(true);
           }
+
           if(usedBlockAttached == used_blocks_N){
             return(true);
           }else{
@@ -384,3 +427,8 @@ bool Block::get_bool_output(){
   return(false);
 }
 
+int32_t* Block::get_table_output(){return(NULL);}
+
+byte* Block::get_table_output_8(){return(NULL);}
+
+byte Block::get_output_N(){return(0);}

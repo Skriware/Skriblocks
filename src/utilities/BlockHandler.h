@@ -22,6 +22,7 @@ public:
 	void addInterrupt(byte type,byte input,byte trigger,byte _priority,byte _starting_block,int value = 0);
 	void addAritmeticBlock(int id,int _operation,int _left,int _right);
 	void addConst(int id, int32_t value);
+	void addConst(int id, int32_t *value,byte N);
 	void addConst(int id,String value);	
 	bool checkForInterrupts();																		//Adding Blocks types
 	
@@ -35,7 +36,8 @@ public:
 	int freeRam();
 	int cti(char c);
 	int32_t readInt();
-	byte* readMultipleInts(byte *n);																								//BT message parsing help functions
+	byte* readMultipleInts(byte *n);
+	int32_t* readMultipleInts32(byte *N);																							//BT message parsing help functions
 	int Handle_Msg();																							// Handle one line of the message
 	void ReadfromBT();	
 	void clear();	
