@@ -76,14 +76,31 @@ byte *tmp;
 char *tmp_c;
   switch(actionID){
      case 0:
+      if (Block::robot->smartRotor != nullptr)
+      {
+        Block::robot->smartRotor->stop();
+      }
+      else
+      {
         Block::robot->Stop();
-        break;
+      }
+      break;
     case 1:
       if(!Block::robot->config_mode){
-        Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
-        Block::robot->MoveForward();
-        Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-        Block::robot->Stop();
+        if (Block::robot->smartRotor != nullptr)
+        {
+          Block::robot->smartRotor->setDirection(1);
+          Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/1000.0);
+          while (Block::robot->smartRotor->isMoving())
+            Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
+        }
+        else
+        {
+          Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+          Block::robot->MoveForward();
+          Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+          Block::robot->Stop();
+        }
       }else{
         Block::robot->Invert_Left_Rotors(used_blocks[0]->get_output()/1000);
         EEPROM.write(EEPROM_LEFT_INVERT_ADDR,used_blocks[0]->get_output()/1000);
@@ -98,10 +115,20 @@ char *tmp_c;
         break;
     case 2:
         if(!Block::robot->config_mode){
-        Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
-        Block::robot->MoveBack();
-        Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-        Block::robot->Stop();
+          if (Block::robot->smartRotor != nullptr)
+          {
+            Block::robot->smartRotor->setDirection(0);
+            Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/1000.0);
+            while (Block::robot->smartRotor->isMoving())
+              Block::BH->active_wait(10,10,interrupted,&action_with_no_interrupt);
+          }
+          else
+          {
+            Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+            Block::robot->MoveBack();
+            Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::robot->Stop();
+          }
          }else{
         Block::robot->Invert_Right_Rotors(used_blocks[0]->get_output()/1000);
          EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,used_blocks[0]->get_output()/1000);
@@ -119,10 +146,19 @@ char *tmp_c;
         break;
     case 3:
         if(!Block::robot->config_mode){
-          Block::robot->SetSpeed(255);
-          Block::robot->FaceLeft();
-          Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-          Block::robot->Stop();
+          if (Block::robot->smartRotor != nullptr)
+          {
+            Block::robot->smartRotor->turnByAngle(-used_blocks[0]->get_output()/1000);
+            while (Block::robot->smartRotor->isMoving())
+              Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
+          }
+          else
+          {
+            Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+            Block::robot->FaceLeft();
+            Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::robot->Stop();
+          }
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Left_Rotors(used_blocks[0]->get_output()/1000);
@@ -146,10 +182,19 @@ char *tmp_c;
         break;
     case 4:
         if(!Block::robot->config_mode){
-          Block::robot->SetSpeed(255);
-          Block::robot->FaceRight();
-          Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-          Block::robot->Stop();
+          if (Block::robot->smartRotor != nullptr)
+          {
+            Block::robot->smartRotor->turnByAngle(used_blocks[0]->get_output()/1000);
+            while (Block::robot->smartRotor->isMoving())
+              Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
+          }
+          else
+          {
+            Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+            Block::robot->FaceRight();
+            Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::robot->Stop();
+          }
         }else{
           Block::robot->TurnLEDOn(184, 255, 3);
           Block::robot->Scale_Right_Rotors(used_blocks[0]->get_output()/1000);
