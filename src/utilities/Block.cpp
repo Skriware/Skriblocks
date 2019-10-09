@@ -415,7 +415,17 @@ size_t tmp_n;
       if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->StopNote();
     break;
     case 19:
-        //playMusic
+        {
+          //playMusic
+          uint16_t *freqs = (uint16_t *) used_blocks[0]->get_table_output_16();
+          uint16_t *delays = (uint16_t *) used_blocks[1]->get_table_output_16();
+          size_t melodySize = (size_t) used_blocks[0]->used_blocks_N;
+          auto *buzzer = Block::robot->Buzzers[SERVO_2];
+          if (buzzer != NULL)
+          {
+            buzzer->PlayMelody(freqs, delays, melodySize);
+          }
+        }
         break;
     case 20:
           which = (SmartRotor::Which)used_blocks[0]->get_output();
