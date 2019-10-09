@@ -18,6 +18,7 @@ public:
   	virtual int32_t get_output();
   	virtual int32_t* get_table_output();
   	virtual byte* get_table_output_8();
+  	virtual int16_t* get_table_output_16();
   	virtual byte get_output_N();
   	void set_output(int x);
   	byte getID();
