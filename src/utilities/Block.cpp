@@ -554,4 +554,6 @@ int32_t* Block::get_table_output(){return(NULL);}
 
 byte* Block::get_table_output_8(){return(NULL);}
 
+int16_t* Block::get_table_output_16(){return(NULL);}
+
 byte Block::get_output_N(){return(0);}

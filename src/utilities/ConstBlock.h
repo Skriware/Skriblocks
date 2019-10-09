@@ -9,6 +9,7 @@ public:
   ~ConstBlock(); 
   int32_t* get_table_output();
   byte* get_table_output_8();
+  int16_t* get_table_output_16();
   void setTableOutput(int32_t *tmp, byte N);
   byte get_output_N();
   int32_t *t_output;
