@@ -42,7 +42,7 @@ byte ConstBlock::get_output_N(){return(N_output);}
 byte* ConstBlock::get_table_output_8(){
   if(N_output > 0){
   uint8_t *tmp = new uint8_t[N_output]; 
-  for(byte rr = 0; rr<8;rr++){
+  for(byte rr = 0; rr<N_output;rr++){
     tmp[rr] = (uint8_t)t_output[rr];
 
   }

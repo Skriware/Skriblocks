@@ -326,8 +326,11 @@ size_t tmp_n;
         Block::robot->TurnLEDOff();
         break;
     case 14:
+      {
           tmp = used_blocks[1]->get_table_output_8();
           tmp_n = robot->LED_Matrixes[used_blocks[0]->get_output()-1]->SetAnimation(0,tmp,(size_t)used_blocks[1]->get_output_N());
+          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->PlayAnimation(0);
+
           Serial.println(tmp_n);
           if(tmp_n > 1){
           for(byte pp = 0; pp< tmp_n;pp++){
@@ -338,6 +341,7 @@ size_t tmp_n;
             robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
             Block::BH->active_wait(50,5,interrupted,&action_with_no_interrupt);
         }
+      }
         break;
     case 15:
           tmp_c = (char*)used_blocks[1]->get_table_output_8();
@@ -355,6 +359,7 @@ size_t tmp_n;
         break;
     case 17:
           robot->LED_Matrixes[used_blocks[0]->get_output()-1]->ClearDisplay(0);
+          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->StopAnimation(0);
           robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
           Block::BH->active_wait(10,5,interrupted,&action_with_no_interrupt);
         break;
@@ -410,7 +415,17 @@ size_t tmp_n;
       if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->StopNote();
     break;
     case 19:
-        //playMusic
+        {
+          //playMusic
+          uint16_t *freqs = (uint16_t *) used_blocks[0]->get_table_output_16();
+          uint16_t *delays = (uint16_t *) used_blocks[1]->get_table_output_16();
+          size_t melodySize = (size_t) used_blocks[0]->used_blocks_N;
+          auto *buzzer = Block::robot->Buzzers[SERVO_2];
+          if (buzzer != NULL)
+          {
+            buzzer->PlayMelody(freqs, delays, melodySize);
+          }
+        }
         break;
     case 20:
           which = (SmartRotor::Which)used_blocks[0]->get_output();
