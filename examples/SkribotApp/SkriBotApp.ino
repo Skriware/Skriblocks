@@ -46,12 +46,14 @@ void setup() {
     Serial.begin(115200);
     Serial.println("DEBUG_MODE");
   #endif
+ 
   #ifdef ESP_H
      robot = new Skribot("SKRIBRAIN");
   #else
     robot = new Skribot("EDU_SHIELD");
   #endif
-  robot->ConfigureBoardEEPROM();
+  bool tmp = robot->Check_Board_Version();
+  if(tmp)robot->ConfigureBoardEEPROM();
   robot->BLE_Setup();
  
   Block::setRobot(robot); 
