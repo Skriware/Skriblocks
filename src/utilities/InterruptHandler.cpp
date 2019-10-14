@@ -48,7 +48,6 @@
 					 }		
 				}
 				}else if(trigger_type == BUTTON_HOLD){
-					if(buttonEventPending(input)){
 					 if(buttonHeld(input,value)){
 					 	buttonClearEvent(input);
 					 	return(true);
@@ -56,7 +55,6 @@
 					 	buttonClearEvent(input);
 					 	return(false);
 					 }
-				}
 				}
  			break;
  			case DISTANCE_INTERRUPT:
