@@ -419,7 +419,7 @@ size_t tmp_n;
           //playMusic
           uint16_t *freqs = (uint16_t *) used_blocks[0]->get_table_output_16();
           uint16_t *delays = (uint16_t *) used_blocks[1]->get_table_output_16();
-          size_t melodySize = (size_t) used_blocks[0]->used_blocks_N;
+          size_t melodySize = (size_t) used_blocks[0]->get_output_N();
           auto *buzzer = Block::robot->Buzzers[SERVO_2];
           if (buzzer != NULL)
           {

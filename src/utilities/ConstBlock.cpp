@@ -53,12 +53,11 @@ byte* ConstBlock::get_table_output_8(){
   
 }
 
-int16_t* ConstBlock::get_table_output_16(){
-  if(N_output > 0){
-  int16_t *tmp = new int16_t[N_output]; 
-  for(byte rr = 0; rr<8;rr++){
-    tmp[rr] = (int16_t)t_output[rr];
-
+int16_t* ConstBlock::get_table_output_16() {
+  if(N_output > 0) {
+    int16_t *tmp = new int16_t[N_output]; 
+    for(byte rr = 0; rr<N_output;rr++) {
+      tmp[rr] = (int16_t) t_output[rr];
   }
   return(tmp);
 }else{
