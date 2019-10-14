@@ -12,7 +12,7 @@ void UserFunction_2(int input = 0);
 
 int UserFunction_3(int input = 0);
 
-int UserFunction_4();
+int UserFunction_5();
 
-void UserFunction_5(int input_1 = 0, int input_2 = 0);
+void UserFunction_4(int input_1 = 0, int input_2 = 0);
 #endif

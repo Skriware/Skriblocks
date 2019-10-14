@@ -271,15 +271,18 @@ byte Block::getNextID(){
 
           Block::BH->active_wait(10,5);
         break;
-        /*
-    case 94:
-        UserFunction_5(input_block->get_output(),output_block->get_output());
-        break;
     case 95:
-        output_block->set_output(UserFunction_4());
+        UserFunction_4(input_block->get_output(),output_block->get_output());
+        break;
+    case 94:
+        output_block->set_output(UserFunction_5());
+        Serial.print("5:");
+        Serial.println(output_block->get_output());
         break;
     case 96:
         output_block->set_output(UserFunction_3(input_block->get_output()));
+        Serial.print("3:");
+        Serial.println(output_block->get_output());
         break;
     case 97:
         UserFunction_2(input_block->get_output());
@@ -287,7 +290,6 @@ byte Block::getNextID(){
     case 98:
         UserFunction_1();
         break; 
-        */
     case 99:
         Block::robot->RawRotorMove(input_block->get_output(),output_block->get_output());
         Block::robot->Remote_block_used = true;

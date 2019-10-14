@@ -1,8 +1,6 @@
 #include "Skribot_mobile.h"
 
                                   //put your global variables here if you want to pass some information from one instance of your function to another
-int lastRightSensor =  0;
-int lastLeftSensor  =  0;
 
 void UserFunctions_Setup(){
 	
@@ -11,7 +9,8 @@ void UserFunctions_Setup(){
 
 void UserFunction_1(){
 	
-
+Block::robot->MoveForward(1000);
+Block::robot->MoveBack(1000);
 
 //Write your own Arduino based Function here and trigger it in app using block UserFunction_1!
 }
@@ -33,7 +32,7 @@ bool RIGHTSens  = Block::robot->ReadLineSensor(1);
 
 int UserFunction_3(int input){
 //Write your own Arduino based Function here and trigger it in app using block UserFunction_3!
-
+/*
    int LeftSensor = Block::robot->ReadDistSensor("D1");                  //Read distance to neares obstacle from both sensors distance. Obtained distance is in cm.
    int RightSensor = Block::robot->ReadDistSensor("D2");       
     if(LeftSensor > RightSensor){                             //checking previous readout
@@ -58,13 +57,21 @@ int UserFunction_3(int input){
     lastLeftSensor = LeftSensor;                             //Remembering last readouts
 
 return(0);
+*/
+  int tmp = Block::robot->ReadDistSensor(D1_PORT) < input;
+return(tmp);
 }
 
-int UserFunction_4(){
+void UserFunction_4(int input_1, int input_2){
+  /*Block::robot->MoveForward(input_1);
+  Block::robot->MoveBack(input_2);
+  //Write your own Arduino based Function here and trigger it in app using block UserFunction_5!
+  */
+}
+
+int UserFunction_5(){
 //Write your own Arduino based Function here and trigger it in app using block UserFunction_4!
-return(0);
+
+return(Block::robot->ReadDistSensor(D1_PORT)/2);
 }
 
-void UserFunction_5(int input_1, int input_2){
-	//Write your own Arduino based Function here and trigger it in app using block UserFunction_5!
-}
