@@ -46,6 +46,10 @@ void setup() {
     Serial.begin(115200);
     Serial.println("DEBUG_MODE");
   #endif
+  #if ENABLED(DEBUG_MODE_1)
+    Serial.begin(115200);
+    Serial.println("DEBUG_MODE");
+  #endif
   #ifdef ESP_H
      robot = new Skribot("SKRIBRAIN_B2C_TESTS");
   #else
@@ -77,7 +81,7 @@ void loop() {
     if(robot->BLE_dataAvailable()){
       while(robot->BLE_dataAvailable()){
         ascitmp = robot->BLE_read();
-        #if ENABLED(DEBUG_MODE)
+        #if ENABLED(DEBUG_MODE_1)
         Serial.print(ascitmp);
         #endif
         BH.AllMessage[BH.messageLength] = ascitmp;
@@ -201,6 +205,10 @@ void loop() {
       if(flag != 2 && flag != 3) {
         Connection_Break = false;
         if(!robot->Remote_block_used)robot->BLE_write("ack\n\r\n");
+        #ifdef DEBUG_MODE_1
+        Serial.print("Starting program at: ");
+        Serial.println(millis());
+        #endif
        while(BH.doBlock()){
            robot->BaterryCheck();
            if(robot->ProgramENDRepotred()){
@@ -229,9 +237,8 @@ void loop() {
           }else{
             robot->Remote_block_used = false;
           }
-
         }
-        #if ENABLED(DEBUG_MODE)
+        #if ENABLED(DEBUG_MODE_1)
           Serial.println("CONFIRMING END OF CODE");
         #endif
         break;
@@ -241,10 +248,10 @@ void loop() {
           robot->status->TurnOn(RED,2);
         #endif
         robot->Stop();
-        #if ENABLED(DEBUG_MODE)
+        #if ENABLED(DEBUG_MODE_1)
           Serial.println("CODE NOT VALID");
-          robot->BLE_write("DONE\n");
         #endif
+        robot->BLE_write("DONE\n");
         break;
 
       }

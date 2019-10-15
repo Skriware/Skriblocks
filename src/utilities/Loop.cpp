@@ -35,9 +35,6 @@ void Loop::do_action() {
   counter++;
 }
 bool Loop::set_connections(Block* blockList[],int blockList_N){
-    Serial.println(begin_block_id);
-    Serial.println(end_block_id);
-    Serial.println(limit_block_id);
 for(byte ii = 0; ii < blockList_N; ii++){
      if(blockList[ii]->getID() == begin_block_id){
             begin_block = blockList[ii];
@@ -92,9 +89,6 @@ void Loop::set_limit(){
 }
 Block* Loop::get_next() {
   counter++;
-  Serial.print("limit:");
-  Serial.println(limit);
-  Serial.println(counter);
   if (counter <= limit || limit == -1){
     return(begin_block);
   }

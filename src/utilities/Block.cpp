@@ -328,29 +328,63 @@ size_t tmp_n;
     case 14:
       {
           tmp = used_blocks[1]->get_table_output_8();
-          tmp_n = robot->LED_Matrixes[used_blocks[0]->get_output()-1]->SetAnimation(0,tmp,(size_t)used_blocks[1]->get_output_N());
-          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->PlayAnimation(0);
-
-          Serial.println(tmp_n);
+          
+          if(used_blocks[0]->get_output() != 2){
+          tmp_n = robot->LED_Matrixes[used_blocks[0]->get_output()]->SetAnimation(0,tmp,(size_t)used_blocks[1]->get_output_N());  
+          robot->LED_Matrixes[used_blocks[0]->get_output()]->PlayAnimation(0);
+          
+          }else{
+            tmp_n = robot->LED_Matrixes[0]->SetAnimation(0,tmp,(size_t)used_blocks[1]->get_output_N());
+            tmp_n = robot->LED_Matrixes[1]->SetAnimation(0,tmp,(size_t)used_blocks[1]->get_output_N());
+            robot->LED_Matrixes[0]->PlayAnimation(0);
+            robot->LED_Matrixes[1]->PlayAnimation(0);
+          }
           if(tmp_n > 1){
           for(byte pp = 0; pp< tmp_n;pp++){
-            robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
+           if(used_blocks[0]->get_output() !=2){
+            robot->LED_Matrixes[used_blocks[0]->get_output()]->Update();
+           }else{
+            robot->LED_Matrixes[0]->Update();
+            robot->LED_Matrixes[1]->Update();
+           }
             Block::BH->active_wait(500,5,interrupted,&action_with_no_interrupt);
           }
         }else{
-            robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
+            if(used_blocks[0]->get_output() !=2){
+            robot->LED_Matrixes[used_blocks[0]->get_output()]->Update();
+           }else{
+            robot->LED_Matrixes[0]->Update();
+            robot->LED_Matrixes[1]->Update();
+           }
             Block::BH->active_wait(50,5,interrupted,&action_with_no_interrupt);
         }
       }
         break;
     case 15:
           tmp_c = (char*)used_blocks[1]->get_table_output_8();
-          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->StartMarquee(tmp_c);
-          for(byte yy = 0; yy <8*(used_blocks_N-1);yy++){
-            robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
+           if(used_blocks[0]->get_output() != 2){
+             robot->LED_Matrixes[used_blocks[0]->get_output()]->StartMarquee(tmp_c);
+            }else{
+             robot->LED_Matrixes[0]->StartMarquee(tmp_c);
+             robot->LED_Matrixes[1]->StartMarquee(tmp_c);
+            }
+         
+          for(byte yy = 0; yy <8*4;yy++){ // TO DO TAKE INFO FROM FUNCTION
+          if(used_blocks[0]->get_output() !=2){
+            robot->LED_Matrixes[used_blocks[0]->get_output()]->Update();
+           }else{
+            robot->LED_Matrixes[0]->Update();
+            robot->LED_Matrixes[1]->Update();
+           }
             Block::BH->active_wait(100,5,interrupted,&action_with_no_interrupt);
           }
-          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->StopMarquee();
+
+          if(used_blocks[0]->get_output() != 2){
+            robot->LED_Matrixes[used_blocks[0]->get_output()]->StopMarquee();
+          }else{
+            robot->LED_Matrixes[0]->StopMarquee();
+            robot->LED_Matrixes[1]->StopMarquee();
+          }
           //ShowText
         break;
     case 16:
@@ -358,9 +392,9 @@ size_t tmp_n;
           //showVariable
         break;
     case 17:
-          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->ClearDisplay(0);
-          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->StopAnimation(0);
-          robot->LED_Matrixes[used_blocks[0]->get_output()-1]->Update();
+          robot->LED_Matrixes[used_blocks[0]->get_output()]->ClearDisplay(0);
+          robot->LED_Matrixes[used_blocks[0]->get_output()]->StopAnimation(0);
+          robot->LED_Matrixes[used_blocks[0]->get_output()]->Update();
           Block::BH->active_wait(10,5,interrupted,&action_with_no_interrupt);
         break;
     case 18:
@@ -436,7 +470,7 @@ size_t tmp_n;
           auto *buzzer = Block::robot->Buzzers[SERVO_2];
           if (buzzer != NULL)
           {
-            buzzer->PlayMelody(freqs, delays, melodySize);
+            for(byte yy  =0; yy< used_blocks[2]->get_output();yy++)buzzer->PlayMelody(freqs, delays, melodySize);
           }
         }
         break;
@@ -529,22 +563,22 @@ bool Block::set_next(Block* blockList[],int blockList_N) {
 
 
 bool Block::set_used_block(Block* blockList[],int blockList_N){
-          Serial.print("Setting usage for block:");
-          Serial.println(blockID);
+         // Serial.print("Setting usage for block:");
+         // Serial.println(blockID);
           byte usedBlockAttached = 0;
           used_blocks = new Block*[used_blocks_N];
           for(byte uu = 0;uu<used_blocks_N;uu++) used_blocks[uu] = NULL;
           if(used_blocks_N !=0){
               for(byte tt = 0; tt < used_blocks_N; tt++){
-                Serial.print("Searching for block id:");
-                Serial.println(used_blocksIDs[tt]);
+               // Serial.print("Searching for block id:");
+                //Serial.println(used_blocksIDs[tt]);
                 if(used_blocksIDs[tt] == 0){
                     used_blocks_N--;
-                    Serial.println("Pass 0 value");
+                   // Serial.println("Pass 0 value");
                 }else{
                 for(int jj = 0 ; jj <  blockList_N ; jj++){
                   if(used_blocksIDs[tt] == blockList[jj]->getID()){
-                    Serial.println("Found!");
+                   // Serial.println("Found!");
                     used_blocks[tt] = blockList[jj];
                     usedBlockAttached++;
                     break;
