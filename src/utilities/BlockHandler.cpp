@@ -202,8 +202,6 @@ void BlockHandler::addConst(int id, int32_t *value,byte N){
     #if ENABLED(DEBUG_MODE)
       Serial.println("Connections done!");          
     #endif
-
-      delay(1000);
       return(true);
 	}
 	bool BlockHandler::doBlock(bool loopmode){
