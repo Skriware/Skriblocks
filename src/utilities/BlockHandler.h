@@ -8,6 +8,13 @@
 #include "LogicCompare.h"
 #include "AritmeticBlock.h"
 #include "InterruptHandler.h"
+
+#define INVALID_MSG_ERROR_CODE 255
+#define TIMEOUT_ERROR_CODE 254
+#define MESSAGE_TIMEOUT 4000
+#define NO_MSG_CODE 0
+#define CODE_COMPLETE 2
+#define CODE_PASSED 1
 class BlockHandler {
 
 
@@ -29,7 +36,14 @@ public:
 	void active_wait(uint32_t ms,int interval,bool interruppted = false,bool *int_info = NULL);
 
 	bool MakeConections();
-	bool doBlock(bool loopmode = false);																							//Making conectons(assigning pointers from IDs) 
+	bool doBlock(bool loopmode = false);
+	
+	byte readMessageLine();
+	byte readCodeLine();
+	void processLine(byte LineCode);
+	void AddToMessage(char x);
+	void CheckLongCodes(char *x);
+	bool CheckForTimeout();																							//Making conectons(assigning pointers from IDs) 
 																												// Starting code
 	
 
