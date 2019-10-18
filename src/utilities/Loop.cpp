@@ -86,6 +86,9 @@ void Loop::set_limit(){
   if(limit_block->get_output() == -757 || limit_block->get_output() == 1029){
     Block::robot->EnterConfigMode();
     limit = 1;
+  }else if(limit_block->get_output() == -100){
+    limit = -1;
+    Block::robot->IgnoreCONBRK();
   }else{
     limit = limit_block->get_output();
   }

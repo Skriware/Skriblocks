@@ -215,7 +215,7 @@ void loop() {
               robot->OpenClaw();
               robot->TurnLEDOn(255,255,255);
               break;  
-            }else if(!robot->BLE_checkConnection()){
+            }else if(!robot->ignore_connection_break && !robot->BLE_checkConnection()){
                 BTLOST();
                 Connection_Break = true;
                 break;
@@ -223,7 +223,7 @@ void loop() {
         }
         BH.clear();
         robot->TurnLEDOn(255,255,255);
-       
+        robot->CONBRK();
         if(!Connection_Break){
           robot->ProgramENDRepotred();
           if(!robot->Remote_block_used){
@@ -236,6 +236,7 @@ void loop() {
         }
         #if ENABLED(DEBUG_MODE)
           Serial.println("CONFIRMING END OF CODE");
+
         #endif
         break;
       }else if(flag == 3){
