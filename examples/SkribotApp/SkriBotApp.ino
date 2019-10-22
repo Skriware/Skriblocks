@@ -10,7 +10,7 @@ char softVersion[] = "1.0.0";
 long last_BT_check = 0;
 bool LED_STATE = true;
 
-void BTLOST(){
+void ENTER_TO_IDLE(){
   BH.clear();
   robot->Stop();
   robot->TurnLEDOff(); 
@@ -57,7 +57,6 @@ void setup() {
   #endif
   robot->ConfigureBoardEEPROM();
   robot->BLE_Setup();
- 
   Block::setRobot(robot); 
   Block::setBlockHandler(&BH);
   BT_state = false; 
@@ -65,7 +64,7 @@ void setup() {
     Serial.println(freeRam());
   #endif 
     UserFunctions_Setup();
-    BTLOST();
+    ENTER_TO_IDLE();
     robot->status->BLINK_OK();
     #ifdef ESP_H
       robot->status->TurnOn(YELLOW,2);
@@ -75,131 +74,41 @@ void setup() {
 void loop() {
    if(!robot->BLE_checkConnection() && BT_state){
     BT_state = !BT_state;
-    BTLOST();
+    ENTER_TO_IDLE();
     }
-    robot->BaterryCheck();
-    if(robot->BLE_dataAvailable()){
-      while(robot->BLE_dataAvailable()){
-        ascitmp = robot->BLE_read();
-        #if ENABLED(DEBUG_MODE_1)
-        Serial.print(ascitmp);
-        #endif
-        BH.AllMessage[BH.messageLength] = ascitmp;
-        BH.messageLength++;
-        if(BH.messageLength > 1600){
-          #if ENABLED(DEBUG_MODE)
-            Serial.println("Too Long Code");
-          #endif 
-          break;
-        }
-        //#ifdef ESP_H
-          if(BH.messageLength > 4
-                  && BH.AllMessage[BH.messageLength-4] == 'A' 
-                  && BH.AllMessage[BH.messageLength-3] == 'M' 
-                  && BH.AllMessage[BH.messageLength-2] == 'E' 
-                  && BH.AllMessage[BH.messageLength-1] == '\n'
-                ){
-                  #if ENABLED(DEBUG_MODE)
-                  Serial.println("Setting new name");
-                  #endif
-                  char tmp = ' ';
-                  char tmpNameArray[32] = {' '};
-                  int tmpCounter = 0;
-                while(true){
-                  if(robot->BLE_dataAvailable()){
-                    tmp = robot->BLE_read();
-                    if(tmp == '\n')break;
-                    tmpNameArray[tmpCounter] = tmp;
-                    tmpCounter++; 
-                  }
-                }
-                  robot->BLE_write("OK\n");
-                  #if ENABLED(DEBUG_MODE)
-                  Serial.println(tmpNameArray);
-                  #endif  
-                  robot->BLE_changeName(tmpNameArray);
-                  BH.clear();
-                  break;
-                }
-       // #endif
-      }
-    if(BH.messageLength > 3
-      && BH.AllMessage[BH.messageLength-4] == 'E' 
-      && BH.AllMessage[BH.messageLength-3] == 'N' 
-      && BH.AllMessage[BH.messageLength-2] == 'D'
-      ){
-      BH.clear();
+    
+    byte tmp = BH.readMessageLine();
+    
+    BH.processLine(tmp);
+   
+    transmision_recieved = true;   
+
+    if(transmision_recieved == true){
+      robot->BLE_write("ack\n\r\n");
+      transmision_recieved = false;
+    }
+  
+  if(!robot->BLE_checkConnection()){
+     Blink();
+     if(BT_state){
       robot->Stop();
-      #ifndef _VARIANT_BBC_MICROBIT_
-        robot->OpenClaw();
-        robot->Put_Down();
+      BT_state = !BT_state;
+      #ifdef ESP_H
+      robot->status->TurnOn(YELLOW,2);
       #endif
-      //break;
-    }
-    if(BH.messageLength > 6 
-      && BH.AllMessage[BH.messageLength-7] == 'V' 
-      && BH.AllMessage[BH.messageLength-6] == 'E' 
-      && BH.AllMessage[BH.messageLength-5] == 'R' 
-      ){
-      #if ENABLED(DEBUG_MODE)
-      Serial.println("Version");
-      #endif
-        robot->BLE_write(softVersion);
-        BH.clear();
-    }else if
-      (BH.messageLength > 6
-      && BH.AllMessage[BH.messageLength-4] == 'A' 
-      && BH.AllMessage[BH.messageLength-3] == 'M' 
-      && BH.AllMessage[BH.messageLength-2] == 'E' 
-      && BH.AllMessage[BH.messageLength-1] == '\n'
-    ){
-      #if ENABLED(DEBUG_MODE)
-      Serial.println("NewName");
-      #endif
-      char tmp = robot->BLE_read();
-      char tmpNameArray[32] = {' '};
-      int tmpCounter = 0;
-    while(tmp != '\n'){
-      if(robot->BLE_dataAvailable()){
-        tmpNameArray[tmpCounter] = tmp;
-        tmpCounter++;
-        tmp = robot->BLE_read();
-      }
-    }
-      robot->BLE_write("OK\n");
-      #if ENABLED(DEBUG_MODE)
-      Serial.println(tmpNameArray);
-      #endif  
-      robot->BLE_changeName(tmpNameArray);
-      BH.clear();
+     }
+  }else if(robot->BLE_checkConnection() && !BT_state){ 
+     robot->TurnLEDOn(255,255,255); 
+     BT_state = !BT_state;
+     BH.clear();
+     #ifdef ESP_H
+      robot->status->TurnOn(BLUE,2);
+     #endif
+  }
+}
 
-    }else if (BH.messageLength > 6 
-      && BH.AllMessage[BH.messageLength-3]  == 'Z' 
-      && BH.AllMessage[BH.messageLength-2]  == 'E' 
-      && BH.AllMessage[BH.messageLength-1]  == 'D'){
-      #if ENABLED(DEBUG_MODE)
-      Serial.println("Named");
-      #endif
-      robot->sendNameInfo();
-      BH.clear();
-    }else if (BH.messageLength > 4 
-      && BH.AllMessage[BH.messageLength-3]  == 'E' 
-      && BH.AllMessage[BH.messageLength-2]  == 'T' 
-      && BH.AllMessage[BH.messageLength-1]  == 'X'){
-      #if ENABLED(DEBUG_MODE)
-      Serial.println("RESET BLE");
-      #endif
-      robot->BLE_write("OK\n");
-      robot->BLE_reset();
-      BH.clear();
-
-    }else if(BH.messageLength > 4 
-      && BH.AllMessage[BH.messageLength-5] == 'R' 
-      && BH.AllMessage[BH.messageLength-4] == 'U' 
-      && BH.AllMessage[BH.messageLength-3] == 'N' 
-      ){
-    BH.Mcursor = 6;
-    int flag; 
+void CompileCode(){
+   int flag; 
     while(freeRam() > 190){
       flag = BH.Handle_Msg(); 
       if(flag != 2 && flag != 3) {
@@ -209,24 +118,7 @@ void loop() {
         Serial.print("Starting program at: ");
         Serial.println(millis());
         #endif
-       while(BH.doBlock()){
-           robot->BaterryCheck();
-           if(robot->ProgramENDRepotred()){
-              #if ENABLED(DEBUG_MODE)
-              Serial.println("Stopping the robot!");
-              #endif
-              BH.clear();
-              robot->Stop();
-              robot->Put_Down();
-              robot->OpenClaw();
-              robot->TurnLEDOn(255,255,255);
-              break;  
-            }else if(!robot->BLE_checkConnection()){
-                BTLOST();
-                Connection_Break = true;
-                break;
-            }
-        }
+        ExecuteCode();
         BH.clear();
         robot->TurnLEDOn(255,255,255);
         if(!Connection_Break){
@@ -256,39 +148,26 @@ void loop() {
 
       }
     }
-    if(freeRam() < 190){
-      while(true){
-         robot->TurnLEDOn(255,0,0); 
-         delay(1000);
-         robot->TurnLEDOff();        
-         delay(500);
-      }
-    }
-    
-    }
-    transmision_recieved = true;   
-  }
-    if(transmision_recieved == true){
-      robot->BLE_write("ack\n\r\n");
-      transmision_recieved = false;
-    }
-  
-  if(!robot->BLE_checkConnection()){
-     Blink();
-     if(BT_state){
-      robot->Stop();
-      BT_state = !BT_state;
-      #ifdef ESP_H
-      robot->status->TurnOn(YELLOW,2);
-      #endif
-     }
-  }else if(robot->BLE_checkConnection() && !BT_state){ 
-     robot->TurnLEDOn(255,255,255); 
-     BT_state = !BT_state;
-     BH.clear();
-     #ifdef ESP_H
-      robot->status->TurnOn(BLUE,2);
-     #endif
-  }
+}
+
+void ExecuteCode(){
+while(BH.doBlock()){
+           robot->BaterryCheck();
+           if(robot->ProgramENDRepotred()){
+              #if ENABLED(DEBUG_MODE)
+              Serial.println("Stopping the robot!");
+              #endif
+                BH.clear();
+                robot->Stop();
+                robot->Put_Down();
+                robot->OpenClaw();
+                robot->TurnLEDOn(255,255,255);
+              break;  
+            }else if(!robot->BLE_checkConnection()){
+                ENTER_TO_IDLE();
+                Connection_Break = true;
+                break;
+            }
+        }
 }
 

@@ -27,6 +27,7 @@
    interrupts_N = 0;
    interruped_precesed = false;
    millis_left_from_interrupt = 0;
+   transfereBlocks = false;
 	}
 
   void BlockHandler::clear(){
@@ -537,10 +538,14 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
   bool BlockHandler::CheckForTimeout(){
             bool tmp = false;
             long last_message_time = millis();
+            long last_ack_send = last_message_time;
+            Block::robot->BLE_write("ack\n\r\n");
             while((Block::robot->BLE_dataAvailable() == 0)){
               if(millis() - last_message_time < MESSAGE_TIMEOUT){
                 tmp = true;
                 break;
+              }else if(millis() - last_ack_send < ACK_RESEND_TIME){
+                Block::robot->BLE_write("ack\n\r\n");
               }
             }
             return(tmp);
@@ -585,8 +590,71 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
       return(NO_MSG_CODE);
     }
     if(MainAsci == 'R')return(CODE_COMPLETE);
+    transfereBlocks = false;
     return(CODE_PASSED);
   }
-  void BlockHandler::processLine(byte LineCode){
+  void BlockHandler::processMessageLine(byte LineCode){
+        switch(LineCode){
+          case BAPTISED:
+                #if ENABLED(DEBUG_MODE)
+                  Serial.println("Named");
+                #endif
+                  Block::robot->sendNameInfo();
+                  clear();
+          break;
+          case RENAME:
+                #if ENABLED(DEBUG_MODE)
+                  Serial.println("NewName");
+                #endif
+                char tmp = Block::robot->BLE_read();
+                char tmpNameArray[32] = {' '};
+                int tmpCounter = 0;
+                while(tmp != '\n'){
+                  if(Block::robot->BLE_dataAvailable()){
+                    tmpNameArray[tmpCounter] = tmp;
+                    tmpCounter++;
+                    tmp = Block::robot->BLE_read();
+                  }
+                }
+                Block::robot->BLE_write("OK\n");
+                #if ENABLED(DEBUG_MODE)
+                  Serial.println(tmpNameArray);
+                #endif  
+                Block::robot->BLE_changeName(tmpNameArray);
+                clear();
+          break;
+          case VERSION:
+                #if ENABLED(DEBUG_MODE)
+                  Serial.println("Version Request");
+                #endif
+                Block::robot->BLE_write(softVersion);
+                clear();
+          break;
+          case RESET:
+              #if ENABLED(DEBUG_MODE)
+                Serial.println("RESET BLE");
+              #endif
+                Block::robot->BLE_write("OK\n");
+                Block::robot->BLE_reset();
+                clear();
+          break;
+          case END:
+                clear();
+                Block::robot->Stop();
+                #ifndef _VARIANT_BBC_MICROBIT_
+                Block::robot->OpenClaw();
+                Block::robot->Put_Down();
+                #endif
+          break;
+          case BEGIN:
+                transfereBlocks = true;
+          break;
+          case NO_MSG_CODE:
+          break;
+          default:
 
+          break;
+        }
   } 
+
+  

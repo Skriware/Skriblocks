@@ -12,9 +12,19 @@
 #define INVALID_MSG_ERROR_CODE 255
 #define TIMEOUT_ERROR_CODE 254
 #define MESSAGE_TIMEOUT 4000
+#define ACK_RESEND_TIME 500
 #define NO_MSG_CODE 0
 #define CODE_COMPLETE 2
 #define CODE_PASSED 1
+
+//Line Tags
+#define BAPTISED 'b'
+#define RENAME 'R'
+#define VERSION 'V'
+#define RESET 'r'
+#define END 'E'
+#define BEGIN 'B'
+
 class BlockHandler {
 
 
@@ -57,7 +67,7 @@ public:
 	void clear();	
 	void init();																					// BT message hendler												
 
-	bool runCode;
+	bool runCode,transfereBlocks;
 
 	 #define blockList_MAX 			200
 	 #define IfblockList_MAX 		20
