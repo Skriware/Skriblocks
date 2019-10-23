@@ -150,6 +150,7 @@ void SendCodeEndMEssage(){
             robot->Remote_block_used = false;
           }
         }
+        robot->connection_Break_Reported = false;
         #if ENABLED(DEBUG_MODE_1)
           Serial.println("CONFIRMING END OF CODE");
         #endif

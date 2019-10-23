@@ -474,9 +474,8 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
               if(tmp != 'B')serialFlush();
               #endif
             }
-            if(Block::robot->program_End_Reported || Block::robot->connection_Break_Reported)break;
-          
       }
+      if(Block::robot->program_End_Reported || Block::robot->connection_Break_Reported)break;
       if(checkForInterrupts()){
        Serial.println("Interrupts!");
         millis_left_from_interrupt = (loop_iterator - yy)*interval;
