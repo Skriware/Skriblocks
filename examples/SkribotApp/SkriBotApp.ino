@@ -16,6 +16,7 @@ void ENTER_TO_IDLE(){
   robot->TurnLEDOff(); 
   robot->OpenClaw();
   robot->Put_Down();
+  robot->TurnLEDOn(255,255,255);
 }
 
 void Blink(){
@@ -76,19 +77,49 @@ void loop() {
     BT_state = !BT_state;
     ENTER_TO_IDLE();
     }
-    
-    byte tmp = BH.readMessageLine();
-    
-    BH.processLine(tmp);
-   
-    transmision_recieved = true;   
 
-    if(transmision_recieved == true){
-      robot->BLE_write("ack\n\r\n");
-      transmision_recieved = false;
+    byte tmp = BH.readMessageLine();
+    BH.processMessageLine(tmp);
+    
+    if(BH.transfereBlocks){
+      byte codeinfo;
+      while(true){                  //read code
+        codeinfo = BH.readCodeLine();
+        if(codeinfo == TIMEOUT_ERROR_CODE)break;
+        if(codeinfo == CODE_COMPLETE)break;
+      }
+      if(codeinfo == CODE_COMPLETE){
+        Serial.println("BEGIN COMPILATION!");
+        byte succes = CompileCode();        //make blocks connections
+        Serial.println("COMPILATION ENDED");
+        if(succes == 2){                    //chceck compiler errors
+            Connection_Break = false;
+            if(!robot->Remote_block_used)robot->BLE_write("ack\n\r\n");
+            ExecuteCode();                  //Here robot runs the code
+            SendCodeEndMEssage();
+
+        }else if(succes ==3){
+        SendErrorMsg("CODE NOT VALID");
+      }
+
+      }else if(codeinfo == TIMEOUT_ERROR_CODE){
+        SendErrorMsg("TIMEOUT ERROR");
+      }  
+
+  }
+  idle_connectioncheck();
+}
+
+int CompileCode(){
+     int flag; 
+  while(freeRam() > 190){
+      flag = BH.Handle_Msg(); 
+      if(flag != 1)return(flag);
     }
-  
-  if(!robot->BLE_checkConnection()){
+}
+
+void idle_connectioncheck(){
+   if(!robot->BLE_checkConnection()){
      Blink();
      if(BT_state){
       robot->Stop();
@@ -105,22 +136,11 @@ void loop() {
       robot->status->TurnOn(BLUE,2);
      #endif
   }
-}
+} 
 
-void CompileCode(){
-   int flag; 
-    while(freeRam() > 190){
-      flag = BH.Handle_Msg(); 
-      if(flag != 2 && flag != 3) {
-        Connection_Break = false;
-        if(!robot->Remote_block_used)robot->BLE_write("ack\n\r\n");
-        #ifdef DEBUG_MODE_1
-        Serial.print("Starting program at: ");
-        Serial.println(millis());
-        #endif
-        ExecuteCode();
-        BH.clear();
-        robot->TurnLEDOn(255,255,255);
+void SendCodeEndMEssage(){
+    BH.clear();
+    robot->TurnLEDOn(255,255,255);
         if(!Connection_Break){
           robot->ProgramENDRepotred();
           if(!robot->Remote_block_used){
@@ -133,23 +153,7 @@ void CompileCode(){
         #if ENABLED(DEBUG_MODE_1)
           Serial.println("CONFIRMING END OF CODE");
         #endif
-        break;
-      }else if(flag == 3){
-        BH.clear();
-        #ifdef ESP_H        
-          robot->status->TurnOn(RED,2);
-        #endif
-        robot->Stop();
-        #if ENABLED(DEBUG_MODE_1)
-          Serial.println("CODE NOT VALID");
-        #endif
-        robot->BLE_write("DONE\n");
-        break;
-
-      }
-    }
 }
-
 void ExecuteCode(){
 while(BH.doBlock()){
            robot->BaterryCheck();
@@ -171,3 +175,13 @@ while(BH.doBlock()){
         }
 }
 
+void SendErrorMsg(char *msg){
+            robot->BLE_write("DONE\n");
+            ENTER_TO_IDLE();
+            #ifdef ESP_H        
+            robot->status->TurnOn(RED,2);
+            #endif
+            #if ENABLED(DEBUG_MODE_1)
+            Serial.println(msg);
+            #endif
+}

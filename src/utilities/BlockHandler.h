@@ -50,7 +50,7 @@ public:
 	
 	byte readMessageLine();
 	byte readCodeLine();
-	void processLine(byte LineCode);
+	void processMessageLine(byte LineCode);
 	void AddToMessage(char x);
 	void CheckLongCodes(char *x);
 	bool CheckForTimeout();																							//Making conectons(assigning pointers from IDs) 

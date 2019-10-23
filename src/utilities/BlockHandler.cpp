@@ -357,6 +357,7 @@ int BlockHandler::Handle_Msg(){
           byte *tmp_b;
           int32_t *tmp_32;
           int *tmp_int;
+          Serial.println(AllMessage[Mcursor]);
   switch(AllMessage[Mcursor]){
     case 'L':
           Mcursor += 2;
@@ -541,11 +542,12 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
             long last_ack_send = last_message_time;
             Block::robot->BLE_write("ack\n\r\n");
             while((Block::robot->BLE_dataAvailable() == 0)){
-              if(millis() - last_message_time < MESSAGE_TIMEOUT){
+              if(millis() - last_message_time > MESSAGE_TIMEOUT){
                 tmp = true;
                 break;
-              }else if(millis() - last_ack_send < ACK_RESEND_TIME){
+              }else if(millis() - last_ack_send > ACK_RESEND_TIME){
                 Block::robot->BLE_write("ack\n\r\n");
+                last_ack_send = millis();
               }
             }
             return(tmp);
@@ -578,6 +580,11 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
     if(Block::robot->BLE_dataAvailable()){
       MainAsci = Block::robot->BLE_read();                                 //Reading first character of the message 255-error Code
       AddToMessage(MainAsci);
+      if(MainAsci == 'R'){
+        //while(Block::robot->BLE_dataAvailable())AddToMessage(Block::robot->BLE_read());
+        return(CODE_COMPLETE);
+      }
+      asciTmp = MainAsci;
     while(asciTmp != '\n'){
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
@@ -587,13 +594,16 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
           }
         }
     }else{
+      Block::robot->BLE_write("ack\n\r\n");
       return(NO_MSG_CODE);
     }
-    if(MainAsci == 'R')return(CODE_COMPLETE);
     transfereBlocks = false;
     return(CODE_PASSED);
   }
   void BlockHandler::processMessageLine(byte LineCode){
+        char tmp;
+        char tmpNameArray[32] = {' '};
+        int tmpCounter;
         switch(LineCode){
           case BAPTISED:
                 #if ENABLED(DEBUG_MODE)
@@ -606,9 +616,9 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
                 #if ENABLED(DEBUG_MODE)
                   Serial.println("NewName");
                 #endif
-                char tmp = Block::robot->BLE_read();
-                char tmpNameArray[32] = {' '};
-                int tmpCounter = 0;
+                tmp = Block::robot->BLE_read();
+                tmpNameArray[32] = {' '};
+                tmpCounter = 0;
                 while(tmp != '\n'){
                   if(Block::robot->BLE_dataAvailable()){
                     tmpNameArray[tmpCounter] = tmp;
@@ -627,7 +637,7 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
                 #if ENABLED(DEBUG_MODE)
                   Serial.println("Version Request");
                 #endif
-                Block::robot->BLE_write(softVersion);
+                Block::robot->BLE_write("1");
                 clear();
           break;
           case RESET:
@@ -652,7 +662,7 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
           case NO_MSG_CODE:
           break;
           default:
-
+                clear();
           break;
         }
   } 
