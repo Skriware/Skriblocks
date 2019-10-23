@@ -92,7 +92,7 @@ void loop() {
         Serial.println("BEGIN COMPILATION!");
         byte succes = CompileCode();        //make blocks connections
         Serial.println("COMPILATION ENDED");
-        if(succes == 2){                    //chceck compiler errors
+        if(succes == 1){                    //chceck compiler errors
             Connection_Break = false;
             if(!robot->Remote_block_used)robot->BLE_write("ack\n\r\n");
             ExecuteCode();                  //Here robot runs the code
@@ -114,7 +114,7 @@ int CompileCode(){
      int flag; 
   while(freeRam() > 190){
       flag = BH.Handle_Msg(); 
-      if(flag != 1)return(flag);
+      if(flag != 2)return(flag);
     }
 }
 
@@ -139,8 +139,8 @@ void idle_connectioncheck(){
 } 
 
 void SendCodeEndMEssage(){
-    BH.clear();
-    robot->TurnLEDOn(255,255,255);
+        BH.clear();
+        robot->TurnLEDOn(255,255,255);
         if(!Connection_Break){
           robot->ProgramENDRepotred();
           if(!robot->Remote_block_used){

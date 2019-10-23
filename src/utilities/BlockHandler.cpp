@@ -356,8 +356,6 @@ int BlockHandler::Handle_Msg(){
           byte type,trigger,priority, starting_block;
           byte *tmp_b;
           int32_t *tmp_32;
-          int *tmp_int;
-          Serial.println(AllMessage[Mcursor]);
   switch(AllMessage[Mcursor]){
     case 'L':
           Mcursor += 2;
@@ -505,7 +503,7 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
           while(true){
             if(Block::robot->BLE_dataAvailable()){
               char tmp2 = Block::robot->BLE_read();
-              AddToMessage(tmp2);
+              //AddToMessage(tmp2);
               if(tmp2 == 'A'){
                 *asciTmp = 'b';
                 break; 
@@ -520,9 +518,9 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
           while(true){
             if(Block::robot->BLE_dataAvailable()){
               char tmp2 = Block::robot->BLE_read();
-              AddToMessage(tmp2);
+              //AddToMessage(tmp2);
               tmp2 = Block::robot->BLE_read();
-              AddToMessage(tmp2);
+              //AddToMessage(tmp2);
               if(tmp2 == 'S'){
                 *asciTmp = 'r';
                 break; 
@@ -558,13 +556,13 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
       asciTmp = '0';
       if(Block::robot->BLE_dataAvailable()){
         MainAsci = Block::robot->BLE_read();                                 //Reading first character of the message 255-error Code
-        AddToMessage(MainAsci);
+        //AddToMessage(MainAsci);
         CheckLongCodes(&MainAsci);
         if(MainAsci == INVALID_MSG_ERROR_CODE) return(INVALID_MSG_ERROR_CODE);
         while(asciTmp != '\n'){
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
-            AddToMessage(asciTmp);
+            //AddToMessage(asciTmp);
           }else{
            if(CheckForTimeout())return(TIMEOUT_ERROR_CODE);
           }
