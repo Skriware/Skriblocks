@@ -52,7 +52,7 @@ void setup() {
     Serial.println("DEBUG_MODE");
   #endif
   #ifdef ESP_H
-     robot = new Skribot("SKRIBRAIN_B2C_TESTS");
+     robot = new Skribot("SKRIBRAIN");
   #else
     robot = new Skribot("EDU_SHIELD");
   #endif
@@ -78,6 +78,7 @@ void loop() {
     BT_state = !BT_state;
     ENTER_TO_IDLE();
     }
+    robot->BaterryCheck();
 
     byte tmp = BH.readMessageLine();
     BH.processMessageLine(tmp);
