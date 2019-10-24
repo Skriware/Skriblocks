@@ -555,13 +555,11 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
       asciTmp = '0';
       if(Block::robot->BLE_dataAvailable()){
         MainAsci = Block::robot->BLE_read();                                 //Reading first character of the message 255-error Code
-        //AddToMessage(MainAsci);
         CheckLongCodes(&MainAsci);
         if(MainAsci == INVALID_MSG_ERROR_CODE) return(INVALID_MSG_ERROR_CODE);
         while(asciTmp != '\n'){
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
-            //AddToMessage(asciTmp);
           }else{
            if(CheckForTimeout())return(TIMEOUT_ERROR_CODE);
           }
