@@ -400,11 +400,11 @@ void BlockHandler::active_wait(uint32_t ms, int interval){
     }
     delay(ms_left_befor_loop);
     for(int yy = 1; yy < loop_iterator; yy++){
-          if(Block::robot->using_BLE_Connection && !Block::robot->connection_Break_Reported && Block::robot->BLE_checkConnection() == false){
-          if(!Block::robot->ignore_connection_break)Block::robot->connection_Break_Reported = true;
-          #ifdef DEBUG_MODE
-          if(Block::robot->connection_Break_Reported)Serial.println("Connection LOST!");
-          #endif
+    if(Block::robot->using_BLE_Connection && !Block::robot->connection_Break_Reported && Block::robot->BLE_checkConnection() == false){
+    if(!Block::robot->ignore_connection_break)Block::robot->connection_Break_Reported = true;
+    #ifdef DEBUG_MODE
+    if(Block::robot->connection_Break_Reported)Serial.println("Connection LOST!");
+    #endif
         }else if(Block::robot->using_BLE_Connection && !Block::robot->program_End_Reported && Block::robot->BLE_dataAvailable() > 0){
             char tmp;
             while(Block::robot->BLE_dataAvailable() > 0){
@@ -417,9 +417,8 @@ void BlockHandler::active_wait(uint32_t ms, int interval){
               if(tmp != 'B')serialFlush();
               #endif
             }
-            if(Block::robot->program_End_Reported || (Block::robot->ignore_connection_break || Block::robot->connection_Break_Reported))break;
-          
       }
+      if(Block::robot->program_End_Reported || (Block::robot->ignore_connection_break || Block::robot->connection_Break_Reported))break;
       if(checkForInterrupts()){
         millis_left_from_interrupt = (loop_iterator - yy)*interval;
         break;

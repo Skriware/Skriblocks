@@ -55,13 +55,9 @@ public:
 	void CheckLongCodes(char *x);
 	bool CheckForTimeout();																							//Making conectons(assigning pointers from IDs) 
 																												// Starting code
-	
-
 	int freeRam();
 	int cti(char c);
-	int32_t readInt();
-	byte* readMultipleInts(byte *n);
-	int32_t* readMultipleInts32(byte *N);																							//BT message parsing help functions
+	int32_t readInt();																						//BT message parsing help functions
 	int Handle_Msg();																							// Handle one line of the message
 	void ReadfromBT();	
 	void clear();	
