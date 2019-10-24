@@ -32,7 +32,7 @@ public:
 	BlockHandler();
 
 	void addLoop(int id,	int startBlockID,	int endBlockID,		int count);
-	void addBlock(int id,	int _nextBlockID,int _actionID,byte* _usedBlocksIDs= NULL,byte _NusedBlocks = 0);
+	void addBlock(int id,	int _nextBlockID,int _actionID,int _input,int output);
 	void addIf(int id,int _next_true, int _next_false, int _logic_block);
 	void addLogic(int id,int logicOperation,int _input_left, int _input_right);
 	void addLogicCompare(int id,int _logicOperation,int _input_left, int _input_right);
@@ -43,7 +43,7 @@ public:
 	void addConst(int id,String value);	
 	bool checkForInterrupts();																		//Adding Blocks types
 	
-	void active_wait(uint32_t ms,int interval,bool interruppted = false,bool *int_info = NULL);
+	void active_wait(uint32_t ms,int interval);
 
 	bool MakeConections();
 	bool doBlock(bool loopmode = false);
