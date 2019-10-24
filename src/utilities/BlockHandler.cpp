@@ -578,7 +578,8 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
       MainAsci = Block::robot->BLE_read();                                 //Reading first character of the message 255-error Code
       AddToMessage(MainAsci);
       if(MainAsci == 'R'){
-        //while(Block::robot->BLE_dataAvailable())AddToMessage(Block::robot->BLE_read());
+        while(Block::robot->BLE_dataAvailable())AddToMessage(Block::robot->BLE_read());
+        transfereBlocks = false;
         return(CODE_COMPLETE);
       }
       asciTmp = MainAsci;
@@ -587,14 +588,16 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
             asciTmp = Block::robot->BLE_read();
             AddToMessage(asciTmp);
           }else{
-            if(CheckForTimeout())return(TIMEOUT_ERROR_CODE);
+            if(CheckForTimeout()){
+              transfereBlocks = false;  
+              return(TIMEOUT_ERROR_CODE);
+            }
           }
         }
     }else{
       Block::robot->BLE_write("ack\n\r\n");
       return(NO_MSG_CODE);
     }
-    transfereBlocks = false;
     return(CODE_PASSED);
   }
   void BlockHandler::processMessageLine(byte LineCode){
@@ -659,6 +662,8 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
           case NO_MSG_CODE:
           break;
           default:
+                Block::robot->BLE_Flush();
+                Block::robot->BLE_write("ack\n\r\n");
                 clear();
           break;
         }
