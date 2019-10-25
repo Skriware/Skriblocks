@@ -17,6 +17,7 @@ void ENTER_TO_IDLE(){
   robot->OpenClaw();
   robot->Put_Down();
   robot->TurnLEDOn(255,255,255);
+  robot->BLE_Flush();
 }
 
 void Blink(){
@@ -90,6 +91,7 @@ void loop() {
         if(codeinfo == TIMEOUT_ERROR_CODE)break;
         if(codeinfo == CODE_COMPLETE)break;
       }
+      robot->BLE_write("ack\n\r\n");
       if(codeinfo == CODE_COMPLETE){
         Serial.println("BEGIN COMPILATION!");
         byte succes = CompileCode();        //make blocks connections
@@ -177,7 +179,6 @@ while(BH.doBlock()){
 }
 
 void SendErrorMsg(char *msg){
-            robot->BLE_write("DONE\n");
             ENTER_TO_IDLE();
             #ifdef ESP_H        
             robot->status->TurnOn(RED,2);
@@ -185,4 +186,5 @@ void SendErrorMsg(char *msg){
             #if ENABLED(DEBUG_MODE_1)
             Serial.println(msg);
             #endif
+            robot->BLE_write("DONE\n");
 }

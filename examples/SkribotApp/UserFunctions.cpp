@@ -9,25 +9,11 @@ void UserFunctions_Setup(){
 
 void UserFunction_1(){
 	
-Block::robot->MoveForward(1000);
-Block::robot->MoveBack(1000);
-
 //Write your own Arduino based Function here and trigger it in app using block UserFunction_1!
 }
 
 void UserFunction_2(int input){       //Example line following Algorithm with one check time input
 
-bool LEFTSens   = Block::robot->ReadLineSensor(3);   //Reading from first sensor
-bool RIGHTSens  = Block::robot->ReadLineSensor(1);
-  if(!LEFTSens && !RIGHTSens){           //Chcecking if both sensor are detecting the line below it.
-    Block::robot->MoveForward(input);                 // Going Forward  
-  }
-  if(LEFTSens && !RIGHTSens){                                 
-    Block::robot->FaceLeft(input);                 //Turning Left 
-  }
-  if(RIGHTSens && !LEFTSens){                   //Reading from second sensor
-    Block::robot->FaceRight(input);                //Turning Right
-  }
 }
 
 int UserFunction_3(int input){
@@ -55,23 +41,21 @@ int UserFunction_3(int input){
     }
     lastRightSensor = RightSensor;
     lastLeftSensor = LeftSensor;                             //Remembering last readouts
-
-return(0);
 */
-  int tmp = Block::robot->ReadDistSensor(D1_PORT) < input;
-return(tmp);
+return(0);
+
+
 }
 
 void UserFunction_4(int input_1, int input_2){
-  /*Block::robot->MoveForward(input_1);
-  Block::robot->MoveBack(input_2);
+  
   //Write your own Arduino based Function here and trigger it in app using block UserFunction_5!
-  */
+  
 }
 
 int UserFunction_5(){
 //Write your own Arduino based Function here and trigger it in app using block UserFunction_4!
 
-return(Block::robot->ReadDistSensor(D1_PORT)/2);
+return(0);
 }
 

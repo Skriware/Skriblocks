@@ -14,7 +14,6 @@
           while(true){
             if(Block::robot->BLE_dataAvailable()){
               char tmp2 = Block::robot->BLE_read();
-              //AddToMessage(tmp2);
               if(tmp2 == 'A'){
                 *asciTmp = 'b';
                 break; 
@@ -29,9 +28,7 @@
           while(true){
             if(Block::robot->BLE_dataAvailable()){
               char tmp2 = Block::robot->BLE_read();
-              //AddToMessage(tmp2);
               tmp2 = Block::robot->BLE_read();
-              //AddToMessage(tmp2);
               if(tmp2 == 'S'){
                 *asciTmp = 'r';
                 break; 
