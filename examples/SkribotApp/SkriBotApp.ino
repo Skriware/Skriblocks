@@ -77,7 +77,7 @@ void loop() {
     BT_state = !BT_state;
     ENTER_TO_IDLE();
     }
-
+    robot->BaterryCheck();
     byte tmp = BH.readMessageLine();
     BH.processMessageLine(tmp);
     
