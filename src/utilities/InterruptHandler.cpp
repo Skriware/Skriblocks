@@ -7,6 +7,7 @@
 	trigger_type = trigger;
 	input = int_input;
 	if(int_type == BUTTON_INTERRUPT){			//mapping for SKRIBRAIN
+		#ifdef ESP_H
 		switch(input){
 			case BUTTON_1:
 				input = SKRIBRAIN_ANALOG_PIN_1;
@@ -21,6 +22,7 @@
 				input = SKRIBRAIN_ANALOG_PIN_1;
 			break;
 		}
+		#endif
 	}
 	sanity_check = Condition_saniti_check();
 	last_interrupted_Block = NULL;
@@ -104,6 +106,7 @@
 			return(false);
 	}
 	bool InterruptHandler::Condition_saniti_check(){
+		#ifdef ESP_H
 		if(interrupt_type == BUTTON_INTERRUPT){
 			if(input == SKRIBRAIN_ANALOG_PIN_1 || input == SKRIBRAIN_ANALOG_PIN_2 || input == SKRIBRAIN_ANALOG_PIN_3){
 				if(trigger_type == BUTTON_PRESSED || trigger_type == BUTTON_HOLD){
@@ -128,6 +131,7 @@
 				return(true);
 			}
 		}
+		#endif
 		return(false);
 	}
 	byte InterruptHandler::get_start_block_id(){

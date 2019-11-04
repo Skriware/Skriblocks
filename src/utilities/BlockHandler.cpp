@@ -49,7 +49,6 @@
 		Block *block = new Block(id,_nextBlockID,_actionID,_intInput,_intOutput);
       	blockList[blockList_N] = block;
       	blockList_N++;
-      	Serial.println(blockList_N);
 	}
 
 	void BlockHandler::addIf(int id,int _next_true, int _next_false, int _logic_block){
@@ -133,6 +132,7 @@
 
 
 	bool BlockHandler::MakeConections(){
+    Serial.println("GO");
 		#if ENABLED(DEBUG_MODE)
       Serial.println("Making connections!");          
     #endif
@@ -370,9 +370,7 @@ int BlockHandler::Handle_Msg(){
           addBlock(id,next,69,0,0);
        break;
       case 'A':
-          Serial.print("ACTION:");
-           Mcursor +=2;
-          Serial.print("ActionID: ");
+          Mcursor +=2;
           actionID = readInt();
           input = readInt();
           output = readInt();
@@ -407,16 +405,12 @@ void BlockHandler::active_wait(uint32_t ms, int interval){
     #endif
         }else if(Block::robot->using_BLE_Connection && !Block::robot->program_End_Reported && Block::robot->BLE_dataAvailable() > 0){
             char tmp;
-            while(Block::robot->BLE_dataAvailable() > 0){
               tmp = Block::robot->BLE_read();
-              delay(5);                     // to be sure that next char will be recieved
-              if((tmp == 'E' && Block::robot->BLE_read() == 'N' && Block::robot->BLE_read() == 'D') || (tmp == 'B' && Block::robot->BLE_read() == 'E' && Block::robot->BLE_read() == 'G')){
+              // to be sure that next char will be recieved
+              if((tmp == 'E') || (tmp == 'B' )){
+                Serial.println("Program interrupted by next program!");
                 Block::robot->program_End_Reported = true;
               }
-              #ifndef ESP_H && _VARIANT_BBC_MICROBIT_
-              if(tmp != 'B')serialFlush();
-              #endif
-            }
       }
       if(Block::robot->program_End_Reported || (Block::robot->ignore_connection_break || Block::robot->connection_Break_Reported))break;
       if(checkForInterrupts()){
