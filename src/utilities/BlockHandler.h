@@ -24,6 +24,9 @@
 #define RESET 'r'
 #define END 'E'
 #define BEGIN 'B'
+#define BATTERY 'L'
+#define REMOTE 'M'
+#define PIANO 'P'
 
 class BlockHandler {
 
