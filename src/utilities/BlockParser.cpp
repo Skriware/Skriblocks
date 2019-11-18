@@ -65,10 +65,16 @@
       if(Block::robot->BLE_dataAvailable()){
         MainAsci = Block::robot->BLE_read();                                 //Reading first character of the message 255-error Code
         CheckLongCodes(&MainAsci);
+        #ifdef DEBUG_MODE_1
+        Serial.print(MainAsci);
+        #endif
         if(MainAsci == INVALID_MSG_ERROR_CODE) return(INVALID_MSG_ERROR_CODE);
-        while(asciTmp != '\n'){
+        while(asciTmp != '\n' && MainAsci != 'H'){
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
+            #ifdef DEBUG_MODE_1
+            Serial.print(asciTmp);
+            #endif
           }else{
            if(CheckForTimeout())return(TIMEOUT_ERROR_CODE);
           }
@@ -108,9 +114,10 @@
     return(CODE_PASSED);
   }
   void BlockHandler::processMessageLine(byte LineCode){
-        char tmp;
+        char tmp = 'A';
         char tmpNameArray[32] = {' '};
         int tmpCounter;
+        char tmp_tag[2] = {' '};
         switch(LineCode){
           case BAPTISED:
                 #if ENABLED(DEBUG_MODE)
@@ -169,13 +176,15 @@
           case NO_MSG_CODE:
           break;
           case REMOTE:
-              Block::robot->RawRotorMove(readInt(),readInt());
+          Block::robot->RawRotorMove(readIntDirect(),readIntDirect());
+          Block::robot->BLE_write("ack\n\r\n");
           break;
           case BATTERY:
               Block::robot->BLE_write((char*)Block::robot->ReadBattery());
+
           break;
           case PIANO:
-              switch(readInt()){
+              switch(readIntDirect()){
                       case 0:
                         if (Block::robot->Buzzers[SERVO_2] != NULL)
                           Block::robot->Buzzers[SERVO_2]->StopNote();
@@ -235,6 +244,16 @@
                       default:
                         break;
               }
+              Block::robot->BLE_write("ack\n\r\n");
+          break;
+          case HARDWARE_SET:
+          tmp = Block::robot->BLE_read();
+              while(tmp != '\n'){
+                tmp_tag[0] = Block::robot->BLE_read();
+                tmp_tag[1] = Block::robot->BLE_read();
+                Block::robot->AddHardware(tmp_tag);
+                tmp = Block::robot->BLE_read();
+              }
           break;
           default:
                 Block::robot->BLE_Flush();
@@ -243,3 +262,31 @@
           break;
         }
   } 
+
+  int32_t BlockHandler::readIntDirect(){
+  int nDigits = 0;
+  int sign = 1;
+  byte cursor = 0;
+  char tmp;
+  char msg[10];
+  tmp = Block::robot->BLE_read();
+  while(tmp != ' ' && tmp != '\n'){
+    msg[cursor+nDigits] = tmp;
+    tmp = Block::robot->BLE_read();
+    nDigits++;
+  }
+  
+  if(msg[cursor] == '-')sign = -1;
+  if(sign==-1){
+    cursor++;
+    nDigits--;
+  }
+  int32_t out = 0;
+  int32_t power = 1;
+    for(int ii = nDigits-1; ii > -1; ii--){
+      if(ii != nDigits-1) power *=10;
+      int32_t add = cti(msg[cursor + ii])*power;
+      out += add;
+    }
+    return(out*sign);
+}

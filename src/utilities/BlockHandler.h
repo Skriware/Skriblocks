@@ -27,6 +27,7 @@
 #define BATTERY 'L'
 #define REMOTE 'M'
 #define PIANO 'P'
+#define HARDWARE_SET 'H'
 
 class BlockHandler {
 
@@ -63,6 +64,7 @@ public:
 	int freeRam();
 	int cti(char c);
 	int32_t readInt();
+	int32_t readIntDirect();
 	byte* readMultipleInts(byte *n);
 	int32_t* readMultipleInts32(byte *N);																							//BT message parsing help functions
 	int Handle_Msg();																							// Handle one line of the message
@@ -99,8 +101,6 @@ public:
 	int Mcursor;								// variable for message parsing
 	char AllMessage[1600];
 	int messageLength;
-
-	
 
 };
 
