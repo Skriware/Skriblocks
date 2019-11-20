@@ -15,7 +15,7 @@
 			blockList[tt] = NULL;
 		}
 	current = NULL;
-  StartBlock = NULL;
+   StartBlock = NULL;
 	 blockList_N 		= 0;
 	 IfblockList_N 	 = 0;
 	 LoopblockList_N 	= 0;
@@ -359,9 +359,9 @@ int BlockHandler::Handle_Msg(){
   switch(AllMessage[Mcursor]){
     case 'L':
           Mcursor += 2;
-          endBlockID = readInt();
           countID = readInt();
           startBlockID  = readInt();
+          endBlockID = readInt();
           addLoop(id,startBlockID,endBlockID,countID);
           break;
      case 'C':

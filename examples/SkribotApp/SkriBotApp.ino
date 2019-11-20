@@ -17,7 +17,7 @@ void ENTER_TO_IDLE(){
   robot->OpenClaw();
   robot->Put_Down();
   robot->TurnLEDOn(255,255,255);
-  robot->ClearHardware();
+
 }
 
 void Blink(){
@@ -53,7 +53,7 @@ void setup() {
     Serial.println("DEBUG_MODE");
   #endif
   #ifdef ESP_H
-     robot = new Skribot("SKRIBRAIN_B2C_TESTS");
+     robot = new Skribot("RAW_SKRIBRAIN");
   #else
     robot = new Skribot("EDU_SHIELD");
   #endif
@@ -71,6 +71,7 @@ void setup() {
     #ifdef ESP_H
       robot->status->TurnOn(YELLOW,2);
     #endif
+    Block::robot->ClearHardware();
 }
 
 void loop() {

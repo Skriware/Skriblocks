@@ -177,6 +177,9 @@
           case NO_MSG_CODE:
           break;
           case REMOTE:
+          Block::robot->ClearHardware();
+          Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_L_DIR2_PIN,SKRIBRAIN_MOTOR_L_DIR1_PIN,"Left");
+          Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_R_DIR2_PIN,SKRIBRAIN_MOTOR_R_DIR1_PIN,"Right");
           Block::robot->RawRotorMove(readIntDirect(),readIntDirect());
           Block::robot->BLE_write("ack\n\r\n");
           break;
@@ -185,6 +188,8 @@
 
           break;
           case PIANO:
+              Block::robot->ClearHardware();
+              Block::robot->AddBuzzer(SERVO_2);
               switch(readIntDirect()){
                       case 0:
                         if (Block::robot->Buzzers[SERVO_2] != NULL)
@@ -248,6 +253,7 @@
               Block::robot->BLE_write("ack\n\r\n");
           break;
           case HARDWARE_SET:
+          Block::robot->ClearHardware();
           tmp = BLE_readwithTIMEOUT();
               while(tmp != '\n'){
                 tmp_tag[0] = BLE_readwithTIMEOUT();
