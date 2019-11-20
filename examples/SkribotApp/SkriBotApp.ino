@@ -53,11 +53,11 @@ void setup() {
     Serial.println("DEBUG_MODE");
   #endif
   #ifdef ESP_H
-     robot = new Skribot("RAW_SKRIBRAIN");
+     robot = new Skribot("SKRIBRAIN_B2C_TESTS");
   #else
     robot = new Skribot("EDU_SHIELD");
   #endif
-  robot->ConfigureBoardEEPROM();
+  //robot->ConfigureBoardEEPROM();
   robot->BLE_Setup();
   Block::setRobot(robot); 
   Block::setBlockHandler(&BH);
@@ -155,6 +155,7 @@ void SendCodeEndMEssage(){
         #if ENABLED(DEBUG_MODE_1)
           Serial.println("CONFIRMING END OF CODE");
         #endif
+        ENTER_TO_IDLE();
 }
 void ExecuteCode(){
 while(BH.doBlock()){

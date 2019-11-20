@@ -43,6 +43,7 @@
   }
 
   bool BlockHandler::CheckForTimeout(){
+    Serial.println("TMIEOT CHECK");
             bool tmp = false;
             long last_message_time = millis();
             long last_ack_send = last_message_time;
@@ -247,13 +248,16 @@
               Block::robot->BLE_write("ack\n\r\n");
           break;
           case HARDWARE_SET:
-          tmp = Block::robot->BLE_read();
+          tmp = BLE_readwithTIMEOUT();
               while(tmp != '\n'){
-                tmp_tag[0] = Block::robot->BLE_read();
-                tmp_tag[1] = Block::robot->BLE_read();
+                tmp_tag[0] = BLE_readwithTIMEOUT();
+                tmp_tag[1] = BLE_readwithTIMEOUT();
+                if(tmp_tag[0] == 'H')tmp_tag[0] = BLE_readwithTIMEOUT();
+                if(tmp_tag[1] == 'H')tmp_tag[1] = BLE_readwithTIMEOUT();
                 Block::robot->AddHardware(tmp_tag);
-                tmp = Block::robot->BLE_read();
+                tmp = BLE_readwithTIMEOUT();
               }
+          Serial.println("HARDWARE SET");
           break;
           default:
                 Block::robot->BLE_Flush();
@@ -263,16 +267,30 @@
         }
   } 
 
+  char BlockHandler::BLE_readwithTIMEOUT(){
+    char asciTmp;
+    if(Block::robot->BLE_dataAvailable()){
+            asciTmp = Block::robot->BLE_read();
+          }else{
+            if(CheckForTimeout()){
+              return(TIMEOUT_ERROR_CODE);
+            }else{
+              asciTmp = Block::robot->BLE_read();
+            }
+          }
+      return(asciTmp);
+}
+
   int32_t BlockHandler::readIntDirect(){
   int nDigits = 0;
   int sign = 1;
   byte cursor = 0;
   char tmp;
   char msg[10];
-  tmp = Block::robot->BLE_read();
+  tmp = BLE_readwithTIMEOUT();
   while(tmp != ' ' && tmp != '\n'){
     msg[cursor+nDigits] = tmp;
-    tmp = Block::robot->BLE_read();
+    tmp = BLE_readwithTIMEOUT();
     nDigits++;
   }
   
