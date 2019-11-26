@@ -74,7 +74,7 @@ action_with_no_interrupt = true;
                           { 0x7e, 0x7e, 0x60, 0x78, 0x78, 0x60, 0x60, 0x60 }}; // F
 byte *tmp;
 char *tmp_c;
-SmartRotor::Which which;
+SmartRotorSystem::Which which;
 size_t tmp_n;
   switch(actionID){
      case 0:
@@ -477,7 +477,7 @@ size_t tmp_n;
     case 20:
       if (Block::robot->smartRotor != nullptr)
       {
-          which = (SmartRotor::Which)used_blocks[0]->get_output();
+          which = (SmartRotorSystem::Which)used_blocks[0]->get_output();
           Block::robot->smartRotor->setDirection(1);
           Block::robot->smartRotor->setSpeed(used_blocks[2]->get_output() + 155);
           Block::robot->smartRotor->moveByRevolutions((float)used_blocks[1]->get_output()/1000.0,which);
@@ -494,7 +494,7 @@ size_t tmp_n;
     case 21:
       if (Block::robot->smartRotor != nullptr)
       {
-          which = (SmartRotor::Which)used_blocks[0]->get_output();
+          which = (SmartRotorSystem::Which)used_blocks[0]->get_output();
           Block::robot->smartRotor->setDirection(0);
           Block::robot->smartRotor->setSpeed(used_blocks[2]->get_output() + 155);
           Block::robot->smartRotor->moveByRevolutions((float)used_blocks[1]->get_output()/1000.0,which);
