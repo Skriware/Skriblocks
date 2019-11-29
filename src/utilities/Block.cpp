@@ -477,9 +477,10 @@ size_t tmp_n;
     case 20:
       if (Block::robot->smartRotor != nullptr)
       {
+          int speed = map(used_blocks[2]->get_output(), 0, 100, 60, 255);
           which = (SmartRotorSystem::Which)used_blocks[0]->get_output();
           Block::robot->smartRotor->setDirection(1);
-          Block::robot->smartRotor->setSpeed(used_blocks[2]->get_output() + 155);
+          Block::robot->smartRotor->setSpeed(speed);
           Block::robot->smartRotor->moveByRevolutions((float)used_blocks[1]->get_output()/1000.0,which);
           while (Block::robot->smartRotor->isMoving())
             Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
@@ -494,9 +495,10 @@ size_t tmp_n;
     case 21:
       if (Block::robot->smartRotor != nullptr)
       {
+          int speed = map(used_blocks[2]->get_output(), 0, 100, 60, 255);
           which = (SmartRotorSystem::Which)used_blocks[0]->get_output();
           Block::robot->smartRotor->setDirection(0);
-          Block::robot->smartRotor->setSpeed(used_blocks[2]->get_output() + 155);
+          Block::robot->smartRotor->setSpeed(speed);
           Block::robot->smartRotor->moveByRevolutions((float)used_blocks[1]->get_output()/1000.0,which);
           while (Block::robot->smartRotor->isMoving())
             Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
