@@ -365,15 +365,19 @@ size_t tmp_n;
       }
         break;
     case 15:
+    {
           tmp_c = (char*)used_blocks[1]->get_table_output_8();
+
+          size_t frames = 0;
            if(used_blocks[0]->get_output() != 2){
-             robot->LED_Matrixes[used_blocks[0]->get_output()]->StartMarquee(tmp_c);
+             frames = robot->LED_Matrixes[used_blocks[0]->get_output()]->StartMarquee(tmp_c);
             }else{
              robot->LED_Matrixes[0]->StartMarquee(tmp_c);
-             robot->LED_Matrixes[1]->StartMarquee(tmp_c);
+             frames = robot->LED_Matrixes[1]->StartMarquee(tmp_c);
             }
          
-          for(byte yy = 0; yy <8*4;yy++){ // TO DO TAKE INFO FROM FUNCTION
+          printf("\033[38;5;1mFRAMES: %zu\033[0m\n", frames);
+          for(int yy = 0; yy < frames; yy++){
           if(used_blocks[0]->get_output() !=2){
             robot->LED_Matrixes[used_blocks[0]->get_output()]->Update();
            }else{
@@ -390,6 +394,7 @@ size_t tmp_n;
             robot->LED_Matrixes[1]->StopMarquee();
           }
           //ShowText
+    }
         break;
     case 16:
          
