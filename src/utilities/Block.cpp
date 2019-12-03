@@ -366,35 +366,71 @@ size_t tmp_n;
         break;
     case 15:
     {
-          tmp_c = (char*)used_blocks[1]->get_table_output_8();
+      uint8_t charCount = used_blocks[1]->get_output_N();
 
-          size_t frames = 0;
-           if(used_blocks[0]->get_output() != 2){
-             frames = robot->LED_Matrixes[used_blocks[0]->get_output()]->StartMarquee(tmp_c);
-            }else{
-             robot->LED_Matrixes[0]->StartMarquee(tmp_c);
-             frames = robot->LED_Matrixes[1]->StartMarquee(tmp_c);
-            }
-         
-          for(int yy = 0; yy < frames; yy++){
-          if(used_blocks[0]->get_output() !=2){
+      if (charCount < 2)
+      {
+        char c = (char) used_blocks[1]->get_output();
+        if (used_blocks[0]->get_output() != 2)
+        {
+          auto m = robot->LED_Matrixes[used_blocks[0]->get_output()];
+          m->SetChar(0, c);
+          m->Update();
+        }
+        else
+        {
+          auto m0 = robot->LED_Matrixes[0];
+          auto m1 = robot->LED_Matrixes[1];
+
+          m0->SetChar(0, c);
+          m0->Update();
+          m1->SetChar(0, c);
+          m1->Update();
+        }
+      }
+      else
+      {
+        tmp_c = (char*)used_blocks[1]->get_table_output_8();
+        size_t frames = (charCount - 1) * 7; 
+        if (used_blocks[0]->get_output() != 2)
+        {
+          robot->LED_Matrixes[used_blocks[0]->get_output()]->StartMarquee(tmp_c);
+        }
+        else
+        {
+          robot->LED_Matrixes[0]->StartMarquee(tmp_c);
+          robot->LED_Matrixes[1]->StartMarquee(tmp_c);
+        }
+      
+        for (int yy = 0; yy < frames; yy++)
+        {
+          if(used_blocks[0]->get_output() !=2)
+          {
             robot->LED_Matrixes[used_blocks[0]->get_output()]->Update();
-           }else{
+          }
+          else
+          {
             robot->LED_Matrixes[0]->Update();
             robot->LED_Matrixes[1]->Update();
-           }
-            Block::BH->active_wait(100,5,interrupted,&action_with_no_interrupt);
           }
 
-          if(used_blocks[0]->get_output() != 2){
-            robot->LED_Matrixes[used_blocks[0]->get_output()]->StopMarquee();
-          }else{
-            robot->LED_Matrixes[0]->StopMarquee();
-            robot->LED_Matrixes[1]->StopMarquee();
-          }
-          //ShowText
+          Block::BH->active_wait(100,5,interrupted,&action_with_no_interrupt);
+        }
+
+        if (used_blocks[0]->get_output() != 2)
+        {
+          robot->LED_Matrixes[used_blocks[0]->get_output()]->StopMarquee();
+        }
+        else
+        {
+          robot->LED_Matrixes[0]->StopMarquee();
+          robot->LED_Matrixes[1]->StopMarquee();
+        }
+
+      //ShowText
+      }
     }
-        break;
+    break;
     case 16:
          
           //showVariable
