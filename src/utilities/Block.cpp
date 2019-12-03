@@ -376,7 +376,6 @@ size_t tmp_n;
              frames = robot->LED_Matrixes[1]->StartMarquee(tmp_c);
             }
          
-          printf("\033[38;5;1mFRAMES: %zu\033[0m\n", frames);
           for(int yy = 0; yy < frames; yy++){
           if(used_blocks[0]->get_output() !=2){
             robot->LED_Matrixes[used_blocks[0]->get_output()]->Update();
