@@ -43,7 +43,6 @@
   }
 
   bool BlockHandler::CheckForTimeout(){
-    Serial.println("TMIEOT CHECK");
             bool tmp = false;
             long last_message_time = millis();
             long last_ack_send = last_message_time;
@@ -185,7 +184,6 @@
           break;
           case BATTERY:
               Block::robot->BLE_write((char*)Block::robot->ReadBattery());
-
           break;
           case PIANO:
               Block::robot->ClearHardware();
