@@ -351,7 +351,7 @@ size_t tmp_n;
             robot->LED_Matrixes[0]->Update();
             robot->LED_Matrixes[1]->Update();
            }
-            Block::BH->active_wait(500,5,interrupted,&action_with_no_interrupt);
+            if(Block::BH->active_wait(500,5,interrupted,&action_with_no_interrupt))break;
           }
         }else{
             if(used_blocks[0]->get_output() !=2){

@@ -27,6 +27,7 @@
    interrupts_N = 0;
    interruped_precesed = false;
    millis_left_from_interrupt = 0;
+   interrupted_step = 0;
    transfereBlocks = false;
 	}
 
@@ -446,10 +447,11 @@ int BlockHandler::Handle_Msg(){
   return(2);    
 }
 
-void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *interrupt_info){
+bool BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *interrupt_info){
     if(interrupted)ms = millis_left_from_interrupt;
     int loop_iterator = ms/interval;
     int ms_left_befor_loop = ms%interval;
+    bool got_interrupt = false;
     if(millis_left_from_interrupt !=0 && interrupt_running == MAX_INTERRUPTS){
       loop_iterator = millis_left_from_interrupt/interval;
       ms_left_befor_loop = millis_left_from_interrupt%interval;
@@ -482,11 +484,13 @@ void BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
         if(interrupt_info != NULL) *interrupt_info = false;
         Serial.print("millis left:");
         Serial.println(millis_left_from_interrupt);
+        got_interrupt = true;
         break;
       }
       if(Block::robot->stausLEDused)Block::robot->BaterryCheck();
       delay(interval);
     } 
+    return(got_interrupt);
 }
 
 
