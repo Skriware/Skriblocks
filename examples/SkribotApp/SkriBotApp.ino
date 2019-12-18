@@ -18,6 +18,13 @@ void ENTER_TO_IDLE(){
   robot->Put_Down();
   robot->TurnLEDOn(255,255,255);
 
+  for (int i = 0; i < 5; i++)
+  {
+    auto *buzzer = robot->Buzzers[i];
+    if (buzzer != nullptr)
+      buzzer->StopNote();
+  }
+
 }
 
 void Blink(){
