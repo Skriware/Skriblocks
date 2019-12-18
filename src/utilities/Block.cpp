@@ -511,10 +511,41 @@ size_t tmp_n;
           uint16_t *freqs = (uint16_t *) used_blocks[0]->get_table_output_16();
           uint16_t *delays = (uint16_t *) used_blocks[1]->get_table_output_16();
           size_t melodySize = (size_t) used_blocks[0]->get_output_N();
+          int repeatCount = used_blocks[2]->get_output();
           auto *buzzer = Block::robot->Buzzers[SERVO_2];
+
+          buzzer->SetMelody(freqs, delays, melodySize);
+
           if (buzzer != NULL)
           {
-            for(byte yy  =0; yy< used_blocks[2]->get_output();yy++)buzzer->PlayMelody(freqs, delays, melodySize);
+            for(byte yy = 0; yy < repeatCount; yy++)
+            {
+              for (int i = 0; i < melodySize; i++)
+              {
+                uint16_t duration = buzzer->PlayNextNote();
+                if (Block::BH->active_wait(duration, 5, interrupted, &action_with_no_interrupt))
+                {
+                  buzzer->StopNote();                 
+
+                  /*
+                  This `goto` is reasonable because we want to break out of a
+                  nested loop and creating separate function just for this
+                  purpose would require:
+
+                    * many arguments to be passed,
+                    * including Buzzer.h from another project
+                      just to declare such a function.
+                     
+                  Moreover, the destination of this jump is not so far away,
+                  just a few lines.
+                  */
+                  goto out_of_the_melody_loop;
+                }
+              }
+            }
+
+            out_of_the_melody_loop:
+              Block::BH->active_wait(10, 5, interrupted, &action_with_no_interrupt);
           }
         }
         break;
