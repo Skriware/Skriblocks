@@ -132,8 +132,7 @@
 
 
 	bool BlockHandler::MakeConections(){
-    Serial.println("GO");
-		#if ENABLED(DEBUG_MODE)
+    #if ENABLED(DEBUG_MODE)
       Serial.println("Making connections!");          
     #endif
   
@@ -206,6 +205,7 @@
 	}
 	bool BlockHandler::doBlock(bool loopmode){
     #ifdef DEBUG_MODE
+          Serial.print("Block:");
 		   		Serial.println(current->getID());
     #endif
 
@@ -407,12 +407,20 @@ void BlockHandler::active_wait(uint32_t ms, int interval){
             char tmp;
               tmp = Block::robot->BLE_read();
               // to be sure that next char will be recieved
-              if((tmp == 'E') || (tmp == 'B' )){
-                Serial.println("Program interrupted by next program!");
+              if((tmp == 'E')){
+                #ifdef DEBUG_MODE
+                  Serial.println("Program ended by user!");
+                #endif
+                Block::robot->program_End_Reported = true;
+              }else if(tmp == 'B'){
+                #ifdef DEBUG_MODE
+                  Serial.println("Program interrupted by next program!");
+                #endif
+                Block::robot->program_Override_Reported = true;
                 Block::robot->program_End_Reported = true;
               }
       }
-      if(Block::robot->program_End_Reported || (Block::robot->ignore_connection_break || Block::robot->connection_Break_Reported))break;
+      if(!Block::robot->ignore_connection_break && Block::robot->program_End_Reported || Block::robot->connection_Break_Reported)break;
       if(checkForInterrupts()){
         millis_left_from_interrupt = (loop_iterator - yy)*interval;
         break;

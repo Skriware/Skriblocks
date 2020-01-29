@@ -69,6 +69,7 @@
         while(asciTmp != '\n'){
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
+            Serial.print(asciTmp);
           }else{
            if(CheckForTimeout())return(TIMEOUT_ERROR_CODE);
           }
@@ -169,9 +170,9 @@
           case NO_MSG_CODE:
           break;
           default:
-                Block::robot->BLE_Flush();
-                Block::robot->BLE_write("ack\n\r\n");
-                clear();
+                //Block::robot->BLE_Flush_Line();
+                //Block::robot->BLE_write("ack\n\r\n");
+                //clear();
           break;
         }
   } 

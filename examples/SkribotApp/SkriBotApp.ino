@@ -17,7 +17,7 @@ void ENTER_TO_IDLE(){
   robot->OpenClaw();
   robot->Put_Down();
   robot->TurnLEDOn(255,255,255);
-  robot->BLE_Flush();
+  //robot->BLE_Flush();
 }
 
 void Blink(){
@@ -80,9 +80,13 @@ void loop() {
     ENTER_TO_IDLE();
     }
     robot->BaterryCheck();
-
     byte tmp = BH.readMessageLine();
-    BH.processMessageLine(tmp);
+    if(!robot->program_Override_Reported){
+      BH.processMessageLine(tmp);
+    }else{
+      BH.transfereBlocks = true;
+      robot->program_Override_Reported = false;
+    }
     
     if(BH.transfereBlocks){
       byte codeinfo;
@@ -142,6 +146,7 @@ void idle_connectioncheck(){
 
 void SendCodeEndMEssage(){
         BH.clear();
+    if(!robot->program_Override_Reported){
         robot->TurnLEDOn(255,255,255);
         if(!Connection_Break){
           robot->ProgramENDRepotred();
@@ -156,6 +161,7 @@ void SendCodeEndMEssage(){
         #if ENABLED(DEBUG_MODE_1)
           //Serial.println("CONFIRMING END OF CODE");
         #endif
+    }
 }
 void ExecuteCode(){
 while(BH.doBlock()){
@@ -176,6 +182,7 @@ while(BH.doBlock()){
                 break;
             }
         }
+  robot->CONBRK();
 }
 
 void SendErrorMsg(char *msg){
