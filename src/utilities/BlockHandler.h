@@ -9,6 +9,8 @@
 #include "AritmeticBlock.h"
 #include "InterruptHandler.h"
 
+#define MIN_CONNECTION_BREAK_TIME 2000
+
 #define INVALID_MSG_ERROR_CODE 255
 #define TIMEOUT_ERROR_CODE 254
 #define MESSAGE_TIMEOUT 1000
@@ -83,6 +85,7 @@ public:
 	byte interrupt_running;
 	byte interrupts_N;
 	uint32_t millis_left_from_interrupt;
+	long last_connection_break;
 	bool interruped_precesed;
 	int blockList_N;
 	int IfblockList_N;

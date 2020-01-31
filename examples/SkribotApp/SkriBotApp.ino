@@ -97,9 +97,7 @@ void loop() {
       }
       robot->BLE_write("ack\n\r\n");
       if(codeinfo == CODE_COMPLETE){
-        //Serial.println("BEGIN COMPILATION!");
         byte succes = CompileCode();        //make blocks connections
-        //Serial.println("COMPILATION ENDED");
         if(succes == 1){                    //chceck compiler errors
             Connection_Break = false;
             if(!robot->Remote_block_used)robot->BLE_write("ack\n\r\n");
