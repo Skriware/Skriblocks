@@ -205,15 +205,15 @@
 	}
 	bool BlockHandler::doBlock(bool loopmode){
     #ifdef DEBUG_MODE
-          Serial.print("Block:");
 		   		Serial.println(current->getID());
+
     #endif
 
     Block::robot->wait_And_Check_BLE_Connection(5,2);      
     current->do_action();
 
     #ifdef DEBUG_MODE
-			 Serial.println(current->getNextID());
+			 //Serial.println(current->getNextID());
     #endif
 
     checkForInterrupts();  //do not check interrupts if you are in one alerady
@@ -268,7 +268,7 @@ int32_t BlockHandler::readInt(){
       out += add;
     }
     #ifdef DEBUG_MODE
-    Serial.println(out*sign);
+      //Serial.println(out*sign);
     #endif
     Mcursor += nDigits+1;
     return(out*sign);

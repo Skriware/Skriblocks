@@ -20,7 +20,6 @@ LogicBlock::~LogicBlock(){
 }
 
   void LogicBlock::get_value(){
-    Serial.println("Getting logic value!");
 	  if(input_left   != NULL)val_left    = input_left->get_output();
 	  if(input_right  != NULL)val_right   = input_right->get_output();
 
@@ -58,8 +57,5 @@ LogicBlock::~LogicBlock(){
 
   bool LogicBlock::get_bool_output(){
     get_value();
-    Serial.println(blockID);
-    Serial.print(" ");
-    Serial.println(bool_output);
     return(bool_output);
   }
