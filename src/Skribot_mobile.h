@@ -11,7 +11,7 @@
 #include "utilities/LogicCompare.h"
 #include "utilities/AritmeticBlock.h"
 #include "utilities/InterruptHandler.h"
-
+#define SKRIBOT Block::robot
 class Skribot_mobile {
 	public:
 	Skribot_mobile();

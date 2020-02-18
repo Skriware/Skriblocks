@@ -112,7 +112,7 @@ byte Block::getNextID(){
         break;
     case 3:
         if(!Block::robot->config_mode){
-          Block::robot->SetSpeed(255);
+          Block::robot->SetSpeed(160);
           Block::robot->FaceLeft();
           Block::BH->active_wait(input_block->get_output(),10);
           Block::robot->Stop();
@@ -139,7 +139,7 @@ byte Block::getNextID(){
         break;
     case 4:
         if(!Block::robot->config_mode){
-          Block::robot->SetSpeed(255);
+          Block::robot->SetSpeed(160);
           Block::robot->FaceRight();
           Block::BH->active_wait(input_block->get_output(),10);
           Block::robot->Stop();
