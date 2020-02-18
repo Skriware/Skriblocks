@@ -9,7 +9,7 @@
 #include "AritmeticBlock.h"
 #include "InterruptHandler.h"
 
-#define MIN_CONNECTION_BREAK_TIME 2000
+#define MIN_CONNECTION_BREAK_TIME 100
 
 #define INVALID_MSG_ERROR_CODE 255
 #define TIMEOUT_ERROR_CODE 254
