@@ -28,11 +28,11 @@
           while(true){
             if(Block::robot->BLE_dataAvailable()){
               char tmp2 = Block::robot->BLE_read();
-              tmp2 = Block::robot->BLE_read();
-              if(tmp2 == 'S'){
+              char tmp3 = Block::robot->BLE_read();
+              if(tmp3 == 'S' && tmp2 == 'E'){
                 *asciTmp = 'r';
                 break; 
-              }else if(tmp2 == 'N'){
+              }else if(tmp3 == 'N' && tmp2 == 'E'){
                 break;
               }else{
                 *asciTmp = INVALID_MSG_ERROR_CODE;
