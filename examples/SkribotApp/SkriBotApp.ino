@@ -95,12 +95,12 @@ void loop() {
         if(codeinfo == TIMEOUT_ERROR_CODE)break;
         if(codeinfo == CODE_COMPLETE)break;
       }
-      robot->BLE_write("ack\n\r\n");
+      robot->BLE_write("ack\n");
       if(codeinfo == CODE_COMPLETE){
         byte succes = CompileCode();        //make blocks connections
         if(succes == 1){                    //chceck compiler errors
             Connection_Break = false;
-            if(!robot->Remote_block_used)robot->BLE_write("ack\n\r\n");
+            if(!robot->Remote_block_used)robot->BLE_write("ack\n");
             ExecuteCode();                  //Here robot runs the code
             SendCodeEndMEssage();
         }else if(succes ==3){
