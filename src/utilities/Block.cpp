@@ -608,14 +608,10 @@ size_t tmp_n;
         Block::robot->Remote_block_used = true;
         break;
     case 101:
-        used_blocks[1]->set_output(
-          (int) !(Block::robot->ReadDistSensor(used_blocks[0]->get_output()))
-        );
+        output_block->set_output(Block::robot->ReadDistSensor(input_block->get_output()));
         break;
     case 102:
-        used_blocks[1]->set_output(
-          (int) !(Block::robot->ReadLineSensor(used_blocks[0]->get_output()))
-        );
+        output_block->set_output((int) !Block::robot->ReadLineSensor(input_block->get_output()));
         break;
     case 255:
       //Saved for loops and ifs
