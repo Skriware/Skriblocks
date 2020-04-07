@@ -442,69 +442,33 @@ size_t tmp_n;
           Block::BH->active_wait(10,5,interrupted,&action_with_no_interrupt);
         break;
     case 18:
-    switch(used_blocks[0]->get_output()){
-        case 0:
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->StopNote();
-          break;
-        case 1:   
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("C4");
-          break;
-        case 2:
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("C#4");
-          break;
-        case 3: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("D4");
-          break;
-        case 4: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("D#4");
-          break;
-        case 5: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("E4");
-          break;
-        case 6: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("F4");
-          break;
-        case 7: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("F#4");
-          break;
-        case 8: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("G4");
-          break;
-        case 9: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("G#4");
-          break;
-        case 10: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("A4");
-          break;
-        case 11: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("A#4");
-          break;
-        case 12: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("B4");
-          break;
-        case 13: 
-          if (Block::robot->Buzzers[SERVO_2] != NULL)
-            Block::robot->Buzzers[SERVO_2]->PlayNote("C5");
-          break;
+    {
+      auto *buzzer = Block::robot->Buzzers[SERVO_2];
+      if (buzzer == nullptr)
+        break;
+
+      switch (used_blocks[0]->get_output()) {
+        case 0: buzzer->StopNote(); break;
+        case 1: buzzer->PlayNote("C4"); break;
+        case 2: buzzer->PlayNote("C#4"); break;
+        case 3: buzzer->PlayNote("D4"); break;
+        case 4: buzzer->PlayNote("D#4"); break;
+        case 5: buzzer->PlayNote("E4"); break;
+        case 6: buzzer->PlayNote("F4"); break;
+        case 7: buzzer->PlayNote("F#4"); break;
+        case 8: buzzer->PlayNote("G4"); break;
+        case 9: buzzer->PlayNote("G#4"); break;
+        case 10: buzzer->PlayNote("A4"); break;
+        case 11: buzzer->PlayNote("A#4"); break;
+        case 12: buzzer->PlayNote("B4"); break;
+        case 13: buzzer->PlayNote("C5"); break;
         default:
           break;
       }
       Block::BH->active_wait(used_blocks[1]->get_output(),5,interrupted,&action_with_no_interrupt);
-      if(Block::robot->Buzzers[SERVO_2] != NULL)Block::robot->Buzzers[SERVO_2]->StopNote();
-    break;
+      buzzer->StopNote();
+      break;
+    }
     case 19:
         {
           //playMusic
@@ -514,10 +478,10 @@ size_t tmp_n;
           int repeatCount = used_blocks[2]->get_output();
           auto *buzzer = Block::robot->Buzzers[SERVO_2];
 
-          buzzer->SetMelody(freqs, delays, melodySize);
-
-          if (buzzer != NULL)
+          if (buzzer != nullptr)
           {
+            buzzer->SetMelody(freqs, delays, melodySize);
+
             for(byte yy = 0; yy < repeatCount; yy++)
             {
               for (int i = 0; i < melodySize; i++)
