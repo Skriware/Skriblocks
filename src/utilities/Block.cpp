@@ -74,7 +74,7 @@ byte Block::getNextID(){
         //UserFunction_3(input_block->get_output());
       if(!Block::robot->config_mode){
         if(output_block->get_output() > 0){
-        Block::robot->SetSpeed(output_block->get_output()/2 + 90);
+        Block::robot->SetSpeed(output_block->get_output());
         Block::robot->MoveForward();
         }
         if(input_block->get_output() > 0){
@@ -96,7 +96,7 @@ byte Block::getNextID(){
     case 2:
         if(!Block::robot->config_mode){
         if(output_block->get_output() > 0){
-          Block::robot->SetSpeed(output_block->get_output()/2 + 90);
+          Block::robot->SetSpeed(output_block->get_output());
           Block::robot->MoveBack();
         }
         if(input_block->get_output() > 0){
@@ -122,7 +122,7 @@ byte Block::getNextID(){
         if(!Block::robot->config_mode){
 
           if(input_block->get_output() > -2){
-            Block::robot->SetSpeed(90);
+            Block::robot->SetSpeed(1);
             Block::robot->FaceLeft();
             if(input_block->get_output() != -1){
               Block::BH->active_wait(input_block->get_output(),10);
@@ -153,7 +153,7 @@ byte Block::getNextID(){
     case 4:
         if(!Block::robot->config_mode){
           if(input_block->get_output() > -2){
-            Block::robot->SetSpeed(90);
+            Block::robot->SetSpeed(1);
             Block::robot->FaceRight();
             if(input_block->get_output() != -1){
             Block::BH->active_wait(input_block->get_output(),10);

@@ -44,18 +44,17 @@ int freeRam()
 }
 
 void setup() {
-  #if ENABLED(DEBUG_MODE)
-    Serial.begin(115200);
-    Serial.println("DEBUG_MODE");
-  #endif
-  #if ENABLED(DEBUG_MODE_1)
-    Serial.begin(115200);
-    Serial.println("DEBUG_MODE");
-  #endif
+
   #ifdef ESP_H
      robot = new Skribot("SKRIBRAIN");
   #else
     robot = new Skribot("EDU_SHIELD");
+  #endif
+  #if ENABLED(DEBUG_MODE)
+    #ifndef ESP_H
+      Serial.begin(115200);
+    #endif
+      Serial.println("DEBUG_MODE");
   #endif
   bool tmp = robot->Check_Board_Version();
   if(tmp)robot->ConfigureBoardEEPROM();
