@@ -28,6 +28,7 @@
 #define REMOTE 'M'
 #define PIANO 'P'
 #define HARDWARE_SET 'H'
+#define CALIBRATE 'C' 
 
 class BlockHandler {
 

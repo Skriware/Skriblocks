@@ -263,6 +263,20 @@
               }
           Serial.println("HARDWARE SET");
           break;
+          case CALIBRATE:
+              Serial.println("HARDWARE CALIBRATION");
+              tmp = BLE_readwithTIMEOUT();
+              tmp_tag[0] = BLE_readwithTIMEOUT();
+              if(tmp_tag[0] == 'M'){
+
+              }else if(tmp_tag == 'W'){
+
+              }else if(tmp_tag == 'B'){
+
+              }
+                Block::robot->BLE_Flush();
+                Block::robot->BLE_write("ack\n\r\n");
+          break;
           default:
                 Block::robot->BLE_Flush();
                 Block::robot->BLE_write("ack\n\r\n");
