@@ -64,7 +64,7 @@ void setup() {
   #else
     robot = new Skribot("EDU_SHIELD");
   #endif
-  //robot->ConfigureBoardEEPROM();
+  robot->ConfigureBoardEEPROM();
   robot->BLE_Setup();
   Block::setRobot(robot); 
   Block::setBlockHandler(&BH);

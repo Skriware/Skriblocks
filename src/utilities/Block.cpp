@@ -1,5 +1,11 @@
 #include "Block.h"
 #include "BlockHandler.h"
+#define STOP 0
+#define MOVE_FORWARD 1
+#define MOVE_BACK 2
+#define TURN_LEFT 3
+#define TURN_RIGHT 4
+
 
 Skribot* Block::robot = NULL;
 BlockHandler* Block::BH = NULL;
@@ -77,7 +83,7 @@ char *tmp_c;
 SmartRotorSystem::Which which;
 size_t tmp_n;
   switch(actionID){
-     case 0:
+     case STOP:
       if (Block::robot->smartRotor != nullptr)
       {
         Block::robot->smartRotor->stop();
@@ -87,145 +93,29 @@ size_t tmp_n;
         Block::robot->Stop();
       }
       break;
-    case 1:
-      if(!Block::robot->config_mode){
-        if (Block::robot->smartRotor != nullptr)
-        {
-          Block::robot->smartRotor->setDirection(1);
-          int speed = map(used_blocks[1]->get_output(), 0, 100, 60, 255);
-          Block::robot->smartRotor->setSpeed(speed);
-          Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/100.0);
-          while (Block::robot->smartRotor->isMoving())
-            Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
-        }
-        else
-        {
+    case MOVE_FORWARD:
           Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
           Block::robot->MoveForward();
           Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
           Block::robot->Stop();
-        }
-      }else{
-        Block::robot->Invert_Left_Rotors(used_blocks[0]->get_output()/1000);
-        EEPROM.write(EEPROM_LEFT_INVERT_ADDR,used_blocks[0]->get_output()/1000);
-        if(!Block::robot->user_config){
-          EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
-          Block::robot->user_config = true;
-          #ifdef ESP_H 
-          EEPROM.commit(); 
-          #endif
-        }
-      }
         break;
-    case 2:
-        if(!Block::robot->config_mode){
-          if (Block::robot->smartRotor != nullptr)
-          {
-            int speed = map(used_blocks[1]->get_output(), 0, 100, 60, 255);
-            Block::robot->smartRotor->setSpeed(speed);
-            Block::robot->smartRotor->setDirection(0);
-            Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/100.0);
-            while (Block::robot->smartRotor->isMoving())
-              Block::BH->active_wait(10,10,interrupted,&action_with_no_interrupt);
-          }
-          else
-          {
-            Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
-            Block::robot->MoveBack();
-            Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-            Block::robot->Stop();
-          }
-         }else{
-        Block::robot->Invert_Right_Rotors(used_blocks[0]->get_output()/1000);
-         EEPROM.write(EEPROM_RIGHT_INVERT_ADDR,used_blocks[0]->get_output()/1000);
-         #ifdef ESP_H 
-          EEPROM.commit(); 
-          #endif
-         if(!Block::robot->user_config){
-          EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
-          Block::robot->user_config = true;
-          #ifdef ESP_H 
-          EEPROM.commit(); 
-          #endif
-        }
-        }
+    case MOVE_BACK:
+          Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+          Block::robot->MoveBack();
+          Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+          Block::robot->Stop();         
         break;
-    case 3:
-        if(!Block::robot->config_mode){
-          if (Block::robot->smartRotor != nullptr)
-          {
-            int speed = map(used_blocks[1]->get_output(), 0, 100, 60, 255);
-            Block::robot->smartRotor->setSpeed(speed);
-            Block::robot->smartRotor->turnByAngle(-used_blocks[0]->get_output());
-            while (Block::robot->smartRotor->isMoving())
-              Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
-          }
-          else
-          {
-           
-            Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
-            Block::robot->FaceLeft();
-            Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-            Block::robot->Stop();
-          }
-        }else{
-          Block::robot->TurnLEDOn(184, 255, 3);
-          Block::robot->Scale_Left_Rotors(used_blocks[0]->get_output()/1000);
-          byte lscale = byte(used_blocks[0]->get_output()/1000);
-          #ifdef DEBUG_MODE
-            Serial.print("Scalling left rotor: ");
-            Serial.println(lscale);
-          #endif
-          EEPROM.write(EEPROM_LEFT_SCALE_ADDR,lscale);
-          #ifdef ESP_H 
-          EEPROM.commit(); 
-          #endif
-          if(!Block::robot->user_config){
-            EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
-            Block::robot->user_config = true;
-            #ifdef ESP_H 
-            EEPROM.commit(); 
-            #endif
-          }
-        }
+    case TURN_LEFT:
+          Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+          Block::robot->FaceLeft();
+          Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+          Block::robot->Stop();
         break;
-    case 4:
-        if(!Block::robot->config_mode){
-          if (Block::robot->smartRotor != nullptr)
-          {
-            int speed = map(used_blocks[1]->get_output(), 0, 100, 60, 255);
-            Block::robot->smartRotor->setSpeed(speed);
-            Block::robot->smartRotor->turnByAngle(used_blocks[0]->get_output());
-            while (Block::robot->smartRotor->isMoving())
-              Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
-          }
-          else
-          {
-            Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
-            Block::robot->FaceRight();
-            Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-            Block::robot->Stop();
-          }
-        }else{
-          Block::robot->TurnLEDOn(184, 255, 3);
-          Block::robot->Scale_Right_Rotors(used_blocks[0]->get_output()/1000);
-          byte rscale = byte(used_blocks[0]->get_output()/1000);
-          EEPROM.write(EEPROM_RIGHT_SCALE_ADDR,rscale);
-          #ifdef DEBUG_MODE
-            Serial.print("Scalling right rotor: ");
-            Serial.println(rscale);
-          #endif
-          #ifdef ESP_H 
-            EEPROM.commit(); 
-            #endif
-          if(!Block::robot->user_config){
-            EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
-            #ifdef ESP_H 
-            EEPROM.commit(); 
-            #endif
-            Block::robot->user_config = true;
-          }
-        }
+    case TURN_RIGHT:
+          Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+          Block::robot->FaceRight();
+          Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+          Block::robot->Stop();
         break;
     case 5:
         Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
@@ -269,31 +159,7 @@ size_t tmp_n;
                 Block::robot->TurnLEDOn(255,0,0);
             break;
              case 1 : 
-                if(!Block::robot->config_mode){
                   Block::robot->TurnLEDOn(0,0,255);
-                }else{
-                   Serial.println("Config mode operation!");
-                   for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
-                      Block::robot->TurnLEDOn(255,255,255);
-                      Block::robot->LineSensors[zz]->Line_Readout();
-                      Block::robot->TurnLEDOn(0,0,0);
-                      Block::BH->active_wait(100,5);
-                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_1)Block::robot->Write_EEPROM_INT(EEPROM_L1_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
-                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_2)Block::robot->Write_EEPROM_INT(EEPROM_L2_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
-                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_3)Block::robot->Write_EEPROM_INT(EEPROM_L3_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
-                      #ifdef ESP_H 
-                      EEPROM.commit(); 
-                      #endif
-                      delay(100);
-                    }
-                    if(!Block::robot->user_config){
-                      EEPROM.write(EEPROM_SETTINGS_OVERRIDED_ADDR,1);
-                      Block::robot->user_config = true;
-                      #ifdef ESP_H 
-                      EEPROM.commit(); 
-                      #endif
-                    }
-              }
             break;
              case 2 : 
                 Block::robot->TurnLEDOn(0,255,0);
@@ -302,20 +168,7 @@ size_t tmp_n;
                 Block::robot->TurnLEDOn(255,0,255);
             break;
              case 5 : 
-                if(!Block::robot->config_mode){
                   Block::robot->TurnLEDOn(255,255,255);
-                }else{
-                   Serial.println("Config mode operation!");
-                   for(int zz = 0; zz < Block::robot->NLineSensors ; zz++){
-                      Block::robot->TurnLEDOn(255,255,255);
-                      Block::robot->LineSensors[zz]->No_Line_Readout();
-                      Block::robot->TurnLEDOn(0,0,0);
-                      Block::BH->active_wait(100,5);
-                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_1)Block::robot->Write_EEPROM_INT(EEPROM_L1_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
-                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_2)Block::robot->Write_EEPROM_INT(EEPROM_L2_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
-                      if(Block::robot->LineSensors[zz]->GetSensorPin() == LINE_PIN_3)Block::robot->Write_EEPROM_INT(EEPROM_L3_BORDER_ADDR,Block::robot->LineSensors[zz]->GetLogicBorder());
-                    }
-                }
             break;
              case 3 : 
                 Block::robot->TurnLEDOn(184, 255, 3);
@@ -549,6 +402,44 @@ size_t tmp_n;
         }
       #endif
       
+      break;
+    case 22:
+        if (Block::robot->smartRotor != nullptr)
+        {
+          Block::robot->smartRotor->setDirection(1);
+          Block::robot->smartRotor->setSpeed(map(used_blocks[1]->get_output(), 0, 100, 60, 255));
+          Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/100.0);
+          while (Block::robot->smartRotor->isMoving())
+            Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
+        }
+      break;
+    case 23:
+        if (Block::robot->smartRotor != nullptr)
+          {
+            Block::robot->smartRotor->setDirection(0);
+            Block::robot->smartRotor->setSpeed(map(used_blocks[1]->get_output(), 0, 100, 60, 255));
+            Block::robot->smartRotor->moveByMeters((float)used_blocks[0]->get_output()/100.0);
+            while (Block::robot->smartRotor->isMoving())
+              Block::BH->active_wait(10,10,interrupted,&action_with_no_interrupt);
+          }
+      break;
+    case 24:
+          if (Block::robot->smartRotor != nullptr)
+          {
+            Block::robot->smartRotor->setSpeed(map(used_blocks[1]->get_output(), 0, 100, 60, 255));
+            Block::robot->smartRotor->turnByAngle(-used_blocks[0]->get_output());
+            while (Block::robot->smartRotor->isMoving())
+              Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
+          }
+      break;
+    case 25:
+           if (Block::robot->smartRotor != nullptr)
+          {
+            Block::robot->smartRotor->setSpeed(map(used_blocks[1]->get_output(), 0, 100, 60, 255));
+            Block::robot->smartRotor->turnByAngle(used_blocks[0]->get_output());
+            while (Block::robot->smartRotor->isMoving())
+              Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
+          }
       break;
         /*
     case 94:

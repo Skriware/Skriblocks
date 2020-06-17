@@ -117,7 +117,7 @@
         char tmp = 'A';
         char tmpNameArray[32] = {' '};
         int tmpCounter;
-        char tmp_tag[2] = {' '};
+        char tmp_tag[10] = {' '};
         switch(LineCode){
           case BAPTISED:
                 #if ENABLED(DEBUG_MODE)
@@ -174,11 +174,12 @@
                 transfereBlocks = true;
           break;
           case NO_MSG_CODE:
+          
           break;
           case REMOTE:
-          Block::robot->ClearHardware();
-          Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_L_DIR2_PIN,SKRIBRAIN_MOTOR_L_DIR1_PIN,"Left");
-          Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_R_DIR2_PIN,SKRIBRAIN_MOTOR_R_DIR1_PIN,"Right");
+          
+          if(Block::robot->NLeftDCRotors >0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_L_DIR2_PIN,SKRIBRAIN_MOTOR_L_DIR1_PIN,"Left");
+          if(Block::robot->NRightDCRotors >0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_R_DIR2_PIN,SKRIBRAIN_MOTOR_R_DIR1_PIN,"Right");
           Block::robot->RawRotorMove(readIntDirect(),readIntDirect());
           Block::robot->BLE_write("ack\n\r\n");
           break;
@@ -186,8 +187,7 @@
               Block::robot->BLE_write((char*)Block::robot->ReadBattery());
           break;
           case PIANO:
-              Block::robot->ClearHardware();
-              Block::robot->AddBuzzer(SERVO_2);
+              if(Block::robot->Buzzers[SERVO_2] == NULL)Block::robot->AddBuzzer(SERVO_2);
               switch(readIntDirect()){
                       case 0:
                         if (Block::robot->Buzzers[SERVO_2] != NULL)
@@ -268,11 +268,27 @@
               tmp = BLE_readwithTIMEOUT();
               tmp_tag[0] = BLE_readwithTIMEOUT();
               if(tmp_tag[0] == 'M'){
-
-              }else if(tmp_tag == 'W'){
-
-              }else if(tmp_tag == 'B'){
-
+                Block::robot->left_invert= readIntDirect();                
+                Block::robot->right_invert= readIntDirect();
+                Block::robot->left_scale= readIntDirect();
+                Block::robot->right_scale= readIntDirect();
+                      #ifdef DEBUG_MODE
+                        Serial.println("User Corrections:");
+                        Serial.print("LS: ");
+                        Serial.println(Block::robot->left_scale);
+                        Serial.print("RS: ");
+                        Serial.println(Block::robot->right_scale);
+                        Serial.print("LI: ");
+                        Serial.println(Block::robot->left_invert);
+                        Serial.print("RI: ");
+                        Serial.println(Block::robot->right_invert);
+                      #endif
+              Block::robot->Save_Calibration_Data(CALIB_MOTORS);
+              }else if(tmp_tag[0] == 'W'){
+              Block::robot->Calibrate_sensors_no_Line();
+              }else if(tmp_tag[0] == 'B'){
+              Block::robot->Calibrate_sensors_Line();
+              Block::robot->Save_Calibration_Data(CALIB_LINE_SENSORS);
               }
                 Block::robot->BLE_Flush();
                 Block::robot->BLE_write("ack\n\r\n");
@@ -326,3 +342,7 @@
     }
     return(out*sign);
 }
+
+
+
+          
