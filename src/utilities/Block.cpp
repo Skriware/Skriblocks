@@ -377,12 +377,15 @@ size_t tmp_n;
           while (Block::robot->smartRotor->isMoving())
             Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
       }
-      #ifdef DEBUG_MODE
+      
         else
         {
-          Serial.println("Block::doAction:case 20: Block::robot->smartRotor is null");
+          Block::robot->SetSpeed(used_blocks[0]->get_output() + 155);
+          Block::robot->TurnLeft();
+          Block::BH->active_wait(1000*used_blocks[1]->get_output(),10,interrupted,&action_with_no_interrupt);
+          Block::robot->Stop();
         }
-      #endif
+    
       break;
     case 21:
       if (Block::robot->smartRotor != nullptr)
@@ -395,12 +398,15 @@ size_t tmp_n;
           while (Block::robot->smartRotor->isMoving())
             Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
       }
-      #ifdef DEBUG_MODE
+     
         else
         {
-          Serial.println("Block::doAction:case 21: Block::robot->smartRotor is null");
+          Block::robot->SetSpeed(used_blocks[0]->get_output() + 155);
+          Block::robot->TurnRight();
+          Block::BH->active_wait(1000*used_blocks[1]->get_output(),10,interrupted,&action_with_no_interrupt);
+          Block::robot->Stop();
         }
-      #endif
+     
       
       break;
     case 22:
@@ -463,10 +469,10 @@ size_t tmp_n;
         Block::robot->Remote_block_used = true;
         break;
     case 101:
-        output_block->set_output(Block::robot->ReadDistSensor(input_block->get_output()));
+        used_blocks[1]->set_output(Block::robot->ReadDistSensor(used_blocks[0]->get_output()));
         break;
     case 102:
-        output_block->set_output((int) !Block::robot->ReadLineSensor(input_block->get_output()));
+        used_blocks[1]->set_output((int) !Block::robot->ReadLineSensor(used_blocks[0]->get_output()));
         break;
     case 255:
       //Saved for loops and ifs

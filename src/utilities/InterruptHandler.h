@@ -4,16 +4,16 @@
 #include <Skribot.h>
 #include "Block.h"
 
-#define BUTTON_INTERRUPT 0			//interrupt types
+#define BUTTON_INTERRUPT 2			//interrupt types
 #define DISTANCE_INTERRUPT 1
-#define LINE_INTERRUPT 2
+#define LINE_INTERRUPT 0
 #define TIME_INTERRUPT 3
 
 #define DIST_D1 	0					//interrupt inputs
 #define DIST_D2 	1
-#define LINE_L1 	2
-#define LINE_L2 	3
-#define LINE_L3 	4
+#define LINE_L1 	1
+#define LINE_L2 	2
+#define LINE_L3 	3
 #define TIME    	5
 #define BUTTON_1	1
 #define BUTTON_2	2

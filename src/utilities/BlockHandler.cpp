@@ -429,6 +429,7 @@ int BlockHandler::Handle_Msg(){
           addBlock(id,next,actionID,tmp_b,input);
           break;
       case 'V':
+          Serial.println("Interrupt");
           Mcursor +=2;
           type = readInt();
           input = readInt();
@@ -440,7 +441,8 @@ int BlockHandler::Handle_Msg(){
           break;
       default:
             #if ENABLED(DEBUG_MODE)
-              Serial.println("Got sth stragne!");          
+              Serial.print("Got sth stragne:");
+              Serial.println(AllMessage[Mcursor]);          
             #endif
         break;
   }

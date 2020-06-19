@@ -177,9 +177,8 @@
           
           break;
           case REMOTE:
-          
-          if(Block::robot->NLeftDCRotors >0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_L_DIR2_PIN,SKRIBRAIN_MOTOR_L_DIR1_PIN,"Left");
-          if(Block::robot->NRightDCRotors >0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_R_DIR2_PIN,SKRIBRAIN_MOTOR_R_DIR1_PIN,"Right");
+          if(Block::robot->NLeftDCRotors ==0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_L_DIR2_PIN,SKRIBRAIN_MOTOR_L_DIR1_PIN,"Left");
+          if(Block::robot->NRightDCRotors ==0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_R_DIR2_PIN,SKRIBRAIN_MOTOR_R_DIR1_PIN,"Right");
           Block::robot->RawRotorMove(readIntDirect(),readIntDirect());
           Block::robot->BLE_write("ack\n\r\n");
           break;

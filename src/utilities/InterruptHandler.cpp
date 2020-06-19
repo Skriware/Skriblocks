@@ -86,7 +86,8 @@
  				}else{
  					return(false);
  				}
- 				return(robot->ReadLineSensor(input - 1) == value);
+ 				Serial.println(robot->ReadLineSensor(input));
+ 				return(robot->ReadLineSensor(input) == line_trig);
  			break; 
  			case TIME_INTERRUPT :
  				if(millis()-last_interrupt_time > value){
@@ -128,6 +129,9 @@
 				return(true);
 			}
 		}
+		#ifdef DEBUG_MODE
+			Serial.println("Interrupt condition invalid");
+		#endif
 		return(false);
 	}
 	byte InterruptHandler::get_start_block_id(){

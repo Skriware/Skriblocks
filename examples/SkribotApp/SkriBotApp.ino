@@ -51,20 +51,13 @@ int freeRam()
 }
 
 void setup() {
-  #if ENABLED(DEBUG_MODE)
-    Serial.begin(115200);
-    Serial.println("DEBUG_MODE");
-  #endif
-  #if ENABLED(DEBUG_MODE_1)
-    Serial.begin(115200);
-    Serial.println("DEBUG_MODE");
-  #endif
   #ifdef ESP_H
      robot = new Skribot("RAW_SKRIBRAIN");
   #else
     robot = new Skribot("EDU_SHIELD");
   #endif
-  robot->ConfigureBoardEEPROM();
+  bool tmp = robot->Check_Board_Version();
+  if(tmp)robot->ConfigureBoardEEPROM();
   robot->BLE_Setup();
   Block::setRobot(robot); 
   Block::setBlockHandler(&BH);
@@ -160,12 +153,15 @@ void SendCodeEndMEssage(){
           }
         }
         robot->connection_Break_Reported = false;
-        #if ENABLED(DEBUG_MODE_1)
+        #if ENABLED(DEBUG_MODE)
           Serial.println("CONFIRMING END OF CODE");
         #endif
         ENTER_TO_IDLE();
 }
 void ExecuteCode(){
+        #if ENABLED(DEBUG_MODE)
+          Serial.println("CONFIRMING START OF CODE");
+        #endif
 while(BH.doBlock()){
            robot->BaterryCheck();
            if(robot->ProgramENDRepotred()){
@@ -192,7 +188,7 @@ void SendErrorMsg(char *msg){
             #ifdef ESP_H        
             robot->status->TurnOn(RED,2);
             #endif
-            #if ENABLED(DEBUG_MODE_1)
+            #if ENABLED(DEBUG_MODE)
             Serial.println(msg);
             #endif
 }
