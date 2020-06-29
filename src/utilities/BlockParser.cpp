@@ -69,7 +69,7 @@
         Serial.print(MainAsci);
         #endif
         if(MainAsci == INVALID_MSG_ERROR_CODE) return(INVALID_MSG_ERROR_CODE);
-        while(asciTmp != '\n' && MainAsci != 'H'){
+        while(asciTmp != '\n' && MainAsci != 'H' && MainAsci != 'C'){
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
             #ifdef DEBUG_MODE_1
@@ -266,6 +266,8 @@
               Serial.println("HARDWARE CALIBRATION");
               tmp = BLE_readwithTIMEOUT();
               tmp_tag[0] = BLE_readwithTIMEOUT();
+              Serial.print("TAG:");
+              Serial.println(tmp_tag[0]);
               if(tmp_tag[0] == 'M'){
                 Block::robot->left_invert= readIntDirect();                
                 Block::robot->right_invert= readIntDirect();
@@ -284,17 +286,24 @@
                       #endif
               Block::robot->Save_Calibration_Data(CALIB_MOTORS);
               }else if(tmp_tag[0] == 'W'){
+                if(Block::robot->NLineSensors == 0){
+                            Block::robot->AddLineSensor(LINE_PIN_1, 1);
+                            Block::robot->AddLineSensor(LINE_PIN_2, 2);
+                            Block::robot->AddLineSensor(LINE_PIN_3, 3);
+                }
+                Serial.println("Calibrating No Line!");
               Block::robot->Calibrate_sensors_no_Line();
+              Block::robot->BLE_write("ack\n\r\n");
               }else if(tmp_tag[0] == 'B'){
+                 Serial.println("Calibrating Line!");
               Block::robot->Calibrate_sensors_Line();
               Block::robot->Save_Calibration_Data(CALIB_LINE_SENSORS);
+              Block::robot->BLE_write("ack\n\r\n");
               }
-                Block::robot->BLE_Flush();
-                Block::robot->BLE_write("ack\n\r\n");
           break;
           default:
-                Block::robot->BLE_Flush();
-                Block::robot->BLE_write("ack\n\r\n");
+              Block::robot->BLE_Flush();
+              Block::robot->BLE_write("ack\n\r\n");
                 clear();
           break;
         }

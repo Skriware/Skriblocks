@@ -94,28 +94,36 @@ size_t tmp_n;
       }
       break;
     case MOVE_FORWARD:
-          Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+          Block::robot->SetSpeed(used_blocks[1]->get_output());
           Block::robot->MoveForward();
-          Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-          Block::robot->Stop();
+          if(used_blocks[0]->get_output() != -1){
+            Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::robot->Stop();
+          }
         break;
     case MOVE_BACK:
-          Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+          Block::robot->SetSpeed(used_blocks[1]->get_output());
           Block::robot->MoveBack();
-          Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-          Block::robot->Stop();         
+          if(used_blocks[0]->get_output() != -1){
+            Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::robot->Stop();
+          }         
         break;
     case TURN_LEFT:
-          Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+          Block::robot->SetSpeed(used_blocks[1]->get_output());
           Block::robot->FaceLeft();
-          Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-          Block::robot->Stop();
+          if(used_blocks[0]->get_output() != -1){
+            Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::robot->Stop();
+          }
         break;
     case TURN_RIGHT:
-          Block::robot->SetSpeed(used_blocks[1]->get_output() + 155);
+          Block::robot->SetSpeed(used_blocks[1]->get_output());
           Block::robot->FaceRight();
-          Block::BH->active_wait(1000*used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
-          Block::robot->Stop();
+          if(used_blocks[0]->get_output() != -1){
+            Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::robot->Stop();
+          }
         break;
     case 5:
         Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
@@ -129,21 +137,8 @@ size_t tmp_n;
         Block::BH->active_wait(100,10,interrupted,&action_with_no_interrupt);
         break;
     case 9:
-        if(!Block::robot->config_mode){
           Block::robot->OpenClaw();
           Block::BH->active_wait(100,10,interrupted,&action_with_no_interrupt);
-        }else{
-          Serial.println("Config mode operation!");
-          Block::robot->TurnLEDOn(0,0,0);
-          for(byte ii = 6; ii<17;ii++){
-            EEPROM.write(ii,255);
-            #ifdef ESP_H 
-            EEPROM.commit(); 
-            #endif
-            delay(100);
-          }
-          Block::robot->TurnLEDOn(255,255,255);
-        }
         break;
     case 10:
           Block::robot->Pick_Up();
@@ -380,10 +375,23 @@ size_t tmp_n;
       
         else
         {
-          Block::robot->SetSpeed(used_blocks[0]->get_output() + 155);
-          Block::robot->TurnLeft();
-          Block::BH->active_wait(1000*used_blocks[1]->get_output(),10,interrupted,&action_with_no_interrupt);
-          Block::robot->Stop();
+            if(used_blocks[0]->get_output() == 1){
+                  for(int kk = 0; kk < Block::robot->NLeftDCRotors ; kk++){
+                    Block::robot->LeftDCRotors[kk]->SetDirection(1);
+                    Block::robot->SetSpeed(used_blocks[2]->get_output());
+                    Block::robot->LeftDCRotors[kk]->Move();
+                  }
+            }else if(used_blocks[0]->get_output() == 2){
+                  for(int kk = 0; kk < Block::robot->NRightDCRotors ; kk++){
+                    Block::robot->RightDCRotors[kk]->SetDirection(1);
+                    Block::robot->SetSpeed(used_blocks[2]->get_output());
+                    Block::robot->RightDCRotors[kk]->Move();
+                  }
+            }
+          if(used_blocks[1]->get_output() != -1){
+            Block::BH->active_wait(used_blocks[1]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::robot->Stop();
+          }
         }
     
       break;
@@ -401,13 +409,24 @@ size_t tmp_n;
      
         else
         {
-          Block::robot->SetSpeed(used_blocks[0]->get_output() + 155);
-          Block::robot->TurnRight();
-          Block::BH->active_wait(1000*used_blocks[1]->get_output(),10,interrupted,&action_with_no_interrupt);
-          Block::robot->Stop();
+            if(used_blocks[0]->get_output() == 1){
+                  for(int kk = 0; kk < Block::robot->NLeftDCRotors ; kk++){
+                    Block::robot->LeftDCRotors[kk]->SetDirection(0);
+                    Block::robot->SetSpeed(used_blocks[2]->get_output() + 155);
+                    Block::robot->LeftDCRotors[kk]->Move();
+                  }
+            }else if(used_blocks[0]->get_output() == 2){
+                  for(int kk = 0; kk < Block::robot->NRightDCRotors ; kk++){
+                    Block::robot->RightDCRotors[kk]->SetDirection(0);
+                    Block::robot->SetSpeed(used_blocks[2]->get_output() + 155);
+                    Block::robot->RightDCRotors[kk]->Move();
+                  }
+            }
+          if(used_blocks[1]->get_output() != -1){
+            Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::robot->Stop();
+          }
         }
-     
-      
       break;
     case 22:
         if (Block::robot->smartRotor != nullptr)
@@ -447,7 +466,6 @@ size_t tmp_n;
               Block::BH->active_wait(10, 10,interrupted,&action_with_no_interrupt);
           }
       break;
-        /*
     case 94:
         UserFunction_5(used_blocks[0]->get_output(),used_blocks[1]->get_output());
         break;
@@ -463,7 +481,6 @@ size_t tmp_n;
     case 98:
         UserFunction_1();
         break; 
-        */
     case 99:
         Block::robot->RawRotorMove(used_blocks[0]->get_output(),used_blocks[1]->get_output());
         Block::robot->Remote_block_used = true;
@@ -501,22 +518,16 @@ bool Block::set_next(Block* blockList[],int blockList_N) {
 
 
 bool Block::set_used_block(Block* blockList[],int blockList_N){
-         // Serial.print("Setting usage for block:");
-         // Serial.println(blockID);
           byte usedBlockAttached = 0;
           used_blocks = new Block*[used_blocks_N];
           for(byte uu = 0;uu<used_blocks_N;uu++) used_blocks[uu] = NULL;
           if(used_blocks_N !=0){
               for(byte tt = 0; tt < used_blocks_N; tt++){
-               // Serial.print("Searching for block id:");
-                //Serial.println(used_blocksIDs[tt]);
                 if(used_blocksIDs[tt] == 0){
                     used_blocks_N--;
-                   // Serial.println("Pass 0 value");
                 }else{
                 for(int jj = 0 ; jj <  blockList_N ; jj++){
                   if(used_blocksIDs[tt] == blockList[jj]->getID()){
-                   // Serial.println("Found!");
                     used_blocks[tt] = blockList[jj];
                     usedBlockAttached++;
                     break;

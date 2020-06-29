@@ -3,7 +3,7 @@
 BlockHandler BH;
 Skribot *robot;
 bool transmision_recieved = false;
-bool BT_state;
+bool BT_state =false;
 bool Connection_Break = false;
 char ascitmp;
 char softVersion[] = "1.0.0";
@@ -13,10 +13,10 @@ bool LED_STATE = true;
 void ENTER_TO_IDLE(){
   BH.clear();
   robot->Stop();
-  robot->TurnLEDOff(); 
-  robot->OpenClaw();
-  robot->Put_Down();
-  robot->TurnLEDOn(255,255,255);
+  //robot->TurnLEDOff(); 
+  //robot->OpenClaw();
+  //robot->Put_Down();
+  //robot->TurnLEDOn(255,255,255);
 
   for (int i = 0; i < 5; i++)
   {
@@ -75,10 +75,6 @@ void setup() {
 }
 
 void loop() {
-   if(!robot->BLE_checkConnection() && BT_state){
-    BT_state = !BT_state;
-    ENTER_TO_IDLE();
-    }
     robot->BaterryCheck();
     byte tmp = BH.readMessageLine();
     BH.processMessageLine(tmp);
@@ -122,10 +118,11 @@ int CompileCode(){
 
 void idle_connectioncheck(){
    if(!robot->BLE_checkConnection()){
-     Blink();
+     //Blink();
      if(BT_state){
       robot->Stop();
       BT_state = !BT_state;
+      Serial.println("DISCONNECTED");
       #ifdef ESP_H
       robot->status->TurnOn(YELLOW,2);
       #endif
@@ -133,6 +130,7 @@ void idle_connectioncheck(){
   }else if(robot->BLE_checkConnection() && !BT_state){ 
      robot->TurnLEDOn(255,255,255); 
      BT_state = !BT_state;
+      Serial.println("CONNECTED");
      BH.clear();
      #ifdef ESP_H
       robot->status->TurnOn(BLUE,2);

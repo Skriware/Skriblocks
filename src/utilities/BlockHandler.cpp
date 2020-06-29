@@ -450,6 +450,7 @@ int BlockHandler::Handle_Msg(){
 }
 
 bool BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *interrupt_info){
+    if(ms < 0) return(false);
     if(interrupted)ms = millis_left_from_interrupt;
     int loop_iterator = ms/interval;
     int ms_left_befor_loop = ms%interval;

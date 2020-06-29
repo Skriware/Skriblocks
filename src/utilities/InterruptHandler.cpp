@@ -86,7 +86,7 @@
  				}else{
  					return(false);
  				}
- 				Serial.println(robot->ReadLineSensor(input));
+ 				//Serial.println(robot->ReadLineSensor(input));
  				return(robot->ReadLineSensor(input) == line_trig);
  			break; 
  			case TIME_INTERRUPT :
