@@ -412,18 +412,18 @@ size_t tmp_n;
             if(used_blocks[0]->get_output() == 1){
                   for(int kk = 0; kk < Block::robot->NLeftDCRotors ; kk++){
                     Block::robot->LeftDCRotors[kk]->SetDirection(0);
-                    Block::robot->SetSpeed(used_blocks[2]->get_output() + 155);
+                    Block::robot->SetSpeed(used_blocks[2]->get_output());
                     Block::robot->LeftDCRotors[kk]->Move();
                   }
             }else if(used_blocks[0]->get_output() == 2){
                   for(int kk = 0; kk < Block::robot->NRightDCRotors ; kk++){
                     Block::robot->RightDCRotors[kk]->SetDirection(0);
-                    Block::robot->SetSpeed(used_blocks[2]->get_output() + 155);
+                    Block::robot->SetSpeed(used_blocks[2]->get_output());
                     Block::robot->RightDCRotors[kk]->Move();
                   }
             }
           if(used_blocks[1]->get_output() != -1){
-            Block::BH->active_wait(used_blocks[0]->get_output(),10,interrupted,&action_with_no_interrupt);
+            Block::BH->active_wait(used_blocks[1]->get_output(),10,interrupted,&action_with_no_interrupt);
             Block::robot->Stop();
           }
         }
