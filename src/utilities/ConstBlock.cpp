@@ -11,7 +11,7 @@ ConstBlock::ConstBlock(int id, int32_t value){
   	actionID 		= 0;
   	nextblockID 	= 0;
     t_output = NULL;
-    N_output = 0;
+    N_output = 1;
 }
 
 ConstBlock::ConstBlock(int id, int32_t *value,byte N){
