@@ -1,7 +1,7 @@
 #ifndef SBlock_H
 #define SBlock_H
 //#define DEBUG_MODE
-
+#define FIRMWARE_VERSION 0.9
 #include "utilities/Block.h"
 #include "utilities/Conditional.h"
 #include "utilities/Loop.h"

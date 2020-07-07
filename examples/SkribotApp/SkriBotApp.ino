@@ -92,11 +92,12 @@ void loop() {
         Serial.println("COMPILATION ENDED");
         if(succes == 1){                    //chceck compiler errors
             Connection_Break = false;
-            if(!robot->Remote_block_used)robot->BLE_write("ack\n\r\n");
+            if(!robot->Remote_block_used)robot->BLE_write("OK");
             ExecuteCode();                  //Here robot runs the code
             SendCodeEndMEssage();
 
         }else if(succes ==3){
+        robot->BLE_write("ERROR:CODE_NOT_VALID\n");
         SendErrorMsg("CODE NOT VALID");
       }
 
@@ -128,7 +129,6 @@ void idle_connectioncheck(){
       #endif
      }
   }else if(robot->BLE_checkConnection() && !BT_state){ 
-     robot->TurnLEDOn(255,255,255); 
      BT_state = !BT_state;
       Serial.println("CONNECTED");
      BH.clear();
@@ -168,9 +168,6 @@ while(BH.doBlock()){
               #endif
                 BH.clear();
                 robot->Stop();
-                robot->Put_Down();
-                robot->OpenClaw();
-                robot->TurnLEDOn(255,255,255);
               break;  
             }else if(!robot->BLE_checkConnection()){
                 ENTER_TO_IDLE();
@@ -181,7 +178,7 @@ while(BH.doBlock()){
 }
 
 void SendErrorMsg(char *msg){
-            robot->BLE_write("DONE\n");
+            //robot->BLE_write("DONE\n");
             ENTER_TO_IDLE();
             #ifdef ESP_H        
             robot->status->TurnOn(RED,2);

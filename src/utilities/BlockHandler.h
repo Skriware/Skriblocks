@@ -13,7 +13,7 @@
 #define TIMEOUT_ERROR_CODE 254
 #define MESSAGE_TIMEOUT 4000
 #define ACK_RESEND_TIME 500
-#define NO_MSG_CODE 0
+#define NO_MSG_CODE '0'
 #define CODE_COMPLETE 2
 #define CODE_PASSED 1
 

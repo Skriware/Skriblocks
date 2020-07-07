@@ -46,13 +46,13 @@
             bool tmp = false;
             long last_message_time = millis();
             long last_ack_send = last_message_time;
-            Block::robot->BLE_write("ack\n\r\n");
+            //Block::robot->BLE_write("ack\n");
             while((Block::robot->BLE_dataAvailable() == 0)){
               if(millis() - last_message_time > MESSAGE_TIMEOUT){
                 tmp = true;
                 break;
               }else if(millis() - last_ack_send > ACK_RESEND_TIME){
-                Block::robot->BLE_write("ack\n\r\n");
+                //Block::robot->BLE_write("ack\n");
                 last_ack_send = millis();
               }
             }
@@ -108,7 +108,7 @@
           }
         }
     }else{
-      Block::robot->BLE_write("ack\n\r\n");
+      CheckForTimeout();
       return(NO_MSG_CODE);
     }
     return(CODE_PASSED);
@@ -118,6 +118,7 @@
         char tmpNameArray[32] = {' '};
         int tmpCounter;
         char tmp_tag[10] = {' '};
+        bool vaildcommand = true;
         switch(LineCode){
           case BAPTISED:
                 #if ENABLED(DEBUG_MODE)
@@ -140,7 +141,6 @@
                     tmp = Block::robot->BLE_read();
                   }
                 }
-                Block::robot->BLE_write("OK\n");
                 #if ENABLED(DEBUG_MODE)
                   Serial.println(tmpNameArray);
                 #endif  
@@ -151,14 +151,14 @@
                 #if ENABLED(DEBUG_MODE)
                   Serial.println("Version Request");
                 #endif
-                Block::robot->BLE_write("1");
+                sprintf(tmp_tag,"VERSION:%f",1.0);
+                Block::robot->BLE_write(tmp_tag);
                 clear();
           break;
           case RESET:
               #if ENABLED(DEBUG_MODE)
                 Serial.println("RESET BLE");
               #endif
-                Block::robot->BLE_write("OK\n");
                 Block::robot->BLE_reset();
                 clear();
           break;
@@ -180,10 +180,10 @@
           if(Block::robot->NLeftDCRotors ==0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_L_DIR2_PIN,SKRIBRAIN_MOTOR_L_DIR1_PIN,"Left");
           if(Block::robot->NRightDCRotors ==0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_R_DIR2_PIN,SKRIBRAIN_MOTOR_R_DIR1_PIN,"Right");
           Block::robot->RawRotorMove(readIntDirect(),readIntDirect());
-          Block::robot->BLE_write("ack\n\r\n");
           break;
           case BATTERY:
-              Block::robot->BLE_write((char*)Block::robot->ReadBattery());
+          sprintf(tmp_tag,"%d",Block::robot->ReadBattery());
+          Block::robot->BLE_write(tmp_tag);
           break;
           case PIANO:
               if(Block::robot->Buzzers[SERVO_2] == NULL)Block::robot->AddBuzzer(SERVO_2);
@@ -247,7 +247,6 @@
                       default:
                         break;
               }
-              Block::robot->BLE_write("ack\n\r\n");
           break;
           case HARDWARE_SET:
           Block::robot->ClearHardware();
@@ -263,16 +262,14 @@
           Serial.println("HARDWARE SET");
           break;
           case CALIBRATE:
-              Serial.println("HARDWARE CALIBRATION");
               tmp = BLE_readwithTIMEOUT();
               tmp_tag[0] = BLE_readwithTIMEOUT();
-              Serial.print("TAG:");
-              Serial.println(tmp_tag[0]);
+              tmp = BLE_readwithTIMEOUT();
               if(tmp_tag[0] == 'M'){
-                Block::robot->left_invert= readIntDirect();                
-                Block::robot->right_invert= readIntDirect();
                 Block::robot->left_scale= readIntDirect();
                 Block::robot->right_scale= readIntDirect();
+                Block::robot->left_invert= readIntDirect();                
+                Block::robot->right_invert= readIntDirect();
                       #ifdef DEBUG_MODE
                         Serial.println("User Corrections:");
                         Serial.print("LS: ");
@@ -291,22 +288,36 @@
                             Block::robot->AddLineSensor(LINE_PIN_2, 2);
                             Block::robot->AddLineSensor(LINE_PIN_3, 3);
                 }
-                Serial.println("Calibrating No Line!");
+              Serial.println("Calibrating No Line!");
               Block::robot->Calibrate_sensors_no_Line();
-              Block::robot->BLE_write("ack\n\r\n");
               }else if(tmp_tag[0] == 'B'){
                  Serial.println("Calibrating Line!");
               Block::robot->Calibrate_sensors_Line();
               Block::robot->Save_Calibration_Data(CALIB_LINE_SENSORS);
-              Block::robot->BLE_write("ack\n\r\n");
               }
+               Block::robot->BLE_Flush();
           break;
           default:
               Block::robot->BLE_Flush();
-              Block::robot->BLE_write("ack\n\r\n");
-                clear();
+              clear();
+              vaildcommand = false;
           break;
         }
+
+        if(LineCode == TIMEOUT_ERROR_CODE){
+          Serial.println("Timeout Error");
+          Block::robot->BLE_write("ERROR:TIMEOUT_ERROR\n");
+          return;
+        }
+        if(LineCode != NO_MSG_CODE && !transfereBlocks && LineCode != HARDWARE_SET){
+        if(vaildcommand){
+          sprintf(tmp_tag,"%cOK\n",LineCode);
+          Block::robot->BLE_write(tmp_tag);
+        }else{
+          sprintf(tmp_tag,"ERROR:UNKNOWN_COMMAND:%c\n",LineCode);
+          Block::robot->BLE_write(tmp_tag);
+        }
+      }
   } 
 
   char BlockHandler::BLE_readwithTIMEOUT(){
