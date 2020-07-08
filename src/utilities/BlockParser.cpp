@@ -1,12 +1,16 @@
 	#include "BlockHandler.h"
 
 
-  void BlockHandler::AddToMessage(char x){
-    AllMessage[messageLength] = x;
-    messageLength++;
-    #ifdef DEBUG_MODE
-    Serial.print(x);
-    #endif
+  bool BlockHandler::AddToMessage(char x){
+    if(messageLength < MAX_MSG_L){
+          AllMessage[messageLength] = x;
+          messageLength++;
+          #ifdef DEBUG_MODE
+          Serial.print(x);
+          #endif
+          return (true);
+    }
+          return(false);
   }
 
   void BlockHandler::CheckLongCodes(char *asciTmp){
@@ -46,13 +50,13 @@
             bool tmp = false;
             long last_message_time = millis();
             long last_ack_send = last_message_time;
-            //Block::robot->BLE_write("ack\n");
+            Block::robot->BLE_write("ack\n");
             while((Block::robot->BLE_dataAvailable() == 0)){
               if(millis() - last_message_time > MESSAGE_TIMEOUT){
                 tmp = true;
                 break;
               }else if(millis() - last_ack_send > ACK_RESEND_TIME){
-                //Block::robot->BLE_write("ack\n");
+                Block::robot->BLE_write("ack\n");
                 last_ack_send = millis();
               }
             }
@@ -111,6 +115,7 @@
       CheckForTimeout();
       return(NO_MSG_CODE);
     }
+    if(!(messageLength < MAX_MSG_L))return(CODE_TOO_LONG);
     return(CODE_PASSED);
   }
   void BlockHandler::processMessageLine(byte LineCode){
@@ -180,6 +185,7 @@
           if(Block::robot->NLeftDCRotors ==0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_L_DIR2_PIN,SKRIBRAIN_MOTOR_L_DIR1_PIN,"Left");
           if(Block::robot->NRightDCRotors ==0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_R_DIR2_PIN,SKRIBRAIN_MOTOR_R_DIR1_PIN,"Right");
           Block::robot->RawRotorMove(readIntDirect(),readIntDirect());
+          Block::robot->BLE_read();
           break;
           case BATTERY:
           sprintf(tmp_tag,"%d",Block::robot->ReadBattery());
@@ -314,7 +320,7 @@
           sprintf(tmp_tag,"%cOK\n",LineCode);
           Block::robot->BLE_write(tmp_tag);
         }else{
-          sprintf(tmp_tag,"ERROR:UNKNOWN_COMMAND:%c\n",LineCode);
+          sprintf(tmp_tag,"ERROR:STOP:UNKNOWN_COMMAND:%c\n",LineCode);
           Block::robot->BLE_write(tmp_tag);
         }
       }

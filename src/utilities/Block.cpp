@@ -524,28 +524,29 @@ bool Block::set_next(Block* blockList[],int blockList_N) {
 
 
 bool Block::set_used_block(Block* blockList[],int blockList_N){
+          if(used_blocks_N == 0)return(true);
           byte usedBlockAttached = 0;
-          used_blocks = new Block*[used_blocks_N];
-          for(byte uu = 0;uu<used_blocks_N;uu++) used_blocks[uu] = NULL;
-          if(used_blocks_N !=0){
-              for(byte tt = 0; tt < used_blocks_N; tt++){
-                if(used_blocksIDs[tt] == 0){
-                    used_blocks_N--;
-                }else{
+          byte Idswithout0s[used_blocks_N] = {0};
+          byte used_nonzero_blocks_N =0;
+           for(byte jj = 0; jj < used_blocks_N; jj++){
+              if(used_blocksIDs[jj] != 0){
+                    Idswithout0s[used_nonzero_blocks_N] = used_blocksIDs[jj];
+                    used_nonzero_blocks_N++;
+              }
+            }
+            if(used_nonzero_blocks_N == 0)return(true);
+          used_blocks = new Block*[used_nonzero_blocks_N];
+          for(byte uu = 0;uu<used_nonzero_blocks_N;uu++) used_blocks[uu] = NULL;
+              for(byte tt = 0; tt < used_nonzero_blocks_N; tt++){
                 for(int jj = 0 ; jj <  blockList_N ; jj++){
-                  if(used_blocksIDs[tt] == blockList[jj]->getID()){
+                  if(Idswithout0s[tt] == blockList[jj]->getID()){
                     used_blocks[tt] = blockList[jj];
                     usedBlockAttached++;
                     break;
                   }
-                }
               }
             }  
-          }else{
-            return(true);
-          }
-
-          if(usedBlockAttached == used_blocks_N){
+          if(usedBlockAttached == used_nonzero_blocks_N){
             return(true);
           }else{
             return(false);

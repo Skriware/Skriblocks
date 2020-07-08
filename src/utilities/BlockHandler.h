@@ -30,22 +30,28 @@
 #define HARDWARE_SET 'H'
 #define CALIBRATE 'C' 
 
+#define CODE_VALID_AND_COMPLETE_RUN_O 1
+#define CODE_VALID_AND_COMPLETE_RUN_C 0
+#define CODE_NOT_VALID 3
+#define CODE_TOO_LONG 4
+#define CODE_NOT_COMPLETE 2
+
 class BlockHandler {
 
 
 public:
 	BlockHandler();
 
-	void addLoop(int id,	int startBlockID,	int endBlockID,		int count);
-	void addBlock(int id,	int _nextBlockID,int _actionID,byte* _usedBlocksIDs= NULL,byte _NusedBlocks = 0);
-	void addIf(int id,int _next_true, int _next_false, int _logic_block);
-	void addLogic(int id,int logicOperation,int _input_left, int _input_right);
-	void addLogicCompare(int id,int _logicOperation,int _input_left, int _input_right);
-	void addInterrupt(byte type,byte input,byte trigger,byte _priority,byte _starting_block,int value = 0);
-	void addAritmeticBlock(int id,int _operation,int _left,int _right);
-	void addConst(int id, int32_t value);
-	void addConst(int id, int32_t *value,byte N);
-	void addConst(int id,String value);	
+	bool addLoop(int id,	int startBlockID,	int endBlockID,		int count);
+	bool addBlock(int id,	int _nextBlockID,int _actionID,byte* _usedBlocksIDs= NULL,byte _NusedBlocks = 0);
+	bool addIf(int id,int _next_true, int _next_false, int _logic_block);
+	bool addLogic(int id,int logicOperation,int _input_left, int _input_right);
+	bool addLogicCompare(int id,int _logicOperation,int _input_left, int _input_right);
+	bool addInterrupt(byte type,byte input,byte trigger,byte _priority,byte _starting_block,int value = 0);
+	bool addAritmeticBlock(int id,int _operation,int _left,int _right);
+	bool addConst(int id, int32_t value);
+	bool addConst(int id, int32_t *value,byte N);
+	bool addConst(int id,String value);	
 	bool checkForInterrupts();																		//Adding Blocks types
 	
 	bool active_wait(uint32_t ms,int interval,bool interruppted = false,bool *int_info = NULL);
@@ -56,7 +62,7 @@ public:
 	byte readMessageLine();
 	byte readCodeLine();
 	void processMessageLine(byte LineCode);
-	void AddToMessage(char x);
+	bool AddToMessage(char x);
 	void CheckLongCodes(char *x);
 	bool CheckForTimeout();																							//Making conectons(assigning pointers from IDs) 
 																												// Starting code
@@ -76,12 +82,13 @@ public:
 
 	bool runCode,transfereBlocks;
 
-	 #define blockList_MAX 			200
-	 #define IfblockList_MAX 		20
-	 #define LoopblockList_MAX 		20
-	 #define LogicblockList_MAX 	40
-	 #define AritmeticblockList_MAX	15
+	 #define blockList_MAX 			300
+	 #define IfblockList_MAX 		50
+	 #define LoopblockList_MAX 		50
+	 #define LogicblockList_MAX 	50
+	 #define AritmeticblockList_MAX	50
 	 #define MAX_INTERRUPTS 8
+	 #define MAX_MSG_L 5000
 
 	Block *blockList[blockList_MAX];
 	Conditional *IfblockList[IfblockList_MAX];
@@ -102,7 +109,7 @@ public:
 	int LogicblockList_N;
 	int AritmeticblockList_N;					//Actual number of blocks in lists
 	int Mcursor;								// variable for message parsing
-	char AllMessage[1600];
+	char AllMessage[MAX_MSG_L];
 	int messageLength;
 
 };

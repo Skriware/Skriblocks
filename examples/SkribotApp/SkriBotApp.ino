@@ -85,25 +85,33 @@ void loop() {
         codeinfo = BH.readCodeLine();
         if(codeinfo == TIMEOUT_ERROR_CODE)break;
         if(codeinfo == CODE_COMPLETE)break;
+        if(codeinfo == CODE_TOO_LONG)break;
       }
       if(codeinfo == CODE_COMPLETE){
         Serial.println("BEGIN COMPILATION!");
         byte succes = CompileCode();        //make blocks connections
         Serial.println("COMPILATION ENDED");
-        if(succes == 1){                    //chceck compiler errors
+        if(succes == CODE_VALID_AND_COMPLETE_RUN_O){                    //chceck compiler errors
             Connection_Break = false;
             if(!robot->Remote_block_used)robot->BLE_write("OK");
             ExecuteCode();                  //Here robot runs the code
             SendCodeEndMEssage();
 
-        }else if(succes ==3){
-        robot->BLE_write("ERROR:CODE_NOT_VALID\n");
-        SendErrorMsg("CODE NOT VALID");
-      }
+        }else if(succes == CODE_NOT_VALID){
+          robot->BLE_write("ERROR:CODE_NOT_VALID\n");
+          SendErrorMsg("CODE NOT VALID");
+        }else if(succes == CODE_TOO_LONG){
+          robot->BLE_write("ERROR:STOP:CODE_TOO_LONG\n");
+          SendErrorMsg("CODE TOO LONG");
+        }
 
       }else if(codeinfo == TIMEOUT_ERROR_CODE){
-        SendErrorMsg("TIMEOUT ERROR");
-      }  
+          SendErrorMsg("TIMEOUT ERROR");
+          robot->BLE_write("ERROR:TIMEOUT_ERROR\n");
+      }else if(codeinfo == CODE_TOO_LONG){
+          robot->BLE_write("ERROR:STOP:CODE_TOO_LONG\n");
+          SendErrorMsg("CODE TOO LONG");
+      } 
 
   }
   idle_connectioncheck();
@@ -113,7 +121,7 @@ int CompileCode(){
      int flag; 
   while(freeRam() > 190){
       flag = BH.Handle_Msg(); 
-      if(flag != 2)return(flag);
+      if(flag != CODE_NOT_COMPLETE)return(flag);
     }
 }
 
@@ -178,7 +186,6 @@ while(BH.doBlock()){
 }
 
 void SendErrorMsg(char *msg){
-            //robot->BLE_write("DONE\n");
             ENTER_TO_IDLE();
             #ifdef ESP_H        
             robot->status->TurnOn(RED,2);
@@ -186,4 +193,5 @@ void SendErrorMsg(char *msg){
             #if ENABLED(DEBUG_MODE)
             Serial.println(msg);
             #endif
+            Block::robot->BLE_Flush();
 }
