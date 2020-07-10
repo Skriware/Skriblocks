@@ -532,7 +532,7 @@ bool BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
         got_interrupt = true;
         break;
       }
-      if(Block::robot->stausLEDused)Block::robot->BaterryCheck();
+      if(Block::robot->stausLEDused)Block::robot->status->ReadBatteryState();
       delay(interval);
     } 
     return(got_interrupt);

@@ -58,9 +58,11 @@ void setup() {
   #endif
   bool tmp = robot->Check_Board_Version();
   if(tmp)robot->ConfigureBoardEEPROM();
+  robot->BaterryCheck();
   robot->BLE_Setup();
   Block::setRobot(robot); 
   Block::setBlockHandler(&BH);
+  robot->BLE_reset();
   BT_state = false; 
   #if ENABLED(DEBUG_MODE)
     Serial.println(freeRam());
@@ -75,7 +77,6 @@ void setup() {
 }
 
 void loop() {
-    robot->BaterryCheck();
     byte tmp = BH.readMessageLine();
     BH.processMessageLine(tmp);
     
