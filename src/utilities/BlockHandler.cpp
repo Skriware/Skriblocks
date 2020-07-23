@@ -518,7 +518,8 @@ bool BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
                 Block::robot->program_End_Reported = true;
               }
               #ifndef ESP_H && _VARIANT_BBC_MICROBIT_
-              if(tmp != 'B')serialFlush();
+              //if(tmp != 'B')
+                serialFlush();
               #endif
             }
       }

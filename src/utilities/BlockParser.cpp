@@ -1,6 +1,11 @@
 	#include "BlockHandler.h"
 
 
+  int BlockHandler::portUID(char portid){
+        int primes[] = {2,3,5,7,11,13,17,19,23};
+        return(primes[cti(portid)]);
+  }
+
   bool BlockHandler::AddToMessage(char x){
     if(messageLength < MAX_MSG_L){
           AllMessage[messageLength] = x;
@@ -123,7 +128,10 @@
         char tmpNameArray[32] = {' '};
         int tmpCounter;
         char tmp_tag[10] = {' '};
+        char hardware_types[10][2] = {{' '},{' '}};
+        int n_hardware = 0;
         bool vaildcommand = true;
+        int tmp_checksum = 0;
         switch(LineCode){
           case BAPTISED:
                 #if ENABLED(DEBUG_MODE)
@@ -185,7 +193,6 @@
           if(Block::robot->NLeftDCRotors ==0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_L_DIR2_PIN,SKRIBRAIN_MOTOR_L_DIR1_PIN,"Left");
           if(Block::robot->NRightDCRotors ==0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_R_DIR2_PIN,SKRIBRAIN_MOTOR_R_DIR1_PIN,"Right");
           Block::robot->RawRotorMove(readIntDirect(),readIntDirect());
-          Block::robot->BLE_read();
           break;
           case BATTERY:
           sprintf(tmp_tag,"%d",Block::robot->ReadBattery());
@@ -255,17 +262,22 @@
               }
           break;
           case HARDWARE_SET:
-          Block::robot->ClearHardware();
           tmp = BLE_readwithTIMEOUT();
-              while(tmp != '\n'){
-                tmp_tag[0] = BLE_readwithTIMEOUT();
-                tmp_tag[1] = BLE_readwithTIMEOUT();
-                if(tmp_tag[0] == 'H')tmp_tag[0] = BLE_readwithTIMEOUT();
-                if(tmp_tag[1] == 'H')tmp_tag[1] = BLE_readwithTIMEOUT();
-                Block::robot->AddHardware(tmp_tag);
+              while(tmp != '\n' && n_hardware < 10){
+                hardware_types[n_hardware][0] = BLE_readwithTIMEOUT();
+                hardware_types[n_hardware][1] = BLE_readwithTIMEOUT();
+                n_hardware++;
                 tmp = BLE_readwithTIMEOUT();
+                tmp_checksum += cti(hardware_types[n_hardware][1])*portUID(hardware_types[n_hardware][0]);
               }
-          Serial.println("HARDWARE SET");
+              if(tmp_checksum != Block::robot->hardware_checksum){
+                Block::robot->ClearHardware();
+                for(byte tt = 0; tt< n_hardware;tt++)Block::robot->AddHardware(hardware_types[tt]);
+                Block::robot->hardware_checksum = tmp_checksum;  
+                Serial.println("HARDWARE SET");
+              }else{
+                Serial.println("Now Hardware changes.");
+              }
           break;
           case CALIBRATE:
               tmp = BLE_readwithTIMEOUT();

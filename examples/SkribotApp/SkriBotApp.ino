@@ -133,6 +133,7 @@ void idle_connectioncheck(){
       robot->Stop();
       BT_state = !BT_state;
       Serial.println("DISCONNECTED");
+      ENTER_TO_IDLE();
       #ifdef ESP_H
       robot->status->TurnOn(YELLOW,2);
       #endif

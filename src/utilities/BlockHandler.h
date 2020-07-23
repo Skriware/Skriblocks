@@ -78,7 +78,8 @@ public:
 	int Handle_Msg();																							// Handle one line of the message
 	void ReadfromBT();	
 	void clear();	
-	void init();																					// BT message hendler												
+	void init();
+	int portUID(char portID);																					// BT message hendler												
 
 	bool runCode,transfereBlocks;
 
