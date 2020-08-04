@@ -78,7 +78,7 @@
         Serial.print(MainAsci);
         #endif
         if(MainAsci == INVALID_MSG_ERROR_CODE) return(INVALID_MSG_ERROR_CODE);
-        while(asciTmp != '\n' && MainAsci != 'H' && MainAsci != 'C'){
+        while(asciTmp != '\n' && MainAsci != 'H' && MainAsci != 'C' && MainAsci != 'G'){
           if(Block::robot->BLE_dataAvailable()){
             asciTmp = Block::robot->BLE_read();
             #ifdef DEBUG_MODE_1
@@ -194,6 +194,26 @@
           if(Block::robot->NRightDCRotors ==0)Block::robot->AddDCRotor(SKRIBRAIN_MOTOR_R_DIR2_PIN,SKRIBRAIN_MOTOR_R_DIR1_PIN,"Right");
           Block::robot->RawRotorMove(readIntDirect(),readIntDirect());
           break;
+          case GRIPPER:
+          if(Block::robot->NClaws == 0)Block::robot->AddClaw();
+            tmp = BLE_readwithTIMEOUT();
+            tmp = BLE_readwithTIMEOUT();
+          switch(tmp){
+              case  '1':
+             Block::robot->CloseClaw();
+            break;
+               case '2':
+             Block::robot->OpenClaw();
+            break;
+               case '3':
+             Block::robot->Pick_Up();
+            break;
+               case '4':
+             Block::robot->Put_Down();
+            break;
+          }
+            tmp = BLE_readwithTIMEOUT();
+          break;
           case BATTERY:
           sprintf(tmp_tag,"%d",Block::robot->ReadBattery());
           Block::robot->BLE_write(tmp_tag);
@@ -300,6 +320,10 @@
                         Serial.println(Block::robot->right_invert);
                       #endif
               Block::robot->Save_Calibration_Data(CALIB_MOTORS);
+              Block::robot->Invert_Left_Rotors(Block::robot->left_invert);
+              Block::robot->Scale_Left_Rotors(Block::robot->left_scale);
+              Block::robot->Invert_Right_Rotors(Block::robot->right_invert);
+              Block::robot->Scale_Right_Rotors(Block::robot->right_scale);
               }else if(tmp_tag[0] == 'W'){
                 if(Block::robot->NLineSensors == 0){
                             Block::robot->AddLineSensor(LINE_PIN_1, 1);

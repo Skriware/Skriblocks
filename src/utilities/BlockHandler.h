@@ -26,6 +26,7 @@
 #define BEGIN 'B'
 #define BATTERY 'L'
 #define REMOTE 'M'
+#define GRIPPER 'G'
 #define PIANO 'P'
 #define HARDWARE_SET 'H'
 #define CALIBRATE 'C' 

@@ -73,6 +73,7 @@ void setup() {
     #ifdef ESP_H
       robot->status->TurnOn(YELLOW,2);
     #endif
+    robot->status->ReadBatteryState();
     Block::robot->ClearHardware();
 }
 
@@ -170,8 +171,8 @@ void ExecuteCode(){
         #if ENABLED(DEBUG_MODE)
           Serial.println("CONFIRMING START OF CODE");
         #endif
+        robot->status->ReadBatteryState();
 while(BH.doBlock()){
-           robot->BaterryCheck();
            if(robot->ProgramENDRepotred()){
               #if ENABLED(DEBUG_MODE)
               Serial.println("Stopping the robot!");
