@@ -83,6 +83,9 @@ void Loop::set_limit(){
   if(limit_block->get_output() == -757 || limit_block->get_output() == 1029){
     Block::robot->EnterConfigMode();
     limit = 1;
+  }else if(limit_block->get_output() == -100){
+    limit = -1;
+    Block::robot->ignore_connection_break = true;
   }else{
     limit = limit_block->get_output();
   }

@@ -504,7 +504,7 @@ bool BlockHandler::active_wait(uint32_t ms, int interval,bool interrupted,bool *
     }
     delay(ms_left_befor_loop);
     for(int yy = 1; yy < loop_iterator; yy++){
-          if(Block::robot->using_BLE_Connection && !Block::robot->connection_Break_Reported && Block::robot->BLE_checkConnection() == false){
+          if(Block::robot->using_BLE_Connection && !Block::robot->ignore_connection_break && !Block::robot->connection_Break_Reported && Block::robot->BLE_checkConnection() == false){
           Block::robot->connection_Break_Reported = true;
           #ifdef DEBUG_MODE
           if(Block::robot->connection_Break_Reported)Serial.println("Connection LOST!");
